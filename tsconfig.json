@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2020",
+    "module": "esnext",
+    "strict": true,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "noUnusedLocals": true,
+    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "allowJs": false,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "~/*": ["./*"]
+    },
+    "lib": ["esnext", "dom"],
+    "types": [
+      "node",
+      "vue",
+      "vite/client",
+      "unplugin-vue-define-options/macros-global"
+    ]
+  },
+  "include": ["src/**/*", "*.d.ts", "auto-imports.d.ts"],
+  "exclude": ["node_modules", "dist", "example"],
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
+}
