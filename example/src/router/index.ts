@@ -80,6 +80,11 @@ const router = new VueRouter({
       name: 'tooltips',
       component: () => import('@/views/TooltipView.vue'),
     },
+    {
+      path: '/data-tables',
+      name: 'data-tables',
+      component: () => import('@/views/DataTableView.vue'),
+    },
   ],
 });
 
