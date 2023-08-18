@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useListeners } from 'vue';
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
@@ -12,14 +11,16 @@ const hidden: Ref<boolean> = ref(true);
 
 const attrs = useAttrs();
 const slots = useSlots();
-const listeners = useListeners();
 </script>
 
 <template>
   <RuiTextField
     v-bind="attrs"
     :type="hidden ? 'password' : 'text'"
-    v-on="listeners"
+    v-on="
+      // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
+      $listeners
+    "
   >
     <template v-if="slots.prepend" #prepend>
       <slot name="prepend" />
