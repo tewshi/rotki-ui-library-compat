@@ -85,6 +85,11 @@ const router = new VueRouter({
       name: 'data-tables',
       component: () => import('@/views/DataTableView.vue'),
     },
+    {
+      path: '/cards',
+      name: 'cards',
+      component: () => import('@/views/CardView.vue'),
+    },
   ],
 });
 
