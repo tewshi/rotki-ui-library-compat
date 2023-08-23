@@ -1,101 +1,101 @@
 <script lang="ts" setup>
 import {
+  type ButtonProps,
   RuiButton,
   RuiTooltip,
   type TooltipProps,
 } from '@rotki/ui-library-compat/components';
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-const tooltips = ref<
-  (TooltipProps & { buttonColor?: DataType<typeof RuiButton>['color'] })[]
->([
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Bottom',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
-  },
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Top',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Left',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: false,
-    hideArrow: true,
-    text: 'Right',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Bottom With arrow',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Top With arrow',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Left With arrow',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: false,
-    hideArrow: false,
-    text: 'Right With arrow',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'primary',
-    popper: { placement: 'bottom' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'secondary',
-    popper: { placement: 'top' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'error',
-    popper: { placement: 'left' },
-  },
-  {
-    disabled: true,
-    hideArrow: false,
-    text: 'Tooltip disabled',
-    buttonColor: 'info',
-    popper: { placement: 'right' },
-  },
-]);
+const tooltips = ref<(TooltipProps & { buttonColor?: ButtonProps['color'] })[]>(
+  [
+    {
+      disabled: false,
+      hideArrow: true,
+      text: 'Bottom',
+      buttonColor: 'primary',
+      popper: { placement: 'bottom' },
+    },
+    {
+      disabled: false,
+      hideArrow: true,
+      text: 'Top',
+      buttonColor: 'secondary',
+      popper: { placement: 'top' },
+    },
+    {
+      disabled: false,
+      hideArrow: true,
+      text: 'Left',
+      buttonColor: 'error',
+      popper: { placement: 'left' },
+    },
+    {
+      disabled: false,
+      hideArrow: true,
+      text: 'Right',
+      buttonColor: 'info',
+      popper: { placement: 'right' },
+    },
+    {
+      disabled: false,
+      hideArrow: false,
+      text: 'Bottom With arrow',
+      buttonColor: 'primary',
+      popper: { placement: 'bottom' },
+    },
+    {
+      disabled: false,
+      hideArrow: false,
+      text: 'Top With arrow',
+      buttonColor: 'secondary',
+      popper: { placement: 'top' },
+    },
+    {
+      disabled: false,
+      hideArrow: false,
+      text: 'Left With arrow',
+      buttonColor: 'error',
+      popper: { placement: 'left' },
+    },
+    {
+      disabled: false,
+      hideArrow: false,
+      text: 'Right With arrow',
+      buttonColor: 'info',
+      popper: { placement: 'right' },
+    },
+    {
+      disabled: true,
+      hideArrow: false,
+      text: 'Tooltip disabled',
+      buttonColor: 'primary',
+      popper: { placement: 'bottom' },
+    },
+    {
+      disabled: true,
+      hideArrow: false,
+      text: 'Tooltip disabled',
+      buttonColor: 'secondary',
+      popper: { placement: 'top' },
+    },
+    {
+      disabled: true,
+      hideArrow: false,
+      text: 'Tooltip disabled',
+      buttonColor: 'error',
+      popper: { placement: 'left' },
+    },
+    {
+      disabled: true,
+      hideArrow: false,
+      text: 'Tooltip disabled',
+      buttonColor: 'info',
+      popper: { placement: 'right' },
+    },
+  ],
+);
 </script>
 
 <template>

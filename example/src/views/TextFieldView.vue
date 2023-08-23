@@ -1,9 +1,14 @@
 <script lang="ts" setup>
-import { RuiRevealableTextField, RuiTextField } from '@rotki/ui-library-compat';
+import {
+  RuiRevealableTextField,
+  RuiTextField,
+  type TextFieldProps,
+} from '@rotki/ui-library-compat';
 import { ref } from 'vue';
-import { type DataType, type Slots } from '@/types';
+import { objectOmit } from '@vueuse/shared';
+import { type Slots } from '@/types';
 
-type TextFieldData = DataType<typeof RuiTextField, string> & Slots;
+type TextFieldData = TextFieldProps & Slots;
 
 const textFields = ref<TextFieldData[]>([
   { value: '', color: 'primary' },
@@ -211,7 +216,7 @@ const revealableTextFields = ref([
         :key="i"
         v-model="field.value"
         placeholder="Placeholder"
-        v-bind="field"
+        v-bind="objectOmit(field, ['value'])"
       />
     </div>
   </div>
