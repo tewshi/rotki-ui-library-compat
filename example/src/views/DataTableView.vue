@@ -610,7 +610,7 @@ onBeforeMount(() => {
       <div class="grid grid-cols-1 gap-12 mb-14">
         <div
           v-for="({ title, table, emptySlot }, i) in emptyTables"
-          :key="i"
+          :key="`${title}${i}`"
           class="flex flex-col space-y-3"
           :data-cy="title"
         >
@@ -645,7 +645,7 @@ onBeforeMount(() => {
 
         <div
           v-for="({ title, table }, i) in datatables"
-          :key="i"
+          :key="`${title}${i}`"
           class="flex flex-col space-y-3"
           :data-cy="title"
         >
@@ -683,7 +683,7 @@ onBeforeMount(() => {
       <div class="grid grid-cols-1 gap-12">
         <div
           v-for="({ title, table }, i) in apiDatatables"
-          :key="i"
+          :key="`${title}${i}`"
           class="flex flex-col space-y-3"
           :data-cy="title"
         >

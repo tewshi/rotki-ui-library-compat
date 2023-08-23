@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-import { RuiProgress } from '@rotki/ui-library-compat';
+import { type ProgressProps, RuiProgress } from '@rotki/ui-library-compat';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-type ProgressData = DataType<typeof RuiProgress, number>;
-
-const progress = ref<ProgressData[]>([
+const progress = ref<ProgressProps[]>([
   {
     value: 40,
     color: 'primary',
