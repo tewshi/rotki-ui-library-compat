@@ -19,7 +19,7 @@ defineOptions({
 });
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: false,
+  value: false,
   indeterminate: false,
   disabled: false,
   color: undefined,
@@ -30,14 +30,17 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: 'input', modelValue: boolean): void;
+  (e: 'input', value: boolean): void;
   (e: 'update:indeterminate', indeterminate: boolean): void;
 }>();
 
-const { size } = toRefs(props);
+const { size, value } = toRefs(props);
 
-const input = (event: Event) => {
-  const checked = (event.target as HTMLInputElement).checked;
+const input = (target: EventTarget | null) => {
+  if (!target) {
+    return;
+  }
+  const { checked } = target as HTMLInputElement;
   if (checked) {
     emit('update:indeterminate', false);
   }
@@ -76,7 +79,7 @@ const attrs = useAttrs();
         :class="css.input"
         :disabled="disabled"
         v-bind="objectOmit(attrs, ['class'])"
-        @input="input($event)"
+        @input="input($event.target)"
       />
       <div
         :class="[

@@ -225,7 +225,12 @@ const radioGroups = ref([
   <div>
     <h2 class="text-h4 mb-6" data-cy="radio-buttons">Radio Buttons</h2>
     <div class="grid gap-4 grid-cols-6 mb-14" data-cy="radio-wrapper">
-      <RuiRadio v-for="(radio, j) in radios" :key="j" v-bind="radio">
+      <RuiRadio
+        v-for="(radio, j) in radios"
+        :key="j"
+        v-model="radio.value"
+        v-bind="radio"
+      >
         <span v-if="radio.label" class="capitalize"> {{ radio.label }} </span>
       </RuiRadio>
     </div>
