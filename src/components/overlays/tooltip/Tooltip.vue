@@ -8,6 +8,7 @@ export interface Props {
   openDelay?: number;
   closeDelay?: number;
   popper?: PopperOptions;
+  tooltipClass?: string;
 }
 
 defineOptions({
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
   openDelay: 0,
   closeDelay: 500,
   popper: () => ({}),
+  tooltipClass: '',
 });
 
 const css = useCssModule();
@@ -28,72 +30,91 @@ const css = useCssModule();
 const { closeDelay, openDelay, popper, disabled } = toRefs(props);
 
 const {
-  reference: trigger,
+  reference: activator,
   popper: tooltip,
   open,
+  popperEnter,
   onMouseOver,
   onMouseLeave,
+  onPopperLeave,
 } = usePopper(popper, disabled, openDelay, closeDelay);
 </script>
 
 <template>
   <div
-    ref="trigger"
+    ref="activator"
     :class="css.wrapper"
     :data-tooltip-disabled="disabled"
     @mouseover="onMouseOver()"
     @mouseleave="onMouseLeave()"
   >
-    <div :class="css.trigger">
-      <slot :open="open" />
+    <div :class="css.activator">
+      <slot name="activator" :open="open" />
     </div>
-    <div
-      v-if="open && !disabled"
+    <TransitionGroup
+      v-if="!disabled && popperEnter"
       ref="tooltip"
-      :class="css.tooltip"
+      :class="[
+        css.tooltip,
+        tooltipClass,
+        css[`tooltip__${popper?.strategy ?? 'absolute'}`],
+      ]"
+      enter-class="opacity-0 translate-y-1"
+      enter-active-class="ease-out duration-200"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-class="opacity-100 translate-y-0"
+      leave-active-class="ease-in duration-150"
+      leave-to-class="opacity-0 translate-y-1"
+      tag="div"
       role="tooltip"
+      @afterLeave="onPopperLeave()"
     >
-      <Transition
-        appear
-        enter-active-class="transition ease-out duration-200"
-        enter-from-class="opacity-0 translate-y-1"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="transition ease-in duration-150"
-        leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 translate-y-1"
-      >
-        <div>
-          <div :class="css.base">
-            <slot name="text">
-              {{ text }}
-            </slot>
-          </div>
-          <span v-if="!hideArrow" data-popper-arrow :class="css.arrow" />
-        </div>
-      </Transition>
-    </div>
+      <div v-if="open" key="tooltip" :class="css.base" role="tooltip-content">
+        <slot>
+          {{ text }}
+        </slot>
+      </div>
+      <span
+        v-if="!hideArrow"
+        key="arrow"
+        data-popper-arrow
+        :class="[css.arrow, { [css.arrow__open]: open }]"
+      />
+    </TransitionGroup>
   </div>
 </template>
 
 <style lang="scss" module>
+$arrowSize: 0.625rem;
 .wrapper {
   @apply relative inline-flex;
 
-  .trigger {
+  .activator {
     @apply inline;
   }
 
   .tooltip {
-    @apply max-w-xs;
-    @apply z-20;
+    @apply w-max max-w-xs transform transition-opacity delay-0 z-50;
+
+    &__fixed {
+      @apply fixed;
+    }
+
+    &__absolute {
+      @apply absolute;
+    }
 
     .base {
-      @apply h-6 px-2 py-1 text-xs font-normal truncate;
+      @apply px-2 py-1 text-xs font-normal;
       @apply bg-rui-grey-700/90 text-white rounded shadow;
     }
 
     .arrow {
-      @apply w-2.5 h-2.5 absolute;
+      @apply w-2.5 h-2.5 transition-opacity opacity-0;
+
+      &__open {
+        @apply opacity-100;
+      }
 
       &::before {
         @apply block border-[0.3125rem] origin-center;
@@ -105,7 +126,7 @@ const {
     }
 
     &[data-popper-placement*='bottom'] .arrow {
-      top: calc(0.5px + 0.625rem * -1 / 2);
+      top: calc(0.5px - #{$arrowSize} / 2);
 
       &::before {
         @apply -rotate-45;
@@ -113,7 +134,7 @@ const {
     }
 
     &[data-popper-placement*='top'] .arrow {
-      bottom: calc(0.5px + 0.625rem * -1 / 2);
+      bottom: calc(0.5px - #{$arrowSize} / 2);
 
       &::before {
         @apply rotate-[135deg];
@@ -121,7 +142,7 @@ const {
     }
 
     &[data-popper-placement*='left'] .arrow {
-      right: calc(0.5px + 0.625rem * -1 / 2);
+      right: calc(0.5px - #{$arrowSize} / 2);
 
       &::before {
         @apply rotate-45;
@@ -129,7 +150,7 @@ const {
     }
 
     &[data-popper-placement*='right'] .arrow {
-      left: calc(0.5px + 0.625rem * -1 / 2);
+      left: calc(0.5px - #{$arrowSize} / 2);
 
       &::before {
         @apply -rotate-[135deg];

@@ -1,14 +1,20 @@
 import { DEFAULT_POPPER_OPTIONS } from '@/composables/popper';
 import Tooltip, { type Props } from './Tooltip.vue';
-import type { Meta, StoryFn, StoryObj } from '@storybook/vue3';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 const render: StoryFn<Props> = (args) => ({
   components: { Tooltip },
   setup() {
     return { args };
   },
-  template:
-    '<div class="text-center p-4"><Tooltip v-bind="args"><span class="text-rui-primary"> Tooltip </span></Tooltip></div>',
+  template: `
+    <div class="text-center p-4">
+      <Tooltip v-bind="args">
+        <template #activator>
+          <span class="text-rui-primary"> Tooltip </span>
+        </template>
+      </Tooltip>
+    </div>`,
 });
 
 const meta: Meta<Props> = {

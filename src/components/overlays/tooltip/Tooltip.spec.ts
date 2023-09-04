@@ -7,7 +7,8 @@ const createWrapper = (options?: any) =>
   mount(Tooltip, {
     ...options,
     slots: {
-      default: '<rui-button>Tooltip trigger</rui-button>',
+      activator: { template: '<rui-button>Tooltip trigger</rui-button>' },
+      default: options?.props?.text ?? '',
     },
     stubs: { RuiButton: Button },
   });
@@ -42,7 +43,7 @@ describe('Tooltip', () => {
         disabled: true,
       },
     });
-    expect(wrapper.get('div[class*=_trigger_]')).toBeTruthy();
+    expect(wrapper.get('div[class*=_activator_]')).toBeTruthy();
     expect(wrapper.find('div[role=tooltip]').exists()).toBeFalsy();
   });
 
@@ -99,13 +100,14 @@ describe('Tooltip', () => {
     ).toBeTruthy();
     expect(wrapper.find('span[data-popper-arrow]').exists()).toBeTruthy();
 
-    await delay(1000);
+    await delay(1100);
 
     expect(wrapper.find('div[role=tooltip]').exists()).toBeFalsy();
     expect(
       wrapper.find('div[data-popper-placement=bottom]').exists(),
     ).toBeFalsy();
     expect(wrapper.find('span[data-popper-arrow]').exists()).toBeFalsy();
-    await wrapper.setProps({ disabled: false });
+    await wrapper.setProps({ disabled: true });
+    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeFalsy();
   });
 });
