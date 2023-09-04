@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, toRefs, useCssModule } from 'vue';
 import { get } from '@vueuse/shared';
+import { useRoute } from 'vue-router/composables';
 import { type SideNavLink } from '@/types';
-import router from '@/router';
 
 const props = defineProps<{
   navigation: Array<{
@@ -11,7 +11,7 @@ const props = defineProps<{
   }>;
 }>();
 
-const route = computed(() => router.currentRoute);
+const route = useRoute();
 const css = useCssModule();
 
 const { navigation } = toRefs(props);
@@ -19,7 +19,7 @@ const links = computed(() =>
   get(navigation).flatMap((section) => section.links),
 );
 const currentPage = computed(() =>
-  get(links).find((link) => link.to.name === route.value.name),
+  get(links).find((link) => link.to.name === route.name),
 );
 const currentPageIndex = computed(() => {
   const current = get(currentPage);

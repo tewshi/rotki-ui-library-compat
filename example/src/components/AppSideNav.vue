@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, useCssModule } from 'vue';
+import { useCssModule } from 'vue';
+import { useRoute } from 'vue-router/composables';
 import { type SideNavLink } from '@/types';
-import router from '@/router';
 
 defineProps<{
   navigation: Array<{
@@ -10,7 +10,7 @@ defineProps<{
   }>;
 }>();
 
-const route = computed(() => router.currentRoute);
+const route = useRoute();
 const css = useCssModule();
 </script>
 
