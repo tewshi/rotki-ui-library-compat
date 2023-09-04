@@ -37,7 +37,7 @@ export const DEFAULT_POPPER_OPTIONS: PopperOptions = {
   scroll: true,
   resize: true,
   placement: 'bottom',
-  strategy: 'fixed',
+  strategy: 'absolute',
 };
 
 export const createPopper = popperGenerator({
@@ -61,10 +61,15 @@ export const usePopper = (
 ) => {
   const reference: Ref<MaybeElement | null> = ref(null);
   const popper: Ref<MaybeElement | null> = ref(null);
-  const instance = ref<Instance | null>(null);
-  const open = ref(false);
-  const openTimeout = ref<NodeJS.Timeout>();
-  const closeTimeout = ref<NodeJS.Timeout>();
+  const instance: Ref<Instance | null> = ref(null);
+  const open: Ref<boolean> = ref(false);
+  const openTimeout: Ref<NodeJS.Timeout | undefined> = ref();
+  const closeTimeout: Ref<NodeJS.Timeout | undefined> = ref();
+  const popperEnter: Ref<boolean> = ref(false);
+
+  const onPopperLeave = () => {
+    set(popperEnter, false);
+  };
 
   const onMouseOver = () => {
     if (get(disabled)) {
@@ -79,8 +84,11 @@ export const usePopper = (
       return;
     }
 
+    set(popperEnter, true);
+
     const timeout = setTimeout(() => {
       set(open, true);
+      get(instance)?.update();
       set(openTimeout, undefined);
     }, get(openDelay));
 
@@ -171,6 +179,12 @@ export const usePopper = (
               resize,
             },
           },
+          {
+            name: 'arrow',
+            options: {
+              padding: 4,
+            },
+          },
         ],
       });
 
@@ -180,5 +194,14 @@ export const usePopper = (
     });
   });
 
-  return { reference, popper, instance, open, onMouseOver, onMouseLeave };
+  return {
+    reference,
+    popper,
+    instance,
+    open,
+    popperEnter,
+    onMouseOver,
+    onMouseLeave,
+    onPopperLeave,
+  };
 };

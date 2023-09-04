@@ -73,8 +73,8 @@ const checkboxes = ref([
         v-for="(checkbox, i) in checkboxes"
         :key="i"
         v-model="checkbox.value"
-        :indeterminate="checkbox.indeterminate"
         v-bind="checkbox"
+        @update:indeterminate="checkbox.indeterminate = $event"
       >
         <span class="capitalize"> {{ checkbox.color }} </span>
       </RuiCheckbox>

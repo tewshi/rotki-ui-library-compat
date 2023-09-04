@@ -8,10 +8,10 @@ const render: StoryFn<Props> = (args) => ({
   setup() {
     const modelValue = computed({
       get() {
-        return args.modelValue;
+        return args.value;
       },
       set(val) {
-        args.modelValue = val;
+        args.value = val;
       },
     });
 
@@ -26,7 +26,7 @@ const meta: Meta<Props> = {
   tags: ['autodocs'],
   render,
   argTypes: {
-    modelValue: { control: 'text' },
+    value: { control: 'text' },
     label: { control: 'text' },
     placeholder: { control: 'text' },
     hint: { control: 'text' },

@@ -34,13 +34,6 @@ const emit = defineEmits<{
 
 const { value, size, internalValue } = toRefs(props);
 
-const input = (event: Event) => {
-  const checked = (event.target as HTMLInputElement).checked;
-  if (checked) {
-    emit('input', get(internalValue));
-  }
-};
-
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
   if (sizeVal === 'lg') {
@@ -53,6 +46,16 @@ const iconSize: ComputedRef<number> = computed(() => {
 });
 
 const selected = computed(() => get(value) === get(internalValue));
+
+const input = (target: EventTarget | null) => {
+  if (!target) {
+    return;
+  }
+  const { checked } = target as HTMLInputElement;
+  if (checked && !get(selected)) {
+    emit('input', get(internalValue));
+  }
+};
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -76,7 +79,7 @@ const attrs = useAttrs();
         :disabled="disabled"
         v-bind="objectOmit(attrs, ['class'])"
         :value="value"
-        @input="input($event)"
+        @input="input($event.target)"
       />
       <div
         :class="[

@@ -7,10 +7,10 @@ const render: StoryFn<Props> = (args) => ({
   setup() {
     const modelValue = computed({
       get() {
-        return args.modelValue;
+        return args.value;
       },
       set(val) {
-        args.modelValue = val;
+        args.value = val;
       },
     });
 
@@ -25,10 +25,11 @@ const meta: Meta<Props> = {
   tags: ['autodocs'],
   render,
   argTypes: {
-    modelValue: { control: 'text' },
+    value: { control: 'text' },
     label: { control: 'text' },
     placeholder: { control: 'text' },
     hint: { control: 'text' },
+    readonly: { control: 'boolean' },
     appendIcon: { control: 'text' },
     prependIcon: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
@@ -148,6 +149,16 @@ export const WithAppendIcon: Story = {
     placeholder: 'Placeholder',
     variant: 'outlined',
     appendIcon: 'heart-fill',
+  },
+};
+
+export const Readonly: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    readonly: true,
+    value: 'Readonly text',
   },
 };
 

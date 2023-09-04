@@ -16,7 +16,7 @@ describe('Simple select', () => {
           'Option 4',
           'Option 5',
         ],
-        modelValue: 'Option 5',
+        value: 'Option 5',
       },
     });
 
@@ -35,7 +35,7 @@ describe('Simple select', () => {
           'Option 4',
           'Option 5',
         ],
-        modelValue: 'Option 5',
+        value: 'Option 5',
         disabled: true,
       },
     });

@@ -9,10 +9,10 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
   setup() {
     const modelValue = computed({
       get() {
-        return args.modelValue;
+        return args.value;
       },
       set(val) {
-        args.modelValue = val;
+        args.value = val;
       },
     });
 
@@ -26,7 +26,13 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
     });
     return { args, modelValue, indeterminate };
   },
-  template: `<Checkbox v-bind="args" v-model="modelValue" v-model:indeterminate="indeterminate">
+  template: `
+  <Checkbox
+    v-bind="args"
+    v-model="modelValue"
+    :indeterminate="indeterminate"
+    @update:indeterminate="indeterminate = $event"
+  >
     {{ args.label }}
   </Checkbox>`,
 });
@@ -38,7 +44,7 @@ const meta: Meta<PropsAndLabel> = {
   render,
   argTypes: {
     label: { control: 'text' },
-    modelValue: { control: 'boolean' },
+    value: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     hint: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
@@ -58,7 +64,7 @@ type Story = StoryObj<PropsAndLabel>;
 
 export const Checked: Story = {
   args: {
-    modelValue: true,
+    value: true,
   },
 };
 

@@ -81,8 +81,8 @@ const circularViewSize = computed(() => 40 + get(circularScaledThickness));
         css[variant ?? ''],
         css[color ?? ''],
       ]"
-      aria-valuemax="100"
-      aria-valuemin="0"
+      :aria-valuemax="100"
+      :aria-valuemin="0"
       role="progressbar"
     >
       <svg
