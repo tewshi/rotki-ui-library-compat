@@ -42,6 +42,7 @@ const pinia = createPinia();
 setActivePinia(pinia);
 
 new Vue({
+  // @ts-ignore
   pinia,
   router,
   render: (h) => h(App),

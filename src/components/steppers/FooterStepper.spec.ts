@@ -9,7 +9,7 @@ describe('FooterStepper', () => {
     const wrapper = createWrapper({
       propsData: {
         pages: 5,
-        modelValue: 1,
+        value: 1,
       },
     });
     expect(wrapper.classes()).toMatch(/_footer-stepper_/);
@@ -21,7 +21,7 @@ describe('FooterStepper', () => {
       propsData: {
         pages: 5,
         variant: 'bullet',
-        modelValue: 1,
+        value: 1,
       },
     });
 

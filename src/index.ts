@@ -1,6 +1,5 @@
 /* eslint-disable max-lines,import/max-dependencies */
 import { type VueConstructor } from 'vue';
-import { useRotkiTheme } from '@/composables/theme';
 import { StepperState } from '@/types/stepper';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';

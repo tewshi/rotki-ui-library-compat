@@ -9,10 +9,10 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
   setup() {
     const modelValue = computed({
       get() {
-        return args.modelValue;
+        return args.value;
       },
       set(val) {
-        args.modelValue = val;
+        args.value = val;
       },
     });
     return { args, modelValue };
@@ -29,8 +29,8 @@ const meta: Meta<PropsAndLabel> = {
   render,
   argTypes: {
     label: { control: 'text' },
-    modelValue: { control: 'text' },
     value: { control: 'text' },
+    internalValue: { control: 'text' },
     hint: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
@@ -49,36 +49,40 @@ type Story = StoryObj<PropsAndLabel>;
 
 export const Checked: Story = {
   args: {
-    modelValue: 'test',
-    value: 'test',
+    value: '',
+    internalValue: 'test',
   },
 };
 
 export const Large: Story = {
   args: {
     size: 'lg',
-    value: 'test',
+    value: '',
+    internalValue: 'test',
   },
 };
 
 export const Small: Story = {
   args: {
     size: 'sm',
-    value: 'test',
+    value: '',
+    internalValue: 'test',
   },
 };
 
 export const Primary: Story = {
   args: {
     color: 'primary',
-    value: 'test',
+    value: '',
+    internalValue: 'test',
   },
 };
 
 export const WithLabel: Story = {
   args: {
     label: 'With Label',
-    value: 'test',
+    value: '',
+    internalValue: 'test',
   },
 };
 
@@ -86,7 +90,7 @@ export const Disabled: Story = {
   args: {
     disabled: true,
     label: 'Disabled',
-    value: 'test',
+    internalValue: 'test',
   },
 };
 
@@ -94,7 +98,7 @@ export const WithErrorMessage: Story = {
   args: {
     label: 'Label',
     errorMessages: ['With error messages'],
-    value: 'test',
+    internalValue: 'test',
   },
 };
 
@@ -102,7 +106,7 @@ export const WithHint: Story = {
   args: {
     label: 'Label',
     hint: 'With hint',
-    value: 'test',
+    internalValue: 'test',
   },
 };
 
@@ -111,7 +115,7 @@ export const HideDetails: Story = {
     label: 'Label',
     hint: 'Hint (should be invisible)',
     hideDetails: true,
-    value: 'test',
+    internalValue: 'test',
   },
 };
 
