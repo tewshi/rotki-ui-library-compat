@@ -18,6 +18,7 @@ export interface Props {
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
+  readonly?: boolean;
 }
 
 defineOptions({
@@ -38,6 +39,7 @@ const props = withDefaults(defineProps<Props>(), {
   hideDetails: false,
   prependIcon: undefined,
   appendIcon: undefined,
+  readonly: false,
 });
 
 const emit = defineEmits<{
@@ -52,6 +54,10 @@ const { label } = toRefs(props);
 const input = (event: Event) => {
   const value = (event.target as HTMLInputElement).value;
   emit('input', value);
+};
+
+const focusInput = (event: unknown) => {
+  emit('focus-input', event as Event);
 };
 
 const labelWithQuote = computed(() => {
@@ -110,7 +116,7 @@ const slots = useSlots();
       <div
         ref="innerWrapper"
         class="flex flex-1 overflow-hidden"
-        @click="emit('focus-input', $event)"
+        @click="focusInput($event)"
       >
         <Component
           :is="as"
@@ -121,6 +127,7 @@ const slots = useSlots();
           :dense="dense"
           :variant="variant"
           :wrapper-width="width"
+          :readonly="readonly"
           v-bind="objectOmit(attrs, ['class'])"
           @input="input($event)"
           @blur="emit('blur', $event)"
