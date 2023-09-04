@@ -50,16 +50,19 @@ const columns: DataTableColumn[] = [
     key: 'name',
     label: 'Full name',
     sortable: true,
+    align: 'start',
   },
   {
     key: 'username',
     label: 'Username',
     sortable: true,
+    align: 'center',
   },
   {
     key: 'email',
     label: 'Email address',
     sortable: true,
+    align: 'end',
   },
   {
     key: 'address.street',
@@ -82,7 +85,7 @@ const columns: DataTableColumn[] = [
   {
     key: 'phone',
     label: 'Phone',
-    align: 'right',
+    align: 'end',
   },
   {
     key: 'action',
@@ -125,7 +128,7 @@ const fixedColumns: DataTableColumn[] = [
   {
     key: 'phone',
     label: 'Phone',
-    align: 'right',
+    align: 'end',
   },
   {
     key: 'action',
@@ -624,7 +627,7 @@ onBeforeMount(() => {
             @update:pagination="table.pagination = $event"
             @update:sort="table.sort = $event"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
@@ -672,7 +675,7 @@ onBeforeMount(() => {
             @update:pagination="table.pagination = $event"
             @update:sort="table.sort = $event"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
@@ -716,7 +719,7 @@ onBeforeMount(() => {
             @update:pagination="table.pagination = $event"
             @update:sort="table.sort = $event"
           >
-            <template #action-data>
+            <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>

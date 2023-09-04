@@ -65,10 +65,10 @@ const render: StoryFn<Props> = (args) => ({
         @update:pagination="pagination = $event"
         @update:sort="sort = $event"
       >
-        <template #action-data>
-          <Button icon variant="text" size="sm"
-            ><Icon name="more-fill" color="primary"
-          /></Button>
+        <template #item.action>
+          <Button icon variant="text" size="sm">
+            <Icon name="more-fill" color="primary" />
+          </Button>
         </template>
       </DataTable>
     </div>`,
@@ -150,18 +150,19 @@ const columns: TableColumn[] = [
     key: 'name',
     label: 'Full name',
     sortable: true,
-    align: 'right',
+    align: 'end',
   },
   {
     key: 'title',
     label: 'Job position',
     sortable: true,
-    align: 'left',
+    align: 'start',
   },
   {
     key: 'email',
     label: 'Email address',
     sortable: true,
+    align: 'center',
   },
   {
     key: 'role',
@@ -198,8 +199,8 @@ const meta: Meta<Props> = {
           'tfoot',
           'no-data',
           'empty-description',
-          '`${column.key}-header`',
-          '`${column.key}-data`',
+          'header.`${column.key}`',
+          'item.`${column.key}`',
         ],
       },
     },
@@ -339,7 +340,7 @@ export const LoadingWithoutData: Story = {
 export const EmptyState: Story = {
   args: {
     rows: [],
-    modelValue: [],
+    value: [],
     cols: columns,
     outlined: true,
     pagination: { limit: 5, page: 1, total: 0 },

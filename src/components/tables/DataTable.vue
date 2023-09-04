@@ -12,7 +12,7 @@ export interface TableColumn {
   key: string;
   sortable?: boolean;
   direction?: 'asc' | 'desc';
-  align?: 'left' | 'right';
+  align?: 'start' | 'center' | 'end';
   class?: string;
   [key: string]: any;
 }
@@ -99,6 +99,8 @@ export interface Props {
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
    */
   empty?: { label?: string; description?: string };
+
+  rounded?: 'sm' | 'md' | 'lg';
 }
 
 defineOptions({
@@ -116,6 +118,7 @@ const props = withDefaults(defineProps<Props>(), {
   paginationModifiers: undefined,
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
+  rounded: 'md',
 });
 
 const emit = defineEmits<{
@@ -477,7 +480,13 @@ watch(search, () => {
 </script>
 
 <template>
-  <div :class="[css.wrapper, { [css.outlined]: outlined }]">
+  <div
+    :class="[
+      css.wrapper,
+      css[`rounded__${rounded}`],
+      { [css.outlined]: outlined },
+    ]"
+  >
     <div :class="css.scroller">
       <table :class="[css.table, { [css.dense]: dense }]">
         <thead :class="css.thead">
@@ -501,14 +510,14 @@ watch(search, () => {
               :class="[
                 css.th,
                 column.class,
-                column.align === 'right' ? css.align__right : css.align__left,
+                css[`align__${column.align ?? 'start'}`],
                 {
                   capitalize: !cols,
                   [css.sortable]: column.sortable,
                 },
               ]"
             >
-              <slot :name="`${column.key}-header`" :column="column">
+              <slot :name="`header.${column.key}`" :column="column">
                 <Button
                   v-if="column.sortable"
                   :class="[
@@ -527,7 +536,7 @@ watch(search, () => {
                     {{ column[columnAttr] }}
                   </span>
 
-                  <template v-if="column.align === 'right'" #prepend>
+                  <template v-if="column.align === 'end'" #prepend>
                     <Icon
                       :class="css.sort__icon"
                       name="arrow-down-line"
@@ -535,25 +544,15 @@ watch(search, () => {
                     />
                   </template>
 
-                  <template
-                    v-if="!column.align || column.align === 'left'"
-                    #append
-                  >
+                  <template #append>
                     <Icon
+                      v-if="column.align != 'end'"
                       :class="css.sort__icon"
                       name="arrow-down-line"
                       size="18"
                     />
                     <Chip
                       v-if="getSortIndex(column.key) >= 0"
-                      :label="`${getSortIndex(column.key) + 1}`"
-                      size="sm"
-                      color="grey"
-                    />
-                  </template>
-
-                  <template v-else-if="getSortIndex(column.key) >= 0" #append>
-                    <Chip
                       :label="`${getSortIndex(column.key) + 1}`"
                       size="sm"
                       color="grey"
@@ -607,13 +606,10 @@ watch(search, () => {
             <td
               v-for="(column, subIndex) in columns"
               :key="subIndex"
-              :class="[
-                css.td,
-                column.align === 'right' ? css.align__right : css.align__left,
-              ]"
+              :class="[css.td, css[`align__${column.align ?? 'start'}`]]"
             >
               <slot
-                :name="`${column.key}-data`"
+                :name="`item.${column.key}`"
                 :column="column"
                 :row="row"
                 :index="index"
@@ -678,7 +674,29 @@ watch(search, () => {
 .wrapper {
   @apply relative divide-y divide-black/[0.12] overflow-hidden;
   &.outlined {
-    @apply rounded-xl border border-black/[0.12];
+    @apply border border-black/[0.12];
+  }
+
+  &.rounded__sm {
+    @apply rounded-[.25rem];
+
+    .image {
+      @apply rounded-t-[.25rem];
+    }
+  }
+  &.rounded__md {
+    @apply rounded-[.5rem];
+
+    .image {
+      @apply rounded-t-[.5rem];
+    }
+  }
+  &.rounded__lg {
+    @apply rounded-[1rem];
+
+    .image {
+      @apply rounded-t-[1rem];
+    }
   }
 
   .scroller {
@@ -695,21 +713,32 @@ watch(search, () => {
         .th {
           @apply p-4;
 
-          &.align__left {
+          &.align__start {
             @apply text-left rtl:text-right;
           }
 
-          &.align__right {
+          &.align__center {
+            @apply text-center;
+          }
+
+          &.align__end {
             @apply text-right rtl:text-left;
           }
 
           &.sortable {
-            &.align__left {
-              @apply pl-2;
+            &.align__start {
+              @apply pl-3;
             }
 
-            &.align__right {
-              @apply pr-2;
+            &.align__center {
+              @apply pl-3;
+              .sort__button {
+                @apply ml-6;
+              }
+            }
+
+            &.align__end {
+              @apply pr-3;
             }
 
             .sort__button {
@@ -786,11 +815,15 @@ watch(search, () => {
       .td {
         @apply whitespace-nowrap p-4 text-rui-text text-body-2;
 
-        &.align__left {
+        &.align__start {
           @apply text-left rtl:text-right;
         }
 
-        &.align__right {
+        &.align__center {
+          @apply text-center;
+        }
+
+        &.align__end {
           @apply text-right rtl:text-left;
         }
 

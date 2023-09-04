@@ -62,11 +62,15 @@ const indicatorText = computed(() => {
 const hasPrev = computed(() => get(value).page > 1);
 const hasNext = computed(() => get(pages) > get(value).page);
 
-const onNavigate = (delta: number) => {
+const goToPage = (page: number) => {
   emit('input', {
     ...get(value),
-    page: get(value).page + delta,
+    page,
   });
+};
+
+const onNavigate = (delta: number) => {
+  goToPage(get(value).page + delta);
 };
 
 const onPrev = () => {
@@ -81,6 +85,20 @@ const onNext = () => {
     return;
   }
   onNavigate(1);
+};
+
+const onFirst = () => {
+  if (!get(hasPrev)) {
+    return;
+  }
+  goToPage(1);
+};
+
+const onLast = () => {
+  if (!get(hasNext)) {
+    return;
+  }
+  goToPage(get(pages));
 };
 </script>
 
@@ -104,6 +122,15 @@ const onNext = () => {
         :disabled="!hasPrev"
         variant="text"
         icon
+        @click="onFirst()"
+      >
+        <Icon name="arrow-left-double-line" />
+      </Button>
+      <Button
+        :size="dense ? 'sm' : undefined"
+        :disabled="!hasPrev"
+        variant="text"
+        icon
         @click="onPrev()"
       >
         <Icon name="arrow-left-s-line" />
@@ -116,6 +143,15 @@ const onNext = () => {
         @click="onNext()"
       >
         <Icon name="arrow-right-s-line" />
+      </Button>
+      <Button
+        :size="dense ? 'sm' : undefined"
+        :disabled="!hasNext"
+        variant="text"
+        icon
+        @click="onLast()"
+      >
+        <Icon name="arrow-right-double-line" />
       </Button>
     </div>
   </div>
