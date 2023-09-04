@@ -59,6 +59,11 @@ const meta: Meta<Props> = {
     header: { control: 'text' },
     image: { control: 'text' },
     prepend: { control: 'text' },
+    rounded: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+      defaultValue: 'md',
+    },
     elevation: { control: 'number', max: 24, min: 1 },
     subheader: { control: 'text' },
     content: { control: 'text' },

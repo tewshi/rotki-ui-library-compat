@@ -40,6 +40,7 @@ describe('Card', () => {
         subheader: 'Card subheader',
         default: { template: `<p>Lorem ipsum dolor sit amet</p>` },
         footer: ['Action 1', 'Action 2'].map((action, i) => ({
+          components: { 'rui-button': Button },
           template: `<rui-button :key="${i}">${action}</rui-button>`,
         })),
       },
