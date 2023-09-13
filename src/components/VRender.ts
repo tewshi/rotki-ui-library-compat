@@ -5,10 +5,17 @@ export default defineComponent({
   render(_h, ctx) {
     const { vNode, key, ...props } = ctx.props;
     if (vNode.componentOptions) {
+      if (!vNode.componentOptions.initialPropsData) {
+        vNode.componentOptions.initialPropsData = {
+          ...vNode.componentOptions.propsData,
+        };
+      }
+
       vNode.componentOptions.propsData = {
-        ...vNode.componentOptions.propsData,
+        ...vNode.componentOptions.initialPropsData,
         ...props,
       };
+
       vNode.componentOptions.listeners = {
         ...vNode.componentOptions.listeners,
         ...ctx.listeners,
@@ -16,12 +23,15 @@ export default defineComponent({
     }
 
     vNode.key = key;
-    vNode.data = {
-      ...vNode.data,
-      class: {
-        [ctx.data.class]: true,
-      },
-    };
+    if (vNode.data.class) {
+      vNode.data = {
+        ...vNode.data,
+        class: {
+          [ctx.data.class]: true,
+        },
+      };
+    }
+
     return vNode;
   },
 });
