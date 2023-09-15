@@ -1,8 +1,8 @@
-import { type ComponentMountingOptions, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 
-const createWrapper = (options?: ComponentMountingOptions<typeof TabItem>) =>
+const createWrapper = (options?: any) =>
   mount(TabItem, {
     ...options,
     propsData: {

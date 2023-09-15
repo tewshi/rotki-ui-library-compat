@@ -18,6 +18,7 @@ import {
   RiInformationLine,
   RiMacbookLine,
   RiMoonLine,
+  RiStarFill,
   RiSunLine,
   RuiPlugin,
 } from '@rotki/ui-library-compat';
@@ -29,6 +30,7 @@ Vue.use(PiniaVuePlugin);
 Vue.use(RuiPlugin, {
   icons: [
     RiMoonLine,
+    RiStarFill,
     RiSunLine,
     RiMacbookLine,
     RiArrowLeftLine,

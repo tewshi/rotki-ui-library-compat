@@ -20,6 +20,10 @@ import {
   default as RuiTooltip,
   type Props as TooltipProps,
 } from '@/components/overlays/tooltip/Tooltip.vue';
+import {
+  type Props as BadgeProps,
+  default as RuiBadge,
+} from '@/components/overlays/badge/Badge.vue';
 import { default as RuiFooterStepper } from '@/components/steppers/FooterStepper.vue';
 import {
   type Props as ProgressProps,
@@ -51,6 +55,7 @@ import { default as RuiTabItem } from '@/components/tabs/tab-item/TabItem.vue';
 
 export {
   RuiAlert,
+  RuiBadge,
   RuiButton,
   RuiButtonGroup,
   RuiCheckbox,
@@ -83,4 +88,5 @@ export {
   DataTableOptions,
   ButtonProps,
   CardProps,
+  BadgeProps,
 };
