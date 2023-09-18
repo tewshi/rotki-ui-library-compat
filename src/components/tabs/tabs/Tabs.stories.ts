@@ -1,4 +1,4 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue3';
+import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { contextColors } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import Card from '@/components/cards/Card.vue';

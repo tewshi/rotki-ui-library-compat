@@ -7,6 +7,14 @@ import { useIcons } from '../../src/composables/icons';
 const { registerIcons } = useIcons();
 registerIcons(Object.values(Icons));
 
+const ResizeObserverMock = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+vi.stubGlobal('ResizeObserver', ResizeObserverMock);
+
 vi.mock('vue', async () => {
   const mod = await vi.importActual<typeof import('vue')>('vue');
   mod.default.config.devtools = false;

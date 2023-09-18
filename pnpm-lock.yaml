@@ -81,6 +81,9 @@ importers:
       '@vueuse/core':
         specifier: 10.3.0
         version: 10.3.0(vue@2.7.14)
+      '@vueuse/math':
+        specifier: 10.4.1
+        version: 10.4.1(vue@2.7.14)
       '@vueuse/shared':
         specifier: 10.3.0
         version: 10.3.0(vue@2.7.14)
@@ -4803,12 +4806,31 @@ packages:
       - vue
     dev: true
 
+  /@vueuse/math@10.4.1(vue@2.7.14):
+    resolution: {integrity: sha512-8XAssBPg6jQ9Z/oD4Yq+gkSjr/r2Sm7pyloWf7i8RQNXiXvf39N0rNZBufFXezKeDa2JmsuMR8JsqlIW7AnG/w==}
+    dependencies:
+      '@vueuse/shared': 10.4.1(vue@2.7.14)
+      vue-demi: 0.14.6(vue@2.7.14)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: true
+
   /@vueuse/metadata@10.3.0:
     resolution: {integrity: sha512-Ema3YhNOa4swDsV0V7CEY5JXvK19JI/o1szFO1iWxdFg3vhdFtCtSTP26PCvbUpnUtNHBY2wx5y3WDXND5Pvnw==}
     dev: true
 
   /@vueuse/shared@10.3.0(vue@2.7.14):
     resolution: {integrity: sha512-kGqCTEuFPMK4+fNWy6dUOiYmxGcUbtznMwBZLC1PubidF4VZY05B+Oht7Jh7/6x4VOWGpvu3R37WHi81cKpiqg==}
+    dependencies:
+      vue-demi: 0.14.6(vue@2.7.14)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+    dev: true
+
+  /@vueuse/shared@10.4.1(vue@2.7.14):
+    resolution: {integrity: sha512-vz5hbAM4qA0lDKmcr2y3pPdU+2EVw/yzfRsBdu+6+USGa4PxqSQRYIUC9/NcT06y+ZgaTsyURw2I9qOFaaXHAg==}
     dependencies:
       vue-demi: 0.14.6(vue@2.7.14)
     transitivePeerDependencies:
@@ -12424,6 +12446,7 @@ packages:
 
   /vue-router@3.6.5(vue@2.7.14):
     resolution: {integrity: sha512-VYXZQLtjuvKxxcshuRAwjHnciqZVoXAjTjcqBTz4rKc8qih9g9pI3hbDjmqXaHdgL3v8pV6P8Z335XvHzESxLQ==}
+    requiresBuild: true
     peerDependencies:
       vue: ^2
     dependencies:

@@ -23,6 +23,7 @@ const navigation = ref([
       { to: { name: 'data-tables' }, title: 'Data Tables' },
       { to: { name: 'cards' }, title: 'Cards' },
       { to: { name: 'tabs' }, title: 'Tabs' },
+      { to: { name: 'badges' }, title: 'Badges' },
     ],
   },
 ]);
