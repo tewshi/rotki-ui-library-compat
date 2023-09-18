@@ -114,7 +114,7 @@ onMounted(() => {
     let newValue: string | number = 0;
     enabledChildren.forEach((child, index) => {
       const props = child.node.componentOptions?.propsData as TabProps;
-      if (index === 0) {
+      if (index === 0 && props.tabValue) {
         newValue = props.tabValue;
       }
       if (props.link !== false && props.to && isPathMatch(props.to, props)) {
