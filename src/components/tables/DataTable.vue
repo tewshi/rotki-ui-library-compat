@@ -715,10 +715,10 @@ watch(search, () => {
     }
   }
   &.rounded__md {
-    @apply rounded-[.5rem];
+    @apply rounded-[.75rem];
 
     .image {
-      @apply rounded-t-[.5rem];
+      @apply rounded-t-[.75rem];
     }
   }
   &.rounded__lg {
@@ -898,7 +898,7 @@ watch(search, () => {
     @apply divide-white/[0.12];
 
     &.outlined {
-      @apply rounded-xl border border-white/[0.12];
+      @apply border-white/[0.12];
     }
 
     .table {
