@@ -23,7 +23,7 @@ export default defineComponent({
     }
 
     vNode.key = key;
-    if (vNode.data.class) {
+    if (ctx.data?.class) {
       vNode.data = {
         ...vNode.data,
         class: {
