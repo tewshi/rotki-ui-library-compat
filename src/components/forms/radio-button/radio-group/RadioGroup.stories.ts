@@ -18,8 +18,8 @@ const render: StoryFn<Props> = (args) => ({
   },
   template: `<RadioGroup v-bind="args" v-model="modelValue">
     <div>
-      <Radio value="yes">yes</Radio>
-      <Radio value="no">no</Radio>
+      <Radio internal-value="yes">yes</Radio>
+      <Radio internal-value="no">no</Radio>
     </div>
   </RadioGroup>`,
 });
