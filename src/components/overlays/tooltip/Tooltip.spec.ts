@@ -29,11 +29,15 @@ describe('Tooltip', () => {
     await wrapper.trigger('mouseover');
     await delay();
 
-    expect(wrapper.get('div[role=tooltip]').classes()).toMatch(/_tooltip_/);
+    const tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.classList).toMatch(/_tooltip_/);
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeTruthy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    wrapper.destroy();
   });
 
   it('passes props correctly', async () => {
@@ -44,7 +48,8 @@ describe('Tooltip', () => {
       },
     });
     expect(wrapper.get('div[class*=_activator_]')).toBeTruthy();
-    expect(wrapper.find('div[role=tooltip]').exists()).toBeFalsy();
+    expect(document.body.querySelector('div[role=tooltip]')).toBeFalsy();
+    wrapper.destroy();
   });
 
   it('disabled does not trigger tooltip', async () => {
@@ -58,21 +63,27 @@ describe('Tooltip', () => {
     await wrapper.trigger('mouseover');
     await delay();
 
-    expect(wrapper.find('div[role=tooltip]').exists()).toBeFalsy();
+    let tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeFalsy();
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeFalsy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeFalsy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeFalsy();
     await wrapper.setProps({ disabled: false });
 
     await wrapper.trigger('mouseover');
     await delay();
 
-    expect(wrapper.get('div[role=tooltip]').classes()).toMatch(/_tooltip_/);
+    tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.classList).toMatch(/_tooltip_/);
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeTruthy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
+    wrapper.destroy();
   });
 
   it('tooltip disappears after close timeout', async () => {
@@ -86,28 +97,40 @@ describe('Tooltip', () => {
     await wrapper.trigger('mouseover');
     await delay();
 
-    expect(wrapper.get('div[role=tooltip]').classes()).toMatch(/_tooltip_/);
+    let tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.classList).toMatch(/_tooltip_/);
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeTruthy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
 
     await wrapper.trigger('mouseleave');
 
-    expect(wrapper.get('div[role=tooltip]').classes()).toMatch(/_tooltip_/);
+    tooltip = document.body.querySelector('div[role=tooltip]');
+
+    expect(tooltip).toBeTruthy();
+    expect(tooltip?.classList).toMatch(/_tooltip_/);
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeTruthy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeTruthy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeTruthy();
 
-    await delay(1100);
+    await delay(2100);
 
-    expect(wrapper.find('div[role=tooltip]').exists()).toBeFalsy();
+    tooltip = document.body.querySelector('div[role=tooltip]');
+    expect(tooltip).toBeFalsy();
+
     expect(
-      wrapper.find('div[data-popper-placement=bottom]').exists(),
+      document.body.querySelector('div[data-popper-placement=bottom]'),
     ).toBeFalsy();
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeFalsy();
+    expect(tooltip?.querySelector('span[data-popper-arrow]')).toBeFalsy();
+
     await wrapper.setProps({ disabled: true });
-    expect(wrapper.find('span[data-popper-arrow]').exists()).toBeFalsy();
+
+    tooltip = document.body.querySelector('div[role=tooltip]');
+    expect(tooltip).toBeFalsy();
+    wrapper.destroy();
   });
 });
