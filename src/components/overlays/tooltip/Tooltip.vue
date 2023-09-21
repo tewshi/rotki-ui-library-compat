@@ -103,9 +103,9 @@ $arrowSize: 0.625rem;
   @apply relative inline-flex;
 
   .activator {
-    width: inherit;
-
     @apply inline;
+
+    width: inherit;
   }
 }
 
