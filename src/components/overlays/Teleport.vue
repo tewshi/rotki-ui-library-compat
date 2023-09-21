@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { type Ref, defineProps, onBeforeUnmount, onMounted, ref } from 'vue';
-import { type VueInstance } from '@vueuse/core';
+import { type VueInstance, isClient } from '@vueuse/core';
 import { type Slot } from 'vue/types/v3-setup-context';
-import { isBrowser } from '@/utils/helpers';
 import TeleportContainer from './teleport-container';
 
 defineOptions({
@@ -31,14 +30,14 @@ const container: Ref<(VueInstance & { updatedNodes?: Slot }) | null> =
 const slots = useSlots();
 
 const getTargetEl = () => {
-  if (!isBrowser()) {
+  if (!isClient) {
     return;
   }
   return document.querySelector(get(selector));
 };
 
 const insertTargetEl = () => {
-  if (!isBrowser()) {
+  if (!isClient) {
     return;
   }
   const parent = document.querySelector('body');
@@ -52,7 +51,7 @@ const insertTargetEl = () => {
 };
 
 const mount = () => {
-  if (!isBrowser()) {
+  if (!isClient) {
     return;
   }
   const targetEl = getTargetEl();
