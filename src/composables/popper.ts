@@ -71,6 +71,10 @@ export const usePopper = (
     set(popperEnter, false);
   };
 
+  const updatePopper = () => {
+    get(instance)?.update();
+  };
+
   const onMouseOver = () => {
     if (get(disabled)) {
       return;
@@ -80,15 +84,10 @@ export const usePopper = (
       set(closeTimeout, undefined);
     }
 
-    if (get(open)) {
-      return;
-    }
-
     set(popperEnter, true);
 
     const timeout = setTimeout(() => {
       set(open, true);
-      get(instance)?.update();
       set(openTimeout, undefined);
     }, get(openDelay));
 
@@ -96,13 +95,12 @@ export const usePopper = (
   };
 
   const onMouseLeave = () => {
+    if (get(disabled)) {
+      return;
+    }
     if (get(openTimeout)) {
       clearTimeout(get(openTimeout));
       set(openTimeout, undefined);
-    }
-
-    if (!get(open)) {
-      return;
     }
 
     const timeout = setTimeout(() => {
@@ -203,5 +201,6 @@ export const usePopper = (
     onMouseOver,
     onMouseLeave,
     onPopperLeave,
+    updatePopper,
   };
 };

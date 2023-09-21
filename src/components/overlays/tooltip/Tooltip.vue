@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RuiTeleport from '@/components/overlays/Teleport.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
 
 export interface Props {
@@ -37,6 +38,7 @@ const {
   onMouseOver,
   onMouseLeave,
   onPopperLeave,
+  updatePopper,
 } = usePopper(popper, disabled, openDelay, closeDelay);
 </script>
 
@@ -51,36 +53,47 @@ const {
     <div :class="css.activator">
       <slot name="activator" :open="open" />
     </div>
-    <TransitionGroup
-      v-if="!disabled && popperEnter"
-      ref="tooltip"
-      :class="[
-        css.tooltip,
-        tooltipClass,
-        css[`tooltip__${popper?.strategy ?? 'absolute'}`],
-      ]"
-      enter-class="opacity-0 translate-y-1"
-      enter-active-class="ease-out duration-200"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-class="opacity-100 translate-y-0"
-      leave-active-class="ease-in duration-150"
-      leave-to-class="opacity-0 translate-y-1"
-      tag="div"
-      role="tooltip"
-      @afterLeave="onPopperLeave()"
-    >
-      <div v-if="open" key="tooltip" :class="css.base" role="tooltip-content">
-        <slot>
-          {{ text }}
-        </slot>
+
+    <RuiTeleport v-if="!disabled">
+      <div
+        v-if="popperEnter"
+        ref="tooltip"
+        :class="[
+          css.tooltip,
+          tooltipClass,
+          css[`tooltip__${popper?.strategy ?? 'absolute'}`],
+        ]"
+        role="tooltip"
+      >
+        <TransitionGroup
+          enter-class="opacity-0 translate-y-1"
+          enter-active-class="ease-out duration-200"
+          enter-to-class="opacity-100 translate-y-0"
+          leave-class="opacity-100 translate-y-0"
+          leave-active-class="ease-in duration-150"
+          leave-to-class="opacity-0 translate-y-1"
+          @before-enter="updatePopper()"
+          @after-leave="onPopperLeave()"
+        >
+          <div
+            v-if="open"
+            key="tooltip"
+            :class="css.base"
+            role="tooltip-content"
+          >
+            <slot>
+              {{ text }}
+            </slot>
+          </div>
+          <span
+            v-if="!hideArrow"
+            key="arrow"
+            :class="[css.arrow, { [css.arrow__open]: open }]"
+            data-popper-arrow
+          />
+        </TransitionGroup>
       </div>
-      <span
-        v-if="!hideArrow"
-        key="arrow"
-        data-popper-arrow
-        :class="[css.arrow, { [css.arrow__open]: open }]"
-      />
-    </TransitionGroup>
+    </RuiTeleport>
   </div>
 </template>
 
@@ -92,69 +105,69 @@ $arrowSize: 0.625rem;
   .activator {
     @apply inline;
   }
+}
 
-  .tooltip {
-    @apply w-max max-w-xs transform transition-opacity delay-0 z-50;
+.tooltip {
+  @apply w-max transform transition-opacity delay-0 z-[9999];
 
-    &__fixed {
-      @apply fixed;
+  &__fixed {
+    @apply fixed;
+  }
+
+  &__absolute {
+    @apply absolute;
+  }
+
+  .base {
+    @apply px-2 py-1 text-xs font-normal;
+    @apply bg-rui-grey-700/90 text-white rounded shadow;
+  }
+
+  .arrow {
+    @apply w-2.5 h-2.5 transition-opacity opacity-0;
+
+    &__open {
+      @apply opacity-100;
     }
 
-    &__absolute {
-      @apply absolute;
+    &::before {
+      @apply block border-[0.3125rem] origin-center;
+      @apply border-l-transparent border-b-transparent border-t-rui-grey-700/90 border-r-rui-grey-700/90;
+
+      content: '';
+      border-radius: 0 0.125rem 0 0;
     }
+  }
 
-    .base {
-      @apply px-2 py-1 text-xs font-normal;
-      @apply bg-rui-grey-700/90 text-white rounded shadow;
+  &[data-popper-placement*='bottom'] .arrow {
+    top: calc(0.5px - #{$arrowSize} / 2);
+
+    &::before {
+      @apply -rotate-45;
     }
+  }
 
-    .arrow {
-      @apply w-2.5 h-2.5 transition-opacity opacity-0;
+  &[data-popper-placement*='top'] .arrow {
+    bottom: calc(0.5px - #{$arrowSize} / 2);
 
-      &__open {
-        @apply opacity-100;
-      }
-
-      &::before {
-        @apply block border-[0.3125rem] origin-center;
-        @apply border-l-transparent border-b-transparent border-t-rui-grey-700/90 border-r-rui-grey-700/90;
-
-        content: '';
-        border-radius: 0 0.125rem 0 0;
-      }
+    &::before {
+      @apply rotate-[135deg];
     }
+  }
 
-    &[data-popper-placement*='bottom'] .arrow {
-      top: calc(0.5px - #{$arrowSize} / 2);
+  &[data-popper-placement*='left'] .arrow {
+    right: calc(0.5px - #{$arrowSize} / 2);
 
-      &::before {
-        @apply -rotate-45;
-      }
+    &::before {
+      @apply rotate-45;
     }
+  }
 
-    &[data-popper-placement*='top'] .arrow {
-      bottom: calc(0.5px - #{$arrowSize} / 2);
+  &[data-popper-placement*='right'] .arrow {
+    left: calc(0.5px - #{$arrowSize} / 2);
 
-      &::before {
-        @apply rotate-[135deg];
-      }
-    }
-
-    &[data-popper-placement*='left'] .arrow {
-      right: calc(0.5px - #{$arrowSize} / 2);
-
-      &::before {
-        @apply rotate-45;
-      }
-    }
-
-    &[data-popper-placement*='right'] .arrow {
-      left: calc(0.5px - #{$arrowSize} / 2);
-
-      &::before {
-        @apply -rotate-[135deg];
-      }
+    &::before {
+      @apply -rotate-[135deg];
     }
   }
 }
