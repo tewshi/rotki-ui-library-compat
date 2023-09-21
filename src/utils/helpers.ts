@@ -46,3 +46,6 @@ export const formatNumber = (
  */
 export const formatInteger = (amount: number | string) =>
   formatNumber(amount, { fractionDigits: 0 });
+
+export const isBrowser = () =>
+  typeof window !== 'undefined' && typeof document !== 'undefined';

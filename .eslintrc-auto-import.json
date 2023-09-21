@@ -324,6 +324,7 @@
     "useRoute": true,
     "useRouter": true,
     "WritableComputedRef": true,
-    "assert": true
+    "assert": true,
+    "isBrowser": true
   }
 }
