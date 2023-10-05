@@ -126,6 +126,8 @@ const props = withDefaults(defineProps<Props>(), {
   columnAttr: 'label',
   sort: undefined,
   loading: false,
+  dense: false,
+  outlined: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
   empty: () => ({ label: 'No item found' }),
