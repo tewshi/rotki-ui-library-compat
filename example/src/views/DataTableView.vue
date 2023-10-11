@@ -706,7 +706,7 @@ onBeforeMount(() => {
               variant="outlined"
               color="primary"
               hide-details
-              @update:model-value="onSearch($event, i)"
+              @input="onSearch($event, i)"
             />
             <span v-if="table.value"> selected: {{ table.value.length }} </span>
           </div>
@@ -715,6 +715,7 @@ onBeforeMount(() => {
               objectOmit(table, ['value', 'pagination', 'sort', 'search'])
             "
             v-model="table.value"
+            :loading="table.loading"
             :pagination-modifiers="{ external: true }"
             :sort-modifiers="{ external: true }"
             :pagination="table.pagination"

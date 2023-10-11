@@ -42,7 +42,7 @@ export interface Props {
    */
   value?: string[];
   /**
-   * model for insternal searching
+   * model for internal searching
    */
   search?: string;
   /**
@@ -87,7 +87,7 @@ export interface Props {
    */
   columnAttr?: string;
   /**
-   * flag to show a more or less spaceous table
+   * flag to show a more or less spacious table
    */
   dense?: boolean;
   /**
@@ -96,7 +96,7 @@ export interface Props {
   outlined?: boolean;
   /**
    * flag to show loading state of the table
-   * triggers an indefinite progress at the bottom of the table header
+   * triggers indefinite progress at the bottom of the table header
    */
   loading?: boolean;
   /**
@@ -518,18 +518,18 @@ const slots = useSlots();
     ]"
   >
     <div :class="css.scroller">
-      <table :class="[css.table, { [css.dense]: dense }]">
+      <table :class="[css.table, { [css.dense]: dense }]" aria-label="">
         <thead :class="css.thead">
           <tr :class="css.tr">
             <th v-if="selectedData" scope="col" :class="css.checkbox">
               <Checkbox
-                :model-value="isAllSelected"
+                :value="isAllSelected"
                 :indeterminate="indeterminate"
                 :disabled="!filtered?.length"
                 hide-details
                 color="primary"
                 data-cy="table-toggle-check-all"
-                @update:model-value="onToggleAll($event)"
+                @input="onToggleAll($event)"
               />
             </th>
 
@@ -625,11 +625,11 @@ const slots = useSlots();
           >
             <td v-if="selectedData" :class="css.checkbox">
               <Checkbox
-                :model-value="isSelected(row[rowAttr])"
+                :value="isSelected(row[rowAttr])"
                 hide-details
                 color="primary"
                 :data-cy="`table-toggle-check-${index}`"
-                @update:model-value="onSelect($event, row[rowAttr])"
+                @input="onSelect($event, row[rowAttr])"
               />
             </td>
 
