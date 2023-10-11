@@ -46,7 +46,7 @@ const slots = useSlots();
       <slot name="prepend" />
     </div>
     <span :class="css.chip__label">
-      {{ label }}
+      <slot>{{ label }}</slot>
     </span>
     <button
       v-if="dismissible"
