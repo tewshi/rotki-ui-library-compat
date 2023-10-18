@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
-import Chip from '@/components/chips/Chip.vue';
+import Badge from '@/components/overlays/badge/Badge.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Progress from '@/components/progress/Progress.vue';
 import TablePagination, {
@@ -60,7 +60,9 @@ export interface Props {
    * use this when api controls pagination
    * @example v-model:pagination.external="{ total: 10, limit: 5, page: 1 }"
    */
-  paginationModifiers?: { external: boolean };
+  paginationModifiers?: {
+    external: boolean;
+  };
   /**
    * model for sort column/columns data
    * single column sort
@@ -77,7 +79,9 @@ export interface Props {
    * multi columns sort
    * @example v-model:sort.external="[{ column: 'name', direction: 'asc' }]"
    */
-  sortModifiers?: { external: boolean };
+  sortModifiers?: {
+    external: boolean;
+  };
   /**
    * list of column definitions
    */
@@ -104,7 +108,10 @@ export interface Props {
    * text and icon
    * @example :empty="{ icon: 'transactions-line', label: 'No transactions found' }"
    */
-  empty?: { label?: string; description?: string };
+  empty?: {
+    label?: string;
+    description?: string;
+  };
 
   rounded?: 'sm' | 'md' | 'lg';
   /**
@@ -521,14 +528,14 @@ const slots = useSlots();
       <table :class="[css.table, { [css.dense]: dense }]" aria-label="">
         <thead :class="css.thead">
           <tr :class="css.tr">
-            <th v-if="selectedData" scope="col" :class="css.checkbox">
+            <th v-if="selectedData" :class="css.checkbox" scope="col">
               <Checkbox
-                :value="isAllSelected"
-                :indeterminate="indeterminate"
                 :disabled="!filtered?.length"
-                hide-details
+                :indeterminate="indeterminate"
+                :value="isAllSelected"
                 color="primary"
                 data-cy="table-toggle-check-all"
+                hide-details
                 @input="onToggleAll($event)"
               />
             </th>
@@ -536,7 +543,6 @@ const slots = useSlots();
             <th
               v-for="(column, index) in columns"
               :key="index"
-              scope="col"
               :class="[
                 css.th,
                 column.class,
@@ -546,49 +552,51 @@ const slots = useSlots();
                   [css.sortable]: column.sortable,
                 },
               ]"
+              scope="col"
             >
-              <slot :name="`header.${column.key}`" :column="column">
-                <Button
+              <slot :column="column" :name="`header.${column.key}`">
+                <Badge
                   v-if="column.sortable"
-                  :class="[
-                    css.sort__button,
-                    {
-                      [css.sort__active]: isSortedBy(column.key),
-                      [css[`sort__${sortedMap[column.key]?.direction}`]]:
-                        isSortedBy(column.key),
-                    },
-                  ]"
+                  :value="getSortIndex(column.key) >= 0"
+                  :text="`${getSortIndex(column.key) + 1}`"
+                  color="secondary"
                   size="sm"
-                  variant="text"
-                  @click="onSort(column)"
                 >
-                  <span :class="css.column__text">
-                    {{ column[columnAttr] }}
-                  </span>
+                  <Button
+                    :class="[
+                      css.sort__button,
+                      {
+                        [css.sort__active]: isSortedBy(column.key),
+                        [css[`sort__${sortedMap[column.key]?.direction}`]]:
+                          isSortedBy(column.key),
+                      },
+                    ]"
+                    size="sm"
+                    variant="text"
+                    @click="onSort(column)"
+                  >
+                    <span :class="css.column__text">
+                      {{ column[columnAttr] }}
+                    </span>
 
-                  <template v-if="column.align === 'end'" #prepend>
-                    <Icon
-                      :class="css.sort__icon"
-                      name="arrow-down-line"
-                      size="18"
-                    />
-                  </template>
+                    <template v-if="column.align === 'end'" #prepend>
+                      <Icon
+                        :class="css.sort__icon"
+                        name="arrow-down-line"
+                        size="18"
+                      />
+                    </template>
 
-                  <template #append>
-                    <Icon
-                      v-if="column.align !== 'end'"
-                      :class="css.sort__icon"
-                      name="arrow-down-line"
-                      size="18"
-                    />
-                    <Chip
-                      v-if="getSortIndex(column.key) >= 0"
-                      :label="`${getSortIndex(column.key) + 1}`"
-                      size="sm"
-                      color="grey"
-                    />
-                  </template>
-                </Button>
+                    <template #append>
+                      <Icon
+                        v-if="column.align !== 'end'"
+                        :class="css.sort__icon"
+                        name="arrow-down-line"
+                        size="18"
+                      />
+                    </template>
+                  </Button>
+                </Badge>
                 <span v-else :class="css.column__text">
                   {{ column[columnAttr] }}
                 </span>
@@ -603,15 +611,15 @@ const slots = useSlots();
             ]"
           >
             <th
-              scope="col"
               :class="css.progress"
               :colspan="columns.length + (selectedData ? 1 : 0)"
+              scope="col"
             >
               <div :class="css.progress__wrapper">
                 <Progress
-                  variant="indeterminate"
-                  color="primary"
                   :circular="noData"
+                  color="primary"
+                  variant="indeterminate"
                 />
               </div>
             </th>
@@ -625,10 +633,10 @@ const slots = useSlots();
           >
             <td v-if="selectedData" :class="css.checkbox">
               <Checkbox
-                :value="isSelected(row[rowAttr])"
-                hide-details
-                color="primary"
                 :data-cy="`table-toggle-check-${index}`"
+                :value="isSelected(row[rowAttr])"
+                color="primary"
+                hide-details
                 @input="onSelect($event, row[rowAttr])"
               />
             </td>
@@ -643,10 +651,10 @@ const slots = useSlots();
               ]"
             >
               <slot
-                :name="`item.${column.key}`"
                 :column="column"
-                :row="row"
                 :index="index"
+                :name="`item.${column.key}`"
+                :row="row"
               >
                 {{ row[column.key] }}
               </slot>
@@ -666,8 +674,8 @@ const slots = useSlots();
               leave-to-class="opacity-0 translate-y-1"
             >
               <td
-                :colspan="columns.length + (selectedData ? 1 : 0)"
                 :class="css.td"
+                :colspan="columns.length + (selectedData ? 1 : 0)"
               >
                 <slot name="no-data">
                   <div :class="css.empty">
@@ -701,14 +709,14 @@ const slots = useSlots();
     <TablePagination
       v-if="paginationData && !hideDefaultFooter"
       v-model="paginationData"
-      :loading="loading"
       :dense="dense"
+      :loading="loading"
       data-cy="table-pagination"
     />
   </div>
 </template>
 
-<style module lang="scss">
+<style lang="scss" module>
 .wrapper {
   @apply relative divide-y divide-black/[0.12] overflow-hidden;
   &.outlined {
@@ -722,6 +730,7 @@ const slots = useSlots();
       @apply rounded-t-[.25rem];
     }
   }
+
   &.rounded__md {
     @apply rounded-[.75rem];
 
@@ -729,6 +738,7 @@ const slots = useSlots();
       @apply rounded-t-[.75rem];
     }
   }
+
   &.rounded__lg {
     @apply rounded-[1rem];
 
@@ -792,6 +802,7 @@ const slots = useSlots();
                     @apply opacity-100;
                   }
                 }
+
                 &__desc {
                   .sort__icon {
                     @apply rotate-0;

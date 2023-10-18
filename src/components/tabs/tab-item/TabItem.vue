@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 export interface Props {
   active?: boolean;
-  value: number | string;
   eager?: boolean;
   reverse?: boolean;
 }
