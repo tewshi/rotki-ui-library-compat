@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VRender from '@/components/VRender';
-import { type TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
+import { type Props as TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
 
 export interface Props {
   value?: number | string;
@@ -72,9 +72,9 @@ const css = useCssModule();
       <VRender
         v-for="(child, i) in children"
         :key="i"
-        :v-node="child"
-        :reverse="reverse"
         :active="i === activeIndex"
+        :reverse="reverse"
+        :v-node="child"
       />
     </div>
   </div>

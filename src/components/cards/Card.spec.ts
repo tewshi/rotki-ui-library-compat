@@ -4,7 +4,11 @@ import Card from '@/components/cards/Card.vue';
 import Button from '@/components/buttons/button/Button.vue';
 
 const createWrapper = (options?: any) =>
-  mount(Card, { ...options, global: { stubs: { 'rui-button': Button } } });
+  mount(Card, {
+    ...options,
+    global: { stubs: { 'rui-button': Button } },
+    components: { RuiButton: Button },
+  });
 
 describe('Card', () => {
   it('renders properly', async () => {
@@ -35,13 +39,14 @@ describe('Card', () => {
       },
       slots: {
         header: 'Card header',
-        image: { template: `<img src="https://placehold.co/960x320" />` },
+        image: { template: `<img src="https://placehold.co/960x320" alt />` },
         prepend: 'OP',
         subheader: 'Card subheader',
         default: { template: `<p>Lorem ipsum dolor sit amet</p>` },
         footer: ['Action 1', 'Action 2'].map((action, i) => ({
           components: { 'rui-button': Button },
-          template: `<rui-button :key="${i}">${action}</rui-button>`,
+          template: `
+            <rui-button :key="${i}">${action}</rui-button>`,
         })),
       },
     });

@@ -1,8 +1,16 @@
 <script lang="ts" setup>
-import { RuiRadio, RuiRadioGroup } from '@rotki/ui-library-compat';
+import {
+  type RadioProps,
+  RuiRadio,
+  RuiRadioGroup,
+} from '@rotki/ui-library-compat';
 import { ref } from 'vue';
 
-const radios = ref([
+type RadioData = RadioProps & {
+  label?: string;
+};
+
+const radios = ref<RadioData[]>([
   {
     internalValue: 'primary',
     value: 'primary',

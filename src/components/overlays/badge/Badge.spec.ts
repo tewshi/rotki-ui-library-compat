@@ -12,6 +12,7 @@ const createWrapper = (options?: any) =>
     global: {
       stubs: { 'rui-button': Button },
     },
+    components: { RuiButton: Button },
   });
 
 describe('Badge', () => {

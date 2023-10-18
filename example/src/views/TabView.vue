@@ -6,13 +6,11 @@ import {
   RuiTabItem,
   RuiTabItems,
   RuiTabs,
+  type TabsProps,
 } from '@rotki/ui-library-compat';
 import { ref } from 'vue';
-import { type DataType } from '@/types';
 
-type TabsData = DataType<typeof RuiTabs, string>;
-
-const tabs = ref<TabsData[]>([
+const tabs = ref<TabsProps[]>([
   {
     color: 'primary',
   },
@@ -64,11 +62,11 @@ const tabs = ref<TabsData[]>([
     <div
       v-for="(data, i) in tabs"
       :key="i"
-      class="flex mb-6 gap-x-6"
       :class="data.vertical ? 'flex-row' : 'flex-col'"
       :data-cy="`wrapper-${i}`"
+      class="flex mb-6 gap-x-6"
     >
-      <RuiTabs v-bind="data" v-model="data.modelValue" data-cy="tabs">
+      <RuiTabs v-model="data.modelValue" data-cy="tabs" v-bind="data">
         <template #default>
           <RuiTab>
             <template #prepend>

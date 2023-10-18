@@ -2,7 +2,7 @@
 import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 
-export interface TabProps {
+export interface Props {
   color?: ContextColorsType;
   disabled?: boolean;
   grow?: boolean;
@@ -21,7 +21,7 @@ defineOptions({
   name: 'RuiTab',
 });
 
-const props = withDefaults(defineProps<TabProps>(), {
+const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   disabled: false,
   grow: false,
@@ -69,11 +69,11 @@ const click = () => {
 <template>
   <Button
     v-if="disabled"
-    variant="text"
-    disabled
     :class="tabClass"
+    disabled
     role="tab"
     v-bind="attrs"
+    variant="text"
   >
     <template v-for="(_, name) in slots" #[name]="slotData">
       <slot :name="name" v-bind="slotData" />
@@ -81,11 +81,11 @@ const click = () => {
   </Button>
   <Button
     v-else-if="!link"
-    v-bind="attrs"
-    role="tab"
     :class="tabClass"
-    variant="text"
     :color="active ? color : undefined"
+    role="tab"
+    v-bind="attrs"
+    variant="text"
     @click="click()"
   >
     <template v-for="(_, name) in slots" #[name]="slotData">
@@ -95,14 +95,12 @@ const click = () => {
   <RouterLink
     v-else
     #default="{ href, navigate, isActive, isExactActive }"
-    :to="to"
     :exact="exact"
     :exact-path="exactPath"
+    :to="to"
     custom
   >
     <Button
-      role="tab"
-      v-bind="attrs"
       :class="[
         ...tabClass,
         {
@@ -111,11 +109,13 @@ const click = () => {
             : isActive,
         },
       ]"
-      tag="a"
-      :target="target"
-      :href="isSelf ? undefined : href"
-      variant="text"
       :color="active || (exact ? isExactActive : isActive) ? color : undefined"
+      :href="isSelf ? undefined : href"
+      :target="target"
+      role="tab"
+      tag="a"
+      v-bind="attrs"
+      variant="text"
       @click="
         click();
         isSelf ? navigate($event) : undefined;

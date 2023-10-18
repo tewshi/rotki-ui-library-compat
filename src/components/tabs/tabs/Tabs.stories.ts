@@ -5,7 +5,11 @@ import Card from '@/components/cards/Card.vue';
 import Tab from '@/components/tabs/tab/Tab.vue';
 import TabItems from '@/components/tabs/tab-items/TabItems.vue';
 import TabItem from '@/components/tabs/tab-item/TabItem.vue';
-import Tabs, { type Props } from './Tabs.vue';
+import Tabs, { type Props as TabsProps } from './Tabs.vue';
+
+type Props = TabsProps & {
+  class?: string;
+};
 
 const render: StoryFn<Props> = (args) => ({
   components: { Tabs, Tab, TabItems, TabItem, Card, Icon },
@@ -22,7 +26,7 @@ const render: StoryFn<Props> = (args) => ({
     return { args, modelValue };
   },
   template: `
-    <div class="flex" :class="args.vertical ? 'flex-row' : 'flex-col'">
+    <div class="flex" :class="args.vertical ? 'flex-row gap-x-6' : 'flex-col'">
       <Tabs v-bind="args" v-model="modelValue">
         <Tab>
           <template #prepend>
@@ -124,7 +128,7 @@ export const DefaultWithArrow: Story = {
 export const VerticalWithArrow: Story = {
   args: {
     vertical: true,
-    className: 'w-[200px] h-[300px]',
+    class: 'w-[200px] h-[300px]',
   },
 };
 

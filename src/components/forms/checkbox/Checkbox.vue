@@ -75,13 +75,13 @@ const attrs = useAttrs();
     >
       <input
         :checked="value"
-        type="checkbox"
         :class="css.input"
         :disabled="disabled"
+        type="checkbox"
         v-bind="objectOmit(attrs, ['class'])"
         @input="input($event.target)"
       />
-      <div
+      <span
         :class="[
           css.checkbox,
           css[color ?? ''],
@@ -95,15 +95,15 @@ const attrs = useAttrs();
       >
         <Icon
           v-if="indeterminate"
-          name="checkbox-indeterminate-fill"
           :size="iconSize"
+          name="checkbox-indeterminate-fill"
         />
-        <Icon v-else-if="value" name="checkbox-fill" :size="iconSize" />
-        <Icon v-else name="checkbox-blank-line" :size="iconSize" />
-      </div>
-      <div :class="css.label" class="text-body-1">
+        <Icon v-else-if="value" :size="iconSize" name="checkbox-fill" />
+        <Icon v-else :size="iconSize" name="checkbox-blank-line" />
+      </span>
+      <span :class="css.label" class="text-body-1">
         <slot />
-      </div>
+      </span>
     </label>
     <div v-if="!hideDetails" class="details">
       <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">

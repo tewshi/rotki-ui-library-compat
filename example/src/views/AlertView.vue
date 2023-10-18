@@ -1,8 +1,16 @@
 <script lang="ts" setup>
-import { RuiAlert } from '@rotki/ui-library-compat';
+import { type AlertProps, RuiAlert } from '@rotki/ui-library-compat';
 import { ref } from 'vue';
 
-const alerts = ref([
+type AlertData = Omit<
+  AlertProps & {
+    clicks?: number;
+    closed?: boolean;
+  },
+  'title' | 'description'
+>;
+
+const alerts = ref<AlertData[]>([
   { type: 'primary', icon: 'information-line' },
   { type: 'secondary', icon: 'information-line' },
   { type: 'error' },

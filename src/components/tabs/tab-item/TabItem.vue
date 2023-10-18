@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-export interface TabItemProps {
+export interface Props {
   active?: boolean;
   value: number | string;
   eager?: boolean;
@@ -10,7 +10,7 @@ defineOptions({
   name: 'RuiTabItem',
 });
 
-withDefaults(defineProps<TabItemProps>(), {
+withDefaults(defineProps<Props>(), {
   eager: false,
   active: false,
   reverse: false,
@@ -22,14 +22,14 @@ const css = useCssModule();
 <template>
   <div :class="[css.tab, { 'active-tab-item': active }]">
     <Transition
-      enter-active-class="w-full transform duration-300 transition"
       :enter-class="`opacity-0 ${reverse ? '-translate-x-8' : 'translate-x-8'}`"
-      enter-to-class="opacity-100 translate-x-0"
-      leave-class="opacity-100 translate-x-0 !h-0 overflow-hidden"
-      leave-active-class="w-full transform duration-300 transition !h-0 overflow-hidden"
       :leave-to-class="`opacity-0 !h-0 overflow-hidden ${
         reverse ? 'translate-x-8' : '-translate-x-8'
       }`"
+      enter-active-class="w-full transform duration-300 transition"
+      enter-to-class="opacity-100 translate-x-0"
+      leave-active-class="w-full transform duration-300 transition !h-0 overflow-hidden"
+      leave-class="opacity-100 translate-x-0 !h-0 overflow-hidden"
     >
       <div v-if="active" class="w-full">
         <slot />

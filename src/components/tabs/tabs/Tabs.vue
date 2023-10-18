@@ -5,7 +5,7 @@ import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import VRender from '@/components/VRender';
-import { type TabProps } from '@/components/tabs/tab/Tab.vue';
+import { type Props as TabProps } from '@/components/tabs/tab/Tab.vue';
 
 export interface Props {
   color?: ContextColorsType;
@@ -86,7 +86,13 @@ const updateValue = (newValue: string | number) => {
 
 const isPathMatch = (
   path: string,
-  { exactPath, exact }: { exactPath?: boolean; exact?: boolean },
+  {
+    exactPath,
+    exact,
+  }: {
+    exactPath?: boolean;
+    exact?: boolean;
+  },
 ) => {
   const route = useRoute();
   const currentRoute = route.fullPath;
@@ -264,10 +270,10 @@ watch(internalValue, () => {
       :class="[css.arrow, { [css['arrow--vertical']]: vertical }]"
     >
       <Button
-        class="w-full h-full !rounded-none"
-        variant="text"
         :color="color"
         :disabled="prevArrowDisabled"
+        class="w-full h-full !rounded-none"
+        variant="text"
         @click="onPrevSliderClick()"
       >
         <Icon :name="vertical ? 'arrow-up-s-line' : 'arrow-left-s-line'" />
@@ -275,21 +281,21 @@ watch(internalValue, () => {
     </div>
     <div
       ref="bar"
-      class="no-scrollbar"
       :class="[
         css['tabs-bar'],
         { [css['tabs-bar--vertical']]: vertical },
         { [css['tabs-bar--grow']]: grow },
       ]"
+      class="no-scrollbar"
     >
       <div
         ref="wrapper"
-        role="tablist"
         :class="[
           css['tabs-wrapper'],
           { [css['tabs-wrapper--vertical']]: vertical },
           { [css['tabs-wrapper--grow']]: grow },
         ]"
+        role="tablist"
       >
         <VRender
           v-for="(child, i) in children"
@@ -305,10 +311,10 @@ watch(internalValue, () => {
       :class="[css.arrow, { [css['arrow--vertical']]: vertical }]"
     >
       <Button
-        class="w-full h-full !rounded-none"
-        variant="text"
         :color="color"
         :disabled="nextArrowDisabled"
+        class="w-full h-full !rounded-none"
+        variant="text"
         @click="onNextSliderClick()"
       >
         <Icon :name="vertical ? 'arrow-down-s-line' : 'arrow-right-s-line'" />

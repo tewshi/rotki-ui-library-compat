@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import {
+  type FooterStepperProps,
   RuiFooterStepper,
   RuiStepper,
+  type StepperProps,
   StepperState,
 } from '@rotki/ui-library-compat';
 import { ref } from 'vue';
 
-const steppers = ref([
+const steppers = ref<StepperProps[]>([
   {
     steps: [
       {
@@ -276,7 +278,7 @@ const steppers = ref([
   },
 ]);
 
-const footerSteppers = ref([
+const footerSteppers = ref<FooterStepperProps[]>([
   {
     value: 1,
     pages: 5,
