@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type Ref, defineProps, onBeforeUnmount, onMounted, ref } from 'vue';
+import { type Ref, onBeforeUnmount, onMounted, ref } from 'vue';
 import { type VueInstance, isClient } from '@vueuse/core';
 import { type Slot } from 'vue/types/v3-setup-context';
 import TeleportContainer from './teleport-container';

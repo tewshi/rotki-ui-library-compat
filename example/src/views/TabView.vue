@@ -66,7 +66,7 @@ const tabs = ref<TabsProps[]>([
       :data-cy="`wrapper-${i}`"
       class="flex mb-6 gap-x-6"
     >
-      <RuiTabs v-model="data.modelValue" data-cy="tabs" v-bind="data">
+      <RuiTabs v-model="data.value" data-cy="tabs" v-bind="data">
         <template #default>
           <RuiTab>
             <template #prepend>
@@ -81,7 +81,7 @@ const tabs = ref<TabsProps[]>([
           <RuiTab link to="/steppers">Stepper View</RuiTab>
         </template>
       </RuiTabs>
-      <RuiTabItems v-model="data.modelValue" data-cy="tab-items">
+      <RuiTabItems v-model="data.value" data-cy="tab-items">
         <template #default>
           <RuiTabItem>
             <RuiCard>Tab 1 Content</RuiCard>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-export interface Props {
+export interface TabItemProps {
   active?: boolean;
+  value?: number | string;
   eager?: boolean;
   reverse?: boolean;
 }
@@ -9,10 +10,11 @@ defineOptions({
   name: 'RuiTabItem',
 });
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<TabItemProps>(), {
   eager: false,
   active: false,
   reverse: false,
+  value: undefined,
 });
 
 const css = useCssModule();

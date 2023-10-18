@@ -1,6 +1,6 @@
 // Use RouterLinkStub from latest version of vue-test-utils that support slot
 // github.com/vuejs/test-utils/blob/69b55052553114f692f3233b0757084e3dec80fb/src/components/RouterLinkStub.ts#L4
-//
+// @ts-ignore
 import { computed, defineComponent, h } from 'vue';
 
 // match return type of router.resolve: RouteLocation & { href: string }
@@ -19,6 +19,7 @@ const defaultRoute = {
 
 // TODO: Borrow typings from vue-router-next
 export const RouterLinkStub = defineComponent({
+  // @ts-ignore
   name: 'RouterLinkStub',
 
   props: {
@@ -42,6 +43,7 @@ export const RouterLinkStub = defineComponent({
       isExactActive: computed(() => false),
       navigate: async () => {},
     });
+    // @ts-ignore
     return this.custom ? children : h('a', undefined, children);
   },
 });

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VRender from '@/components/VRender';
-import { type Props as TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
+import { type TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
 
 export interface Props {
   value?: number | string;

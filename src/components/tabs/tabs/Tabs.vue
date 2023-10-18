@@ -5,7 +5,7 @@ import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import VRender from '@/components/VRender';
-import { type Props as TabProps } from '@/components/tabs/tab/Tab.vue';
+import { type TabProps } from '@/components/tabs/tab/Tab.vue';
 
 export interface Props {
   color?: ContextColorsType;

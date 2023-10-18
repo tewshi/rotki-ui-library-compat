@@ -2,7 +2,7 @@
 import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 
-export interface Props {
+export interface TabProps {
   color?: ContextColorsType;
   disabled?: boolean;
   grow?: boolean;
@@ -21,7 +21,7 @@ defineOptions({
   name: 'RuiTab',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<TabProps>(), {
   color: undefined,
   disabled: false,
   grow: false,

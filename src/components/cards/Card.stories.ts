@@ -1,6 +1,6 @@
 import { objectOmit } from '@vueuse/shared';
 import Button, {
-  type Props as ButtonProps,
+  type ButtonProps,
 } from '@/components/buttons/button/Button.vue';
 import Card, { type Props as CardProps } from './Card.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';

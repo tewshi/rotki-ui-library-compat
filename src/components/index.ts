@@ -8,7 +8,7 @@ import {
   default as RuiButtonGroup,
 } from '@/components/buttons/button-group/ButtonGroup.vue';
 import {
-  type Props as ButtonProps,
+  type ButtonProps,
   default as RuiButton,
 } from '@/components/buttons/button/Button.vue';
 import {
@@ -86,7 +86,7 @@ import {
 } from '@/components/tables/TablePagination.vue';
 import {
   default as RuiTabItem,
-  type Props as TabItemProps,
+  type TabItemProps,
 } from '@/components/tabs/tab-item/TabItem.vue';
 import {
   default as RuiTabItems,
@@ -94,7 +94,7 @@ import {
 } from '@/components/tabs/tab-items/TabItems.vue';
 import {
   default as RuiTab,
-  type Props as TabProps,
+  type TabProps,
 } from '@/components/tabs/tab/Tab.vue';
 import {
   default as RuiTabs,
