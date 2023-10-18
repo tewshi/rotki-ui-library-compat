@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { type ContextColorsType } from '@/consts/colors';
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
+import { type ContextColorsType } from '@/consts/colors';
 
-export interface Props {
+type ModelType = number | string;
+
+export interface ButtonProps {
   disabled?: boolean;
   loading?: boolean;
   color?: ContextColorsType;
@@ -10,15 +12,17 @@ export interface Props {
   elevation?: number | string | null;
   variant?: 'default' | 'outlined' | 'text' | 'fab';
   icon?: boolean;
+  active?: boolean;
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
+  value?: ModelType;
 }
 
 defineOptions({
   name: 'RuiButton',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<ButtonProps>(), {
   disabled: false,
   loading: false,
   color: undefined,
@@ -28,11 +32,15 @@ const props = withDefaults(defineProps<Props>(), {
   icon: false,
   size: undefined,
   tag: 'button',
+  value: undefined,
 });
 
-const emit = defineEmits<{ (e: 'click', event: Event): void }>();
+const emit = defineEmits<{
+  (e: 'click', event: Event): void;
+  (e: 'input', value?: ModelType): void;
+}>();
 
-const { disabled, elevation, variant, size } = toRefs(props);
+const { disabled, elevation, variant, size, value } = toRefs(props);
 
 const attrs = useAttrs();
 const css = useCssModule();
@@ -65,6 +73,11 @@ const spinnerSize: ComputedRef<number> = computed(() => {
   return 22;
 });
 
+const onClick = (event: PointerEvent) => {
+  emit('click', event);
+  emit('input', get(value));
+};
+
 const slots = useSlots();
 </script>
 
@@ -81,22 +94,23 @@ const slots = useSlots();
         [css.loading]: loading,
         [css._rounded]: rounded,
         [css.icon]: icon,
+        [css.active]: active,
       },
     ]"
     :disabled="disabled || loading"
     v-bind="attrs"
-    @click="emit('click', $event)"
+    @click="onClick($event)"
   >
     <slot v-if="slots.prepend" name="prepend" />
     <span v-if="slots.default" :class="css.label"> <slot /> </span>
     <slot v-if="slots.append" name="append" />
     <RuiProgress
       v-if="loading"
-      circular
       :class="css.spinner"
-      variant="indeterminate"
-      thickness="2"
       :size="spinnerSize"
+      circular
+      thickness="2"
+      variant="indeterminate"
     />
   </Component>
 </template>
@@ -118,12 +132,20 @@ const slots = useSlots();
       }
     }
 
+    &.active {
+      @apply bg-rui-grey-50;
+    }
+
     &.grey {
       @apply bg-rui-grey-300 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-light-text;
 
       &.outlined,
       &.text {
         @apply active:bg-white/10 hover:bg-white/[.04] text-rui-text;
+
+        &.active {
+          @apply bg-white/30;
+        }
       }
     }
   }
@@ -154,9 +176,17 @@ const slots = useSlots();
     &.#{$color} {
       @apply bg-rui-#{$color} hover:bg-rui-#{$color}-darker active:bg-rui-#{$color}-darker/90 text-rui-dark-text;
 
+      &.active {
+        @apply bg-rui-#{$color}-darker;
+      }
+
       &.outlined,
       &.text {
         @apply bg-transparent hover:bg-rui-#{$color}-lighter/[.04] active:bg-rui-#{$color}-lighter/10 text-rui-#{$color};
+
+        &.active {
+          @apply bg-rui-#{$color}-lighter/30;
+        }
       }
 
       &.outlined {
@@ -168,9 +198,17 @@ const slots = useSlots();
   &.grey {
     @apply bg-rui-grey-200 hover:bg-rui-grey-100 active:bg-rui-grey-50 text-rui-text;
 
+    &.active {
+      @apply bg-rui-grey-50;
+    }
+
     &.outlined,
     &.text {
       @apply bg-transparent hover:bg-black/[.04] active:bg-black/10;
+
+      &.active {
+        @apply bg-black/10;
+      }
     }
 
     &.outlined {

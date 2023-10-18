@@ -1,8 +1,24 @@
 <script lang="ts" setup>
-import { RuiButton, RuiButtonGroup, RuiIcon } from '@rotki/ui-library-compat';
+import {
+  type ButtonGroupProps,
+  type ButtonProps,
+  RuiButton,
+  RuiButtonGroup,
+  RuiIcon,
+} from '@rotki/ui-library-compat';
+import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
 
-const buttons = ref([
+type ExtraProperties = {
+  clicks: number;
+  prepend?: string;
+  append?: string;
+  iconName?: string;
+};
+
+type ButtonData = ButtonProps & ExtraProperties;
+
+const buttons = ref<ButtonData[]>([
   { clicks: 0, color: 'primary' },
   { clicks: 0, color: 'secondary' },
   { clicks: 0, color: 'error' },
@@ -279,7 +295,12 @@ const buttons = ref([
   },
 ]);
 
-const buttonGroups = ref([
+type ButtonGroupData = ButtonGroupProps & {
+  count: number;
+  rounded?: boolean;
+};
+
+const buttonGroups = ref<ButtonGroupData[]>([
   { count: 0, color: 'primary' },
   { count: 0, color: 'secondary' },
   { count: 0, color: 'error' },
@@ -362,6 +383,160 @@ const buttonGroups = ref([
     size: 'sm',
   },
 ]);
+
+const toggleButtons = ref<ButtonGroupData[]>([
+  { count: 0, color: 'primary', value: 0 },
+  { count: 0, color: 'secondary', required: true, value: 0 },
+  { count: 0, color: 'primary', value: 0, disabled: true },
+  {
+    count: 0,
+    color: 'secondary',
+    required: true,
+    value: 0,
+    disabled: true,
+  },
+  { count: 0, color: 'error', value: 0 },
+  { count: 0, color: 'warning', required: true, value: 0 },
+  { count: 0, color: 'info', value: 0 },
+  { count: 0, color: 'success', required: true, value: 0 },
+  { count: 0, color: 'primary', vertical: true, value: 0 },
+  {
+    count: 0,
+    color: 'secondary',
+    vertical: true,
+    value: 0,
+  },
+  { count: 0, color: 'error', vertical: true, value: 0 },
+  { count: 0, color: 'warning', vertical: true, value: 0 },
+  { count: 0, color: 'info', vertical: true, value: 0 },
+  { count: 0, color: 'success', vertical: true, value: 0 },
+  {
+    count: 0,
+    color: 'primary',
+    variant: 'outlined',
+    value: 0,
+  },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    value: 0,
+  },
+  {
+    count: 0,
+    color: 'error',
+    variant: 'outlined',
+    value: 0,
+  },
+  {
+    count: 0,
+    color: 'warning',
+    variant: 'outlined',
+    value: 0,
+  },
+  {
+    count: 0,
+    color: 'info',
+    variant: 'outlined',
+    value: 0,
+  },
+  {
+    count: 0,
+    color: 'success',
+    variant: 'outlined',
+    value: 0,
+  },
+  { count: 0, color: 'primary', variant: 'text', value: 0 },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'text',
+    value: 0,
+  },
+  { count: 0, color: 'error', variant: 'text', value: 0 },
+  { count: 0, color: 'warning', variant: 'text', value: 0 },
+  { count: 0, color: 'info', variant: 'text', value: 0 },
+  { count: 0, color: 'success', variant: 'text', value: 0 },
+]);
+const multipleToggleButtons = ref<ButtonGroupData[]>([
+  { count: 0, color: 'primary', value: ['center'] },
+  {
+    count: 0,
+    color: 'secondary',
+    required: true,
+    value: ['center'],
+  },
+  { count: 0, color: 'primary', value: ['center'], disabled: true },
+  {
+    count: 0,
+    color: 'secondary',
+    required: true,
+    value: ['center'],
+    disabled: true,
+  },
+  { count: 0, color: 'error', value: ['center'] },
+  { count: 0, color: 'warning', required: true, value: ['center'] },
+  { count: 0, color: 'info', value: ['center'] },
+  { count: 0, color: 'success', required: true, value: ['center'] },
+  { count: 0, color: 'primary', vertical: true, value: ['center'] },
+  {
+    count: 0,
+    color: 'secondary',
+    vertical: true,
+    value: ['center'],
+  },
+  { count: 0, color: 'error', vertical: true, value: ['center'] },
+  { count: 0, color: 'warning', vertical: true, value: ['center'] },
+  { count: 0, color: 'info', vertical: true, value: ['center'] },
+  { count: 0, color: 'success', vertical: true, value: ['center'] },
+  {
+    count: 0,
+    color: 'primary',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  {
+    count: 0,
+    color: 'error',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  {
+    count: 0,
+    color: 'warning',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  {
+    count: 0,
+    color: 'info',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  {
+    count: 0,
+    color: 'success',
+    variant: 'outlined',
+    value: ['center'],
+  },
+  { count: 0, color: 'primary', variant: 'text', value: ['center'] },
+  {
+    count: 0,
+    color: 'secondary',
+    variant: 'text',
+    value: ['center'],
+  },
+  { count: 0, color: 'error', variant: 'text', value: ['center'] },
+  { count: 0, color: 'warning', variant: 'text', value: ['center'] },
+  { count: 0, color: 'info', variant: 'text', value: ['center'] },
+  { count: 0, color: 'success', variant: 'text', value: ['center'] },
+]);
 </script>
 
 <template>
@@ -388,9 +563,9 @@ const buttonGroups = ref([
       </RuiButton>
     </div>
     <h2 class="text-h4 mb-6" data-cy="button-groups">Button Groups</h2>
-    <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start">
+    <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14">
       <div v-for="(buttonGroup, i) in buttonGroups" :key="i">
-        <RuiButtonGroup v-bind="buttonGroup">
+        <RuiButtonGroup v-bind="objectOmit(buttonGroup, ['count', 'rounded'])">
           <RuiButton @click="buttonGroup.count--">Decrease</RuiButton>
           <RuiButton @click="buttonGroup.count++">Increase</RuiButton>
           <RuiButton @click="buttonGroup.count++">
@@ -398,6 +573,60 @@ const buttonGroups = ref([
           </RuiButton>
         </RuiButtonGroup>
         <div class="mt-2">Counts: {{ buttonGroup.count }}</div>
+      </div>
+    </div>
+    <h2 class="text-h4 mb-6" data-cy="toggleable-button-groups">
+      Toggleable Button Groups
+    </h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14">
+      <div v-for="(buttonGroup, i) in toggleButtons" :key="i">
+        <RuiButtonGroup
+          v-model="buttonGroup.value"
+          v-bind="objectOmit(buttonGroup, ['value', 'count', 'rounded'])"
+        >
+          <RuiButton>
+            <RuiIcon name="align-left" />
+          </RuiButton>
+          <RuiButton>
+            <RuiIcon name="align-center" />
+          </RuiButton>
+          <RuiButton>
+            <RuiIcon name="align-right" />
+          </RuiButton>
+          <RuiButton>
+            <RuiIcon name="align-justify" />
+          </RuiButton>
+        </RuiButtonGroup>
+        <div v-if="buttonGroup.required" class="mt-2 text-rui-error">
+          required: *
+        </div>
+      </div>
+    </div>
+    <h2 class="text-h4 mb-6" data-cy="multiple-toggleable-button-groups">
+      Multiple Toggleable Button Groups
+    </h2>
+    <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start">
+      <div v-for="(buttonGroup, i) in multipleToggleButtons" :key="i">
+        <RuiButtonGroup
+          v-model="buttonGroup.value"
+          v-bind="objectOmit(buttonGroup, ['value', 'count', 'rounded'])"
+        >
+          <RuiButton value="left">
+            <RuiIcon name="align-left" />
+          </RuiButton>
+          <RuiButton value="center">
+            <RuiIcon name="align-center" />
+          </RuiButton>
+          <RuiButton value="right">
+            <RuiIcon name="align-right" />
+          </RuiButton>
+          <RuiButton value="justify">
+            <RuiIcon name="align-justify" />
+          </RuiButton>
+        </RuiButtonGroup>
+        <div v-if="buttonGroup.required" class="mt-2 text-rui-error">
+          required: *
+        </div>
       </div>
     </div>
   </div>

@@ -1,27 +1,74 @@
 <script lang="ts" setup>
-import { type ContextColorsType } from '@/consts/colors';
 import VRender from '@/components/VRender';
+import { type ContextColorsType } from '@/consts/colors';
+import type { ButtonProps } from '@/components/buttons/button/Button.vue';
+
+type ModelType = ButtonProps['value'];
 
 export interface Props {
   vertical?: boolean;
   color?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
+  required?: boolean;
+  value?: ModelType | ModelType[];
+  disabled?: boolean;
 }
 
 defineOptions({
   name: 'RuiButtonGroup',
 });
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   vertical: false,
   color: undefined,
   variant: 'default',
   size: undefined,
+  value: undefined,
 });
 
+const emit = defineEmits<{
+  (e: 'input', value?: ModelType | ModelType[]): void;
+}>();
+
 const slots = useSlots();
-const children = computed(() => slots.default?.() ?? []);
+const { value, required } = toRefs(props);
+const children = computed(() =>
+  (slots.default?.() ?? []).map((node, i) => {
+    const propsData = node.componentOptions?.propsData as ButtonProps;
+
+    propsData.active = activeItem(propsData?.value ?? i);
+    return { node, props: propsData };
+  }),
+);
+
+const activeItem = (id: ModelType) => {
+  const selected = get(value);
+  if (Array.isArray(selected)) {
+    return selected.includes(id);
+  }
+  return selected === id;
+};
+
+const onClick = (id: ModelType) => {
+  const selected = get(value);
+  const mandatory = get(required);
+  if (Array.isArray(selected)) {
+    const index = selected.indexOf(id);
+    if (index >= 0) {
+      if (!mandatory || selected.length !== 1) {
+        selected.splice(index, 1);
+      }
+    } else {
+      selected.push(id);
+    }
+    emit('input', selected);
+  } else if (mandatory) {
+    emit('input', id);
+  } else {
+    emit('input', activeItem(id) ? undefined : id);
+  }
+};
 
 const css = useCssModule();
 
@@ -43,11 +90,14 @@ onMounted(() => {
       <VRender
         v-for="(child, i) in children"
         :key="i"
-        :v-node="child"
-        :color="color"
-        :variant="variant"
-        :size="size"
         :class="css.button"
+        :color="color"
+        :disabled="disabled"
+        :size="size"
+        :v-node="child.node"
+        v-bind="child.props"
+        :variant="variant"
+        @input="onClick($event ?? i)"
       />
     </div>
   </div>

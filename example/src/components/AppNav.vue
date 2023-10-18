@@ -9,7 +9,7 @@ import {
 } from '@rotki/ui-library-compat';
 
 const css = useCssModule();
-const { switchThemeScheme } = useRotkiTheme();
+const { switchThemeScheme, store } = useRotkiTheme();
 
 interface Theme {
   name: string;
@@ -40,10 +40,11 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
         class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow"
       >
         <span class="sr-only">Theme</span>
-        <RuiButtonGroup variant="outlined">
+        <RuiButtonGroup :value="store" variant="outlined">
           <RuiButton
             v-for="theme in themes"
             :key="theme.value"
+            :value="theme.value"
             @click="onSwitchTheme(theme)"
           >
             <RuiIcon :name="theme.icon" :size="16" />

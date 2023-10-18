@@ -1,8 +1,8 @@
 import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { contextColors } from '@/consts/colors';
-import { default as Button, type Props } from './Button.vue';
+import { default as Button, type ButtonProps } from './Button.vue';
 
-type PropsAndLabel = Props & { label: string };
+type PropsAndLabel = ButtonProps & { label: string };
 
 const render: StoryFn<PropsAndLabel> = (args) => ({
   components: { Button },

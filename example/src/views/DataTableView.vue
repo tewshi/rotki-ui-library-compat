@@ -37,9 +37,11 @@ interface _User {
   };
 }
 
-const { data: _users, isFetching } = useFetch<string>(
-  'https://jsonplaceholder.typicode.com/users',
-);
+const {
+  data: _users,
+  isFetching,
+  execute,
+} = useFetch<string>('https://jsonplaceholder.typicode.com/users');
 
 const columns: DataTableColumn[] = [
   {
@@ -592,7 +594,11 @@ const onSearch = useDebounceFn(async (query: string, index: number) => {
   }
 }, 500);
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
+  if (get(isFetching)) {
+    await execute().catch();
+  }
+
   get(datatables).forEach((row, i) => {
     fetchData(
       i,
