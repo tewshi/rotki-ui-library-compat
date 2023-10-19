@@ -50,7 +50,7 @@ const slots = useSlots();
   }
 
   .header {
-    @apply text-rui-text text-h5;
+    @apply text-rui-text text-h6;
   }
 
   .subheader {
