@@ -118,6 +118,10 @@ export interface Props {
    * should hide the footer
    */
   hideDefaultFooter?: boolean;
+  /**
+   * should add zebra-striping to the table row
+   */
+  striped?: boolean;
 }
 
 defineOptions({
@@ -140,6 +144,7 @@ const props = withDefaults(defineProps<Props>(), {
   empty: () => ({ label: 'No item found' }),
   rounded: 'md',
   hideDefaultFooter: false,
+  striped: false,
 });
 
 const emit = defineEmits<{
@@ -625,7 +630,7 @@ const slots = useSlots();
             </th>
           </tr>
         </thead>
-        <tbody :class="css.tbody">
+        <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
           <tr
             v-for="(row, index) in filtered"
             :key="index"
@@ -849,6 +854,15 @@ const slots = useSlots();
 
     .tbody {
       @apply divide-y divide-black/[0.12];
+
+      &--striped {
+        .tr {
+          &:nth-child(even) {
+            @apply bg-rui-grey-50;
+          }
+        }
+      }
+
       .tr {
         @apply hover:bg-black/[0.04];
 
@@ -933,6 +947,15 @@ const slots = useSlots();
 
       .tbody {
         @apply divide-white/[0.12];
+
+        &--striped {
+          .tr {
+            &:nth-child(even) {
+              @apply bg-rui-grey-900;
+            }
+          }
+        }
+
         .tr {
           &__selected {
             @apply bg-rui-dark-primary/[0.08];

@@ -187,6 +187,7 @@ const meta: Meta<Props> = {
     loading: false,
     dense: false,
     outlined: false,
+    striped: false,
   },
   parameters: {
     docs: {
@@ -280,6 +281,16 @@ export const Outlined: Story = {
     cols: columns,
     value: [],
     outlined: true,
+    pagination: { limit: 10, page: 1, total: 50 },
+  },
+};
+
+export const Striped: Story = {
+  args: {
+    rows: data,
+    cols: columns,
+    value: [],
+    striped: true,
     pagination: { limit: 10, page: 1, total: 50 },
   },
 };
