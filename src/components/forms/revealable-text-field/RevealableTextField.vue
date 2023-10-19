@@ -46,12 +46,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const hidden: Ref<boolean> = ref(true);
 
+const attrs = useAttrs();
 const slots = useSlots();
 </script>
 
 <template>
   <RuiTextField
-    v-bind="props"
+    v-bind="{ ...props, ...attrs }"
     :type="hidden ? 'password' : 'text'"
     v-on="
       // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
