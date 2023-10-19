@@ -73,8 +73,7 @@ const spinnerSize: ComputedRef<number> = computed(() => {
   return 22;
 });
 
-const onClick = (event: PointerEvent) => {
-  emit('click', event);
+const onClick = () => {
   emit('input', get(value));
 };
 
@@ -99,7 +98,11 @@ const slots = useSlots();
     ]"
     :disabled="disabled || loading"
     v-bind="attrs"
-    @click="onClick($event)"
+    v-on="
+      // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
+      $listeners
+    "
+    @click="onClick()"
   >
     <slot v-if="slots.prepend" name="prepend" />
     <span v-if="slots.default" :class="css.label"> <slot /> </span>
