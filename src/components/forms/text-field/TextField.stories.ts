@@ -33,6 +33,7 @@ const meta: Meta<Props> = {
     appendIcon: { control: 'text' },
     prependIcon: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
+    successMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean', table: { category: 'State' } },
     dense: { control: 'boolean', table: { category: 'State' } },
     variant: {
@@ -44,6 +45,11 @@ const meta: Meta<Props> = {
     color: {
       control: 'select',
       options: ['grey', ...contextColors],
+      table: { category: 'State' },
+    },
+    textColor: {
+      control: 'select',
+      options: contextColors,
       table: { category: 'State' },
     },
   },
@@ -111,7 +117,16 @@ export const WithErrorMessage: Story = {
     label: 'Label',
     placeholder: 'Placeholder',
     variant: 'outlined',
-    hint: 'With error messages',
+    errorMessages: ['With error messages'],
+  },
+};
+
+export const WithSuccessMessage: Story = {
+  args: {
+    label: 'Label',
+    placeholder: 'Placeholder',
+    variant: 'outlined',
+    successMessages: ['With success messages'],
   },
 };
 
