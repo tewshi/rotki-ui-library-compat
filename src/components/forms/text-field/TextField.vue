@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { logicOr } from '@vueuse/math';
 import { objectOmit } from '@vueuse/shared';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
@@ -11,10 +12,11 @@ export interface Props {
   disabled?: boolean;
   variant?: 'default' | 'filled' | 'outlined';
   color?: 'grey' | ContextColorsType;
+  textColor?: 'grey' | ContextColorsType;
   dense?: boolean;
   hint?: string;
-  as?: string | object;
   errorMessages?: string[];
+  successMessages?: string[];
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
   appendIcon?: RuiIcons;
@@ -23,6 +25,7 @@ export interface Props {
 
 defineOptions({
   name: 'RuiTextField',
+  inheritAttrs: false,
 });
 
 const props = withDefaults(defineProps<Props>(), {
@@ -32,10 +35,11 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   variant: 'default',
   color: 'grey',
+  textColor: undefined,
   dense: false,
   hint: '',
-  as: 'input',
   errorMessages: () => [],
+  successMessages: () => [],
   hideDetails: false,
   prependIcon: undefined,
   appendIcon: undefined,
@@ -44,20 +48,17 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (e: 'input', modelValue: string): void;
-  (e: 'focus-input', event: Event): void;
-  (e: 'blur', event: Event): void;
-  (e: 'remove', value: unknown): void;
 }>();
 
-const { label } = toRefs(props);
+const { label, value, errorMessages, successMessages } = toRefs(props);
 
-const input = (event: Event) => {
-  const value = (event.target as HTMLInputElement).value;
-  emit('input', value);
-};
+const input = (target: EventTarget | null) => {
+  if (!target) {
+    return;
+  }
 
-const focusInput = (event: unknown) => {
-  emit('focus-input', event as Event);
+  const val = (target as HTMLInputElement).value;
+  emit('input', val);
 };
 
 const labelWithQuote = computed(() => {
@@ -70,13 +71,11 @@ const labelWithQuote = computed(() => {
 
 const wrapper = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
+const internalValue = ref(get(value));
 
 const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
-const {
-  left: innerWrapperLeft,
-  right: innerWrapperRight,
-  width,
-} = useElementBounding(innerWrapper);
+const { left: innerWrapperLeft, right: innerWrapperRight } =
+  useElementBounding(innerWrapper);
 
 const prependWidth = computed(
   () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
@@ -84,10 +83,19 @@ const prependWidth = computed(
 const appendWidth = computed(
   () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
 );
+const hasError = computed(() => get(errorMessages).length > 0);
+const hasSuccess = computed(() => get(successMessages).length > 0);
+const hasMessages = logicOr(hasError, hasSuccess);
 
 const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
+
+watch(value, (val) => {
+  if (get(internalValue) !== val) {
+    set(internalValue, val);
+  }
+});
 </script>
 
 <template>
@@ -100,8 +108,11 @@ const slots = useSlots();
         css[variant],
         {
           [css.dense]: dense,
-          [css['with-error']]: errorMessages.length > 0,
+          [css.disabled]: disabled,
           [css['no-label']]: !label,
+          [css['with-error']]: hasError,
+          [css['with-success']]: hasSuccess && !hasError,
+          [css[`text_${textColor}`]]: textColor && !hasMessages,
         },
       ]"
     >
@@ -113,25 +124,19 @@ const slots = useSlots();
           <Icon :name="prependIcon" />
         </div>
       </div>
-      <div
-        ref="innerWrapper"
-        class="flex flex-1 overflow-hidden"
-        @click="focusInput($event)"
-      >
-        <Component
-          :is="as"
-          :value="value"
+      <div ref="innerWrapper" class="flex flex-1 overflow-hidden">
+        <input
+          v-model="internalValue"
           :placeholder="placeholder || ' '"
           :class="css.input"
           :disabled="disabled"
-          :dense="dense"
-          :variant="variant"
-          :wrapper-width="width"
           :readonly="readonly"
           v-bind="objectOmit(attrs, ['class'])"
-          @input="input($event)"
-          @blur="emit('blur', $event)"
-          @remove="emit('remove', $event)"
+          @input="input($event.target)"
+          v-on="
+            // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
+            objectOmit($listeners, ['input'])
+          "
         />
         <label :class="css.label">
           {{ label }}
@@ -150,13 +155,34 @@ const slots = useSlots();
       </div>
     </div>
     <div v-if="!hideDetails" class="details pt-1">
-      <div v-if="errorMessages.length > 0" class="text-rui-error text-caption">
-        {{ errorMessages[0] }}
-      </div>
-      <div v-else-if="hint" class="text-rui-text-secondary text-caption">
-        {{ hint }}
-      </div>
-      <div v-else class="h-5" />
+      <TransitionGroup
+        enter-class="opacity-0 -translate-y-2"
+        enter-active-class="transform transition"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-class="opacity-100 -translate-y-2 h-0"
+        leave-active-class="transform transition"
+        leave-to-class="opacity-0 -translate-y-2 h-0"
+        appear
+      >
+        <div v-if="hasError" key="error" class="text-rui-error text-caption">
+          {{ errorMessages[0] }}
+        </div>
+        <div
+          v-else-if="hasSuccess"
+          key="success"
+          class="text-rui-success text-caption"
+        >
+          {{ successMessages[0] }}
+        </div>
+        <div
+          v-else-if="hint"
+          key="hint"
+          class="text-rui-text-secondary text-caption"
+        >
+          {{ hint }}
+        </div>
+        <div v-else key="placeholder" class="h-5" />
+      </TransitionGroup>
     </div>
   </div>
 </template>
@@ -299,19 +325,35 @@ const slots = useSlots();
         }
       }
     }
+
+    &.text_#{$color},
+    &.with-#{$color} {
+      .prepend,
+      .append,
+      .input {
+        @apply text-rui-#{$color};
+      }
+
+      &:not(.disabled) .prepend svg,
+      &:not(.disabled) .append svg {
+        @apply text-rui-#{$color};
+      }
+    }
   }
 
-  &.with-error {
-    .input {
-      @apply border-rui-error #{!important};
-    }
+  @each $color in 'error', 'success' {
+    &.with-#{$color} {
+      .input {
+        @apply border-rui-#{$color} #{!important};
+      }
 
-    .label {
-      @apply text-rui-error after:border-rui-error #{!important};
-    }
+      .label {
+        @apply text-rui-#{$color} after:border-rui-#{$color} #{!important};
+      }
 
-    .fieldset {
-      @apply border-rui-error #{!important};
+      .fieldset {
+        @apply border-rui-#{$color} #{!important};
+      }
     }
   }
 

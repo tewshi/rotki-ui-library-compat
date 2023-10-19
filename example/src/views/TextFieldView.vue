@@ -11,12 +11,12 @@ import { type Slots } from '@/types';
 type TextFieldData = TextFieldProps & Slots;
 
 const textFields = ref<TextFieldData[]>([
-  { value: '', color: 'primary' },
-  { value: '', color: 'secondary' },
-  { value: '', color: 'error' },
-  { value: '', color: 'warning' },
-  { value: '', color: 'info' },
-  { value: '', color: 'success' },
+  { value: '', color: 'primary', textColor: 'primary' },
+  { value: '', color: 'secondary', textColor: 'secondary' },
+  { value: '', color: 'error', textColor: 'error' },
+  { value: '', color: 'warning', textColor: 'warning' },
+  { value: '', color: 'info', textColor: 'info' },
+  { value: '', color: 'success', textColor: 'success' },
 
   { value: '', color: 'primary', dense: true },
   { value: '', color: 'secondary', dense: true },
@@ -125,6 +125,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     appendIcon: 'arrow-right-line',
+    textColor: 'primary',
   },
 
   {
@@ -143,6 +144,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     prependIcon: 'arrow-right-line',
+    textColor: 'primary',
   },
 
   {
@@ -155,6 +157,7 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'filled',
     prepend: 'Prepend',
+    textColor: 'primary',
   },
   {
     value: '',
@@ -178,16 +181,60 @@ const textFields = ref<TextFieldData[]>([
     color: 'primary',
     variant: 'outlined',
     append: 'Append',
+    textColor: 'primary',
   },
 ]);
 
 const revealableTextFields = ref([
-  { value: '', color: 'primary', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'secondary', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'error', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'warning', variant: 'outlined', label: 'Password' },
-  { value: '', color: 'info', variant: 'outlined', label: 'API Key' },
-  { value: '', color: 'success', variant: 'outlined', label: 'API Secret' },
+  {
+    value: '',
+    color: 'primary',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'primary',
+  },
+  {
+    value: '',
+    color: 'secondary',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'secondary',
+  },
+  {
+    value: '',
+    color: 'error',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'error',
+  },
+  {
+    value: '',
+    color: 'warning',
+    variant: 'outlined',
+    label: 'Password',
+    textColor: 'warning',
+  },
+  {
+    value: '',
+    color: 'info',
+    variant: 'outlined',
+    label: 'API Key',
+    textColor: 'info',
+    disableToggle: true,
+    disabled: true,
+  },
+  {
+    value: 'some secret key',
+    color: 'success',
+    variant: 'outlined',
+    label: 'API Secret',
+    textColor: 'success',
+    prependIcon: 'arrow-right-line',
+    successMessages: ['lorem ipsum success message'],
+    errorMessages: ['lorem ipsum error message'],
+    hint: 'lorem ipsum hint',
+    disabled: false,
+  },
 ]);
 </script>
 

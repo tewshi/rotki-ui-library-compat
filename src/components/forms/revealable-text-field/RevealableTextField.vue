@@ -5,7 +5,10 @@ import { default as RuiIcon } from '@/components/icons/Icon.vue';
 
 defineOptions({
   name: 'RuiRevealableTextField',
+  inheritAttrs: false,
 });
+
+defineProps<{ disabled?: boolean }>();
 
 const hidden: Ref<boolean> = ref(true);
 
@@ -17,6 +20,7 @@ const slots = useSlots();
   <RuiTextField
     v-bind="attrs"
     :type="hidden ? 'password' : 'text'"
+    :disabled="disabled"
     v-on="
       // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
       $listeners
@@ -28,6 +32,7 @@ const slots = useSlots();
     <template #append>
       <div class="flex items-center">
         <RuiButton
+          :disabled="disabled"
           tabindex="-1"
           variant="text"
           type="button"
