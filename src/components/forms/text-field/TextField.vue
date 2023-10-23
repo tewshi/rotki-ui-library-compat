@@ -52,15 +52,6 @@ const emit = defineEmits<{
 
 const { label, value, errorMessages, successMessages } = toRefs(props);
 
-const input = (target: EventTarget | null) => {
-  if (!target) {
-    return;
-  }
-
-  const val = (target as HTMLInputElement).value;
-  emit('input', val);
-};
-
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
   if (!labelVal) {
@@ -71,7 +62,11 @@ const labelWithQuote = computed(() => {
 
 const wrapper = ref<HTMLDivElement>();
 const innerWrapper = ref<HTMLDivElement>();
-const internalValue = ref(get(value));
+
+const internalValue = computed({
+  get: () => get(value),
+  set: (val: string) => emit('input', val),
+});
 
 const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
 const { left: innerWrapperLeft, right: innerWrapperRight } =
@@ -90,12 +85,6 @@ const hasMessages = logicOr(hasError, hasSuccess);
 const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
-
-watch(value, (val) => {
-  if (get(internalValue) !== val) {
-    set(internalValue, val);
-  }
-});
 </script>
 
 <template>
@@ -132,7 +121,6 @@ watch(value, (val) => {
           :disabled="disabled"
           :readonly="readonly"
           v-bind="objectOmit(attrs, ['class'])"
-          @input="input($event.target)"
           v-on="
             // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
             objectOmit($listeners, ['input'])
@@ -156,10 +144,10 @@ watch(value, (val) => {
     </div>
     <div v-if="!hideDetails" class="details pt-1 min-h-[1.5rem] px-3">
       <TransitionGroup
-        enter-class="opacity-0 -translate-y-2"
+        enter-class="opacity-0 -translate-y-2 h-0"
         enter-active-class="transform transition"
         enter-to-class="opacity-100 translate-y-0"
-        leave-class="opacity-100 -translate-y-2 h-0"
+        leave-class="opacity-100 -translate-y-2"
         leave-active-class="transform transition"
         leave-to-class="opacity-0 -translate-y-2 h-0"
         appear
