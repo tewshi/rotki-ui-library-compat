@@ -14,11 +14,9 @@ const createWrapper = (options?: any) =>
 describe('Button/ButtonGroup', () => {
   it('passes vertical props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /vertical/,
-    );
+    expect(wrapper.classes()).not.toMatch(/vertical/);
     await wrapper.setProps({ vertical: true });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/vertical/);
+    expect(wrapper.classes()).toMatch(/vertical/);
   });
 
   it('passes color props', async () => {
@@ -27,34 +25,30 @@ describe('Button/ButtonGroup', () => {
         color: 'primary',
       },
     });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_primary_/);
+    expect(wrapper.classes()).toMatch(/_primary_/);
     expect(wrapper.find('button').classes()).toMatch(/_primary_/);
 
     await wrapper.setProps({ color: 'secondary' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(
-      /_secondary_/,
-    );
+    expect(wrapper.classes()).toMatch(/_secondary_/);
     expect(wrapper.find('button').classes()).toMatch(/_secondary_/);
 
     await wrapper.setProps({ color: 'error' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_error_/);
+    expect(wrapper.classes()).toMatch(/_error_/);
     expect(wrapper.find('button').classes()).toMatch(/_error_/);
 
     await wrapper.setProps({ color: 'success' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_success_/);
+    expect(wrapper.classes()).toMatch(/_success_/);
     expect(wrapper.find('button').classes()).toMatch(/_success_/);
   });
 
   it('passes variant props', async () => {
     const wrapper = createWrapper();
-    expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(
-      /_outlined_/,
-    );
+    expect(wrapper.classes()).not.toMatch(/_outlined_/);
     await wrapper.setProps({ variant: 'outlined' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_outlined_/);
+    expect(wrapper.classes()).toMatch(/_outlined_/);
     expect(wrapper.find('button').classes()).toMatch(/_outlined_/);
     await wrapper.setProps({ variant: 'text' });
-    expect(wrapper.find('div[class*=wrapper]').classes()).toMatch(/_text_/);
+    expect(wrapper.classes()).toMatch(/_text_/);
     expect(wrapper.find('button').classes()).toMatch(/_text_/);
   });
 
@@ -192,5 +186,44 @@ describe('Button/ButtonGroup', () => {
     await buttons.at(2).trigger('click');
     expect(buttons.at(2).classes()).toMatch(/_active_/);
     expect(get(value)).toEqual([2]);
+
+    await wrapper.setProps({ gap: 'md' });
+    expect(wrapper.classes()).toMatch(/_separated_/);
+    expect(wrapper.classes()).toMatch(/_separated__md/);
+
+    await wrapper.setProps({ gap: 'sm' });
+    expect(wrapper.classes()).toMatch(/_separated_/);
+    expect(wrapper.classes()).toMatch(/_separated__sm/);
+
+    await wrapper.setProps({ gap: 'lg' });
+    expect(wrapper.classes()).toMatch(/_separated_/);
+    expect(wrapper.classes()).toMatch(/_separated__lg/);
+  });
+
+  it('disabled button group', async () => {
+    const value = ref([0]);
+    const updateModelValue = vi.fn((v?: number[]) => set(value, v));
+    const wrapper = createWrapper({
+      propsData: {
+        value,
+      },
+      inheritAttrs: true,
+    });
+
+    wrapper.vm.$on('input', (e: number[]) => {
+      updateModelValue(e);
+    });
+
+    const buttons = wrapper.findAll('button');
+
+    expect(buttons.at(0).attributes('disabled')).toBeUndefined();
+    expect(buttons.at(1).attributes('disabled')).toBeUndefined();
+    expect(buttons.at(2).attributes('disabled')).toBeUndefined();
+
+    await wrapper.setProps({ disabled: true });
+
+    expect(buttons.at(0).attributes('disabled')).toBeDefined();
+    expect(buttons.at(1).attributes('disabled')).toBeDefined();
+    expect(buttons.at(2).attributes('disabled')).toBeDefined();
   });
 });

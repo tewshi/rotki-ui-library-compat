@@ -301,23 +301,23 @@ type ButtonGroupData = ButtonGroupProps & {
 };
 
 const buttonGroups = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary' },
-  { count: 0, color: 'secondary' },
-  { count: 0, color: 'error' },
+  { count: 0, color: 'primary', gap: 'sm' },
+  { count: 0, color: 'secondary', gap: 'md' },
+  { count: 0, color: 'error', gap: 'lg' },
   { count: 0, color: 'warning' },
   { count: 0, color: 'info' },
   { count: 0, color: 'success' },
 
-  { count: 0, color: 'primary', vertical: true },
-  { count: 0, color: 'secondary', vertical: true },
-  { count: 0, color: 'error', vertical: true },
+  { count: 0, color: 'primary', vertical: true, gap: 'sm' },
+  { count: 0, color: 'secondary', vertical: true, gap: 'md' },
+  { count: 0, color: 'error', vertical: true, gap: 'lg' },
   { count: 0, color: 'warning', vertical: true },
   { count: 0, color: 'info', vertical: true },
   { count: 0, color: 'success', vertical: true },
 
-  { count: 0, color: 'primary', variant: 'outlined' },
-  { count: 0, color: 'secondary', variant: 'outlined' },
-  { count: 0, color: 'error', variant: 'outlined' },
+  { count: 0, color: 'primary', variant: 'outlined', gap: 'sm' },
+  { count: 0, color: 'secondary', variant: 'outlined', gap: 'md' },
+  { count: 0, color: 'error', variant: 'outlined', gap: 'lg' },
   { count: 0, color: 'warning', variant: 'outlined' },
   { count: 0, color: 'info', variant: 'outlined' },
   { count: 0, color: 'success', variant: 'outlined' },
@@ -334,14 +334,23 @@ const buttonGroups = ref<ButtonGroupData[]>([
     color: 'primary',
     variant: 'outlined',
     size: 'lg',
+    gap: 'sm',
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
     size: 'lg',
+    gap: 'md',
   },
-  { count: 0, color: 'error', variant: 'outlined', rounded: true, size: 'lg' },
+  {
+    count: 0,
+    color: 'error',
+    variant: 'outlined',
+    rounded: true,
+    size: 'lg',
+    gap: 'lg',
+  },
   {
     count: 0,
     color: 'warning',
@@ -361,14 +370,23 @@ const buttonGroups = ref<ButtonGroupData[]>([
     color: 'primary',
     variant: 'outlined',
     size: 'sm',
+    gap: 'sm',
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
     size: 'sm',
+    gap: 'md',
   },
-  { count: 0, color: 'error', variant: 'outlined', rounded: true, size: 'sm' },
+  {
+    count: 0,
+    color: 'error',
+    variant: 'outlined',
+    rounded: true,
+    size: 'sm',
+    gap: 'lg',
+  },
   {
     count: 0,
     color: 'warning',
@@ -385,9 +403,9 @@ const buttonGroups = ref<ButtonGroupData[]>([
 ]);
 
 const toggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', value: 0 },
-  { count: 0, color: 'secondary', required: true, value: 0 },
-  { count: 0, color: 'primary', value: 0, disabled: true },
+  { count: 0, color: 'primary', value: 0, gap: 'sm' },
+  { count: 0, color: 'secondary', required: true, value: 0, gap: 'md' },
+  { count: 0, color: 'primary', value: 0, disabled: true, gap: 'lg' },
   {
     count: 0,
     color: 'secondary',
@@ -399,14 +417,15 @@ const toggleButtons = ref<ButtonGroupData[]>([
   { count: 0, color: 'warning', required: true, value: 0 },
   { count: 0, color: 'info', value: 0 },
   { count: 0, color: 'success', required: true, value: 0 },
-  { count: 0, color: 'primary', vertical: true, value: 0 },
+  { count: 0, color: 'primary', vertical: true, value: 0, gap: 'sm' },
   {
     count: 0,
     color: 'secondary',
     vertical: true,
     value: 0,
+    gap: 'md',
   },
-  { count: 0, color: 'error', vertical: true, value: 0 },
+  { count: 0, color: 'error', vertical: true, value: 0, gap: 'lg' },
   { count: 0, color: 'warning', vertical: true, value: 0 },
   { count: 0, color: 'info', vertical: true, value: 0 },
   { count: 0, color: 'success', vertical: true, value: 0 },
@@ -415,18 +434,21 @@ const toggleButtons = ref<ButtonGroupData[]>([
     color: 'primary',
     variant: 'outlined',
     value: 0,
+    gap: 'sm',
   },
   {
     count: 0,
     color: 'secondary',
     variant: 'outlined',
     value: 0,
+    gap: 'md',
   },
   {
     count: 0,
     color: 'error',
     variant: 'outlined',
     value: 0,
+    gap: 'lg',
   },
   {
     count: 0,
@@ -459,14 +481,15 @@ const toggleButtons = ref<ButtonGroupData[]>([
   { count: 0, color: 'success', variant: 'text', value: 0 },
 ]);
 const multipleToggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', value: ['center'] },
+  { count: 0, color: 'primary', value: ['center'], gap: 'sm' },
   {
     count: 0,
     color: 'secondary',
     required: true,
     value: ['center'],
+    gap: 'md',
   },
-  { count: 0, color: 'primary', value: ['center'], disabled: true },
+  { count: 0, color: 'primary', value: ['center'], disabled: true, gap: 'lg' },
   {
     count: 0,
     color: 'secondary',
@@ -478,14 +501,15 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
   { count: 0, color: 'warning', required: true, value: ['center'] },
   { count: 0, color: 'info', value: ['center'] },
   { count: 0, color: 'success', required: true, value: ['center'] },
-  { count: 0, color: 'primary', vertical: true, value: ['center'] },
+  { count: 0, color: 'primary', vertical: true, value: ['center'], gap: 'sm' },
   {
     count: 0,
     color: 'secondary',
     vertical: true,
     value: ['center'],
+    gap: 'md',
   },
-  { count: 0, color: 'error', vertical: true, value: ['center'] },
+  { count: 0, color: 'error', vertical: true, value: ['center'], gap: 'lg' },
   { count: 0, color: 'warning', vertical: true, value: ['center'] },
   { count: 0, color: 'info', vertical: true, value: ['center'] },
   { count: 0, color: 'success', vertical: true, value: ['center'] },
@@ -532,8 +556,8 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
     variant: 'text',
     value: ['center'],
   },
-  { count: 0, color: 'error', variant: 'text', value: ['center'] },
-  { count: 0, color: 'warning', variant: 'text', value: ['center'] },
+  { count: 0, color: 'error', variant: 'text', value: ['center'], gap: 'sm' },
+  { count: 0, color: 'warning', variant: 'text', value: ['center'], gap: 'md' },
   { count: 0, color: 'info', variant: 'text', value: ['center'] },
   { count: 0, color: 'success', variant: 'text', value: ['center'] },
 ]);
@@ -611,7 +635,7 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
           v-model="buttonGroup.value"
           v-bind="objectOmit(buttonGroup, ['value', 'count', 'rounded'])"
         >
-          <RuiButton value="left">
+          <RuiButton value="left" disabled>
             <RuiIcon name="align-left" />
           </RuiButton>
           <RuiButton value="center">

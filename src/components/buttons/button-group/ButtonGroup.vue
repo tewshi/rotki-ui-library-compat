@@ -10,6 +10,7 @@ export interface Props {
   color?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
+  gap?: 'sm' | 'md' | 'lg';
   required?: boolean;
   value?: ModelType | ModelType[];
   disabled?: boolean;
@@ -24,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
   color: undefined,
   variant: 'default',
   size: undefined,
+  gap: undefined,
   value: undefined,
 });
 
@@ -32,12 +34,23 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const { value, required } = toRefs(props);
+const { value, required, disabled, color, variant, size } = toRefs(props);
 const children = computed(() =>
   (slots.default?.() ?? []).map((node, i) => {
-    const propsData = (node.componentOptions?.propsData || {}) as ButtonProps;
+    const propsData = (node.componentOptions?.propsData ?? {}) as ButtonProps;
 
     propsData.active = activeItem(propsData?.value ?? i);
+
+    // if group is disabled, disable child buttons
+    if (get(disabled)) {
+      propsData.disabled = true;
+    }
+
+    const rootColor = get(color);
+    // if given root color, use it
+    if (rootColor) {
+      propsData.color = rootColor;
+    }
     return { node, props: propsData };
   }),
 );
@@ -78,28 +91,28 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
-    <div
-      :class="[
-        css.wrapper,
-        css[color ?? ''],
-        css[variant],
-        { [css.wrapper__vertical]: vertical },
-      ]"
-    >
-      <VRender
-        v-for="(child, i) in children"
-        :key="i"
-        :class="css.button"
-        :color="color"
-        :disabled="disabled"
-        :size="size"
-        :v-node="child.node"
-        v-bind="child.props"
-        :variant="variant"
-        @input="onClick($event ?? i)"
-      />
-    </div>
+  <div
+    :class="[
+      css.wrapper,
+      css[color ?? ''],
+      css[variant],
+      {
+        [css.wrapper__vertical]: vertical,
+        [css.separated]: !!gap,
+        [css[`separated__${gap}`]]: !!gap,
+      },
+    ]"
+  >
+    <VRender
+      v-for="(child, i) in children"
+      :key="i"
+      :class="css.button"
+      :size="size"
+      :v-node="child.node"
+      v-bind="child.props"
+      :variant="variant"
+      @input="onClick($event ?? i)"
+    />
   </div>
 </template>
 
@@ -118,8 +131,30 @@ onMounted(() => {
     }
   }
 
+  &.separated {
+    @apply divide-x-0 divide-y-0 outline-0;
+
+    &__sm {
+      @apply gap-2;
+    }
+    &__md {
+      @apply gap-4;
+    }
+    &__lg {
+      @apply gap-6;
+    }
+
+    .button {
+      @apply outline-1;
+    }
+  }
+
+  &:not(.separated) .button {
+    @apply rounded-none;
+  }
+
   .button {
-    @apply rounded-none border-0 outline-0;
+    @apply border-0 outline-0;
   }
 
   @each $color in c.$context-colors {
