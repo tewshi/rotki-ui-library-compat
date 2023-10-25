@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   elevation: null,
   variant: 'default',
   icon: false,
+  active: false,
   size: undefined,
   tag: 'button',
   value: undefined,
