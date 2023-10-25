@@ -26,7 +26,9 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'default',
   size: undefined,
   gap: undefined,
+  required: false,
   value: undefined,
+  disabled: false,
 });
 
 const emit = defineEmits<{
