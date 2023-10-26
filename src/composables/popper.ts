@@ -84,9 +84,9 @@ export const usePopper = (
       set(closeTimeout, undefined);
     }
 
-    set(popperEnter, true);
-
     if (!get(openTimeout)) {
+      set(popperEnter, true);
+
       const timeout = setTimeout(() => {
         set(open, true);
         set(openTimeout, undefined);
@@ -107,6 +107,9 @@ export const usePopper = (
 
     if (!get(closeTimeout)) {
       const timeout = setTimeout(() => {
+        if (!get(open)) {
+          onPopperLeave();
+        }
         set(open, false);
         set(closeTimeout, undefined);
       }, get(closeDelay));
