@@ -185,7 +185,7 @@ const textFields = ref<TextFieldData[]>([
   },
 ]);
 
-const revealableTextFields = ref([
+const revealableTextFields = ref<TextFieldData[]>([
   {
     value: '',
     color: 'primary',
@@ -220,7 +220,6 @@ const revealableTextFields = ref([
     variant: 'outlined',
     label: 'API Key',
     textColor: 'info',
-    disableToggle: true,
     disabled: true,
   },
   {
