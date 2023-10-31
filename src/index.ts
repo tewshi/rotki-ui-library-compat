@@ -1,6 +1,8 @@
 /* eslint-disable max-lines,import/max-dependencies */
-import { type VueConstructor } from 'vue';
+import Vue, { type VueConstructor } from 'vue';
+import { isClient } from '@vueuse/core';
 import { StepperState } from '@/types/stepper';
+import { createTeleport } from '@/components/overlays/teleport-container';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
 
@@ -21,10 +23,24 @@ export * from '@/components';
 
 export { StepperState };
 
+const installTeleport = () => {
+  if (!isClient) {
+    return;
+  }
+
+  const teleport = createTeleport();
+  Object.defineProperty(Vue.prototype, '$teleport', {
+    get() {
+      return teleport;
+    },
+  });
+};
+
 export const RuiPlugin = {
   install: (app: VueConstructor, options?: InitThemeOptions) => {
     const { registerIcons } = useIcons();
     registerIcons(options?.icons || []);
     useRotkiTheme().init({ ...options });
+    installTeleport();
   },
 };

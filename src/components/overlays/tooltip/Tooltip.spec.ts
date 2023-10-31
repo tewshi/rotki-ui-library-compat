@@ -1,10 +1,24 @@
 import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
+import Vue from 'vue';
 import Button from '@/components/buttons/button/Button.vue';
 import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
+import { createTeleport } from '@/components/overlays/teleport-container';
 
-const createWrapper = (options?: any) =>
-  mount(Tooltip, {
+const TeleportPlugin = {
+  install() {
+    const teleport = createTeleport();
+    Object.defineProperty(Vue.prototype, '$teleport', {
+      get() {
+        return teleport;
+      },
+    });
+  },
+};
+
+const createWrapper = (options?: any) => {
+  Vue.use(TeleportPlugin);
+  return mount(Tooltip, {
     ...options,
     slots: {
       activator: {
@@ -14,6 +28,7 @@ const createWrapper = (options?: any) =>
     },
     stubs: { RuiButton: Button },
   });
+};
 
 const delay = (time: number = 100) =>
   new Promise((resolve) => {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import RuiTeleport from '@/components/overlays/Teleport.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
+import RuiTeleport from '@/components/overlays/Teleport';
 
 export interface Props {
   text?: string | null;
