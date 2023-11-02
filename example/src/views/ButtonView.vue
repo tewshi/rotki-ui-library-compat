@@ -403,7 +403,7 @@ const buttonGroups = ref<ButtonGroupData[]>([
 ]);
 
 const toggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', value: 0, gap: 'sm', activeColor: 'warning' },
+  { count: 0, color: 'primary', value: 0, activeColor: 'warning' },
   {
     count: 0,
     required: true,
@@ -440,7 +440,6 @@ const toggleButtons = ref<ButtonGroupData[]>([
     color: 'primary',
     variant: 'outlined',
     value: 0,
-    gap: 'sm',
   },
   {
     count: 0,
