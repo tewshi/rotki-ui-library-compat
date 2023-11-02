@@ -8,6 +8,7 @@ type ModelType = ButtonProps['value'];
 export interface Props {
   vertical?: boolean;
   color?: ContextColorsType;
+  activeColor?: ContextColorsType;
   variant?: 'default' | 'outlined' | 'text';
   size?: 'sm' | 'lg';
   gap?: 'sm' | 'md' | 'lg';
@@ -23,6 +24,7 @@ defineOptions({
 const props = withDefaults(defineProps<Props>(), {
   vertical: false,
   color: undefined,
+  activeColor: undefined,
   variant: 'default',
   size: undefined,
   gap: undefined,
@@ -36,7 +38,8 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const { value, required, disabled, color, variant, size } = toRefs(props);
+const { value, required, disabled, color, activeColor, variant, size } =
+  toRefs(props);
 const children = computed(() =>
   (slots.default?.() ?? []).map((node, i) => {
     const propsData = (node.componentOptions?.propsData ?? {}) as ButtonProps;
@@ -52,6 +55,12 @@ const children = computed(() =>
     // if given root color, use it
     if (rootColor) {
       propsData.color = rootColor;
+    }
+
+    const _activeColor = get(activeColor);
+    // if given active color, use it
+    if (_activeColor && propsData.active) {
+      propsData.color = _activeColor;
     }
     return { node, props: propsData };
   }),

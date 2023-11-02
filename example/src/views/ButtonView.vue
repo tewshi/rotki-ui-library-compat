@@ -403,8 +403,14 @@ const buttonGroups = ref<ButtonGroupData[]>([
 ]);
 
 const toggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', value: 0, gap: 'sm' },
-  { count: 0, color: 'secondary', required: true, value: 0, gap: 'md' },
+  { count: 0, color: 'primary', value: 0, gap: 'sm', activeColor: 'warning' },
+  {
+    count: 0,
+    required: true,
+    value: 0,
+    gap: 'md',
+    activeColor: 'primary',
+  },
   { count: 0, color: 'primary', value: 0, disabled: true, gap: 'lg' },
   {
     count: 0,
@@ -481,13 +487,19 @@ const toggleButtons = ref<ButtonGroupData[]>([
   { count: 0, color: 'success', variant: 'text', value: 0 },
 ]);
 const multipleToggleButtons = ref<ButtonGroupData[]>([
-  { count: 0, color: 'primary', value: ['center'], gap: 'sm' },
   {
     count: 0,
-    color: 'secondary',
+    color: 'primary',
+    value: ['center'],
+    gap: 'sm',
+    activeColor: 'warning',
+  },
+  {
+    count: 0,
     required: true,
     value: ['center'],
     gap: 'md',
+    activeColor: 'warning',
   },
   { count: 0, color: 'primary', value: ['center'], disabled: true, gap: 'lg' },
   {

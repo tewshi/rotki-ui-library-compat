@@ -49,6 +49,7 @@ const meta: Meta<Props> = {
   argTypes: {
     vertical: { control: 'boolean' },
     color: { control: 'select', options: contextColors },
+    activeColor: { control: 'select', options: contextColors },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'text'],
@@ -134,6 +135,15 @@ export const TextToggle: Story = {
   },
 };
 
+export const ActiveColorToggle: Story = {
+  args: {
+    variant: 'text',
+    value: 0,
+    color: 'primary',
+    activeColor: 'warning',
+  },
+};
+
 export const DefaultToggleMultiple: Story = {
   args: {
     value: [0],
@@ -177,6 +187,15 @@ export const TextToggleMultiple: Story = {
     variant: 'text',
     value: [0],
     color: 'primary',
+  },
+};
+
+export const ActiveColorMultiple: Story = {
+  args: {
+    variant: 'text',
+    value: [0],
+    color: 'primary',
+    activeColor: 'warning',
   },
 };
 
