@@ -101,6 +101,10 @@ import {
   type Props as TabsProps,
 } from '@/components/tabs/tabs/Tabs.vue';
 import { default as RuiDivider } from '@/components/divider/Divider.vue';
+import {
+  default as RuiSkeletonLoader,
+  type Props as SkeletonLoaderProps,
+} from '@/components/loaders/Skeleton.vue';
 
 export {
   RuiAlert,
@@ -129,6 +133,7 @@ export {
   RuiTabItem,
   RuiTablePagination,
   RuiDivider,
+  RuiSkeletonLoader,
   ProgressProps,
   ChipProps,
   TextFieldProps,
@@ -157,4 +162,5 @@ export {
   TabItemsProps,
   TabItemProps,
   TablePaginationProps,
+  SkeletonLoaderProps,
 };
