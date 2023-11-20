@@ -66,6 +66,11 @@ const router = new VueRouter({
       component: () => import('@/views/ProgressView.vue'),
     },
     {
+      path: '/loaders',
+      name: 'loaders',
+      component: () => import('@/views/LoaderView.vue'),
+    },
+    {
       path: '/chips',
       name: 'chips',
       component: () => import('@/views/ChipView.vue'),
