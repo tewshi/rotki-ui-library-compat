@@ -345,12 +345,12 @@ onMounted(computeFieldHeight);
     @apply leading-6 text-rui-text w-full bg-transparent pb-2 pt-0;
     @apply outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
 
-    padding-right: v-bind(appendWidth) !important;
+    padding-right: calc(var(--x-padding) + v-bind(prependWidth)) !important;
 
     &_sizer {
       @apply invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none py-2 px-3 #{!important};
 
-      padding-right: v-bind(appendWidth) !important;
+      padding-right: calc(var(--x-padding) + v-bind(prependWidth)) !important;
     }
 
     &:focus {
@@ -466,15 +466,15 @@ onMounted(computeFieldHeight);
   }
 
   &.dense {
-    .textarea {
-      @apply py-1;
-      &_sizer {
-        @apply py-1;
-      }
-    }
+    .inner_wrapper {
+      @apply pt-2;
 
-    .label {
-      @apply leading-[3.5];
+      .textarea {
+        @apply py-1;
+        &_sizer {
+          @apply py-1;
+        }
+      }
     }
   }
 
@@ -519,19 +519,6 @@ onMounted(computeFieldHeight);
   &.filled {
     .label {
       @apply rounded-t bg-black/[0.06];
-    }
-
-    &.dense {
-      .textarea {
-        @apply py-2;
-        &_sizer {
-          @apply py-2;
-        }
-      }
-
-      .label {
-        @apply leading-[2.5];
-      }
     }
 
     &.no-label {
@@ -601,13 +588,6 @@ onMounted(computeFieldHeight);
     }
 
     &.dense {
-      .textarea {
-        @apply py-2;
-        &_sizer {
-          @apply py-2;
-        }
-      }
-
       .label {
         @apply leading-[2.5];
       }
