@@ -29,6 +29,7 @@ export interface Props {
   minRows?: number | string;
   maxRows?: number | string;
   rowHeight?: number | string;
+  autoGrow?: boolean;
 }
 
 defineOptions({
@@ -58,6 +59,7 @@ const props = withDefaults(defineProps<Props>(), {
   minRows: 2,
   rowHeight: 1.5, // in rems
   maxRows: undefined,
+  autoGrow: false,
 });
 
 const emit = defineEmits<{
@@ -68,6 +70,7 @@ const emit = defineEmits<{
 const {
   label,
   value,
+  autoGrow,
   clearable,
   disabled,
   readonly,
@@ -151,6 +154,10 @@ const clearIconClicked = () => {
 };
 
 const computeFieldHeight = (newVal?: string, oldVal?: string) => {
+  if (!get(autoGrow)) {
+    return;
+  }
+
   const field = get(textarea);
   const fieldValue = newVal ?? get(value);
   const fieldSizer = get(textareaSizer);
@@ -218,6 +225,7 @@ onMounted(computeFieldHeight);
       </div>
       <div :class="css.inner_wrapper">
         <textarea
+          v-if="autoGrow"
           ref="textareaSizer"
           :value="internalValue"
           :class="[css.textarea_sizer]"
@@ -343,14 +351,15 @@ onMounted(computeFieldHeight);
 
   .textarea {
     @apply leading-6 text-rui-text w-full bg-transparent pb-2 pt-0;
-    @apply outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
+    @apply outline-0 outline-none placeholder:opacity-0 focus:placeholder:opacity-100;
 
-    padding-right: calc(var(--x-padding) + v-bind(prependWidth)) !important;
+    --x-padding: 0.75rem;
+    padding-right: calc(var(--x-padding) + v-bind(appendWidth)) !important;
 
     &_sizer {
       @apply invisible absolute top-0 left-0 w-full h-0 -z-10 pointer-events-none py-2 px-3 #{!important};
 
-      padding-right: calc(var(--x-padding) + v-bind(prependWidth)) !important;
+      padding-right: calc(var(--x-padding) + v-bind(appendWidth)) !important;
     }
 
     &:focus {
@@ -407,6 +416,10 @@ onMounted(computeFieldHeight);
   .prepend,
   .append {
     @apply mt-4 mx-3;
+
+    .textarea {
+      --x-padding: 0rem;
+    }
   }
 
   @each $color in c.$context-colors {

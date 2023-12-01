@@ -10,6 +10,7 @@ const textAreas = ref<TextAreaData[]>([
     value: '',
     color: 'primary',
     textColor: 'primary',
+    autoGrow: true,
   },
   { value: '', color: 'secondary', textColor: 'secondary', maxRows: 5 },
   {
