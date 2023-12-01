@@ -144,7 +144,11 @@ const showClearIcon = logicAnd(
         },
       ]"
     >
-      <div class="flex items-center gap-1 shrink-0" :class="css.prepend">
+      <div
+        v-if="slots.prepend || prependIcon"
+        class="flex items-center gap-1 shrink-0"
+        :class="css.prepend"
+      >
         <div v-if="slots.prepend">
           <slot name="prepend" />
         </div>
@@ -173,7 +177,11 @@ const showClearIcon = logicAnd(
           <legend />
         </fieldset>
       </div>
-      <div class="flex items-center gap-1 shrink-0" :class="css.append">
+      <div
+        v-if="slots.append || appendIcon || showClearIcon"
+        class="flex items-center gap-1 shrink-0"
+        :class="css.append"
+      >
         <RuiButton
           v-if="showClearIcon"
           :class="{ hidden: !focusedDebounced }"
@@ -252,7 +260,7 @@ const showClearIcon = logicAnd(
 }
 
 .wrapper {
-  @apply relative w-full min-w-[200px] flex items-center pt-3;
+  @apply relative w-full min-w-[12.5rem] flex items-center pt-3;
 
   .input {
     @apply leading-6 text-rui-text w-full bg-transparent py-1.5 pr-3 outline-0 outline-none transition-all placeholder:opacity-0 focus:placeholder:opacity-100;
@@ -416,7 +424,7 @@ const showClearIcon = logicAnd(
 
   &.filled {
     .input {
-      @apply pt-6 pb-2;
+      @apply py-4;
 
       &:focus {
         + .label {
@@ -430,10 +438,10 @@ const showClearIcon = logicAnd(
       &[data-has-value='true'],
       &:focus {
         + .label {
-          @apply leading-[2.5];
+          @apply leading-[1.5] pl-4;
 
-          padding-left: calc(var(--x-padding) + var(--prepend-width, 0px));
-          padding-right: calc(var(--x-padding) + var(--append-width, 0px));
+          padding-left: calc(var(--x-padding));
+          padding-right: calc(var(--x-padding));
         }
       }
     }
