@@ -566,7 +566,7 @@ onMounted(computeFieldHeight);
         @apply border-t-transparent;
 
         + .label {
-          @apply leading-[1] pl-4;
+          @apply leading-[0] pl-4;
         }
 
         ~ .fieldset {
