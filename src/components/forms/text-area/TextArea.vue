@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { objectOmit } from '@vueuse/shared';
 import { logicAnd, logicNot } from '@vueuse/math';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon, { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
@@ -21,7 +22,6 @@ export interface Props {
   successMessages?: string | string[];
   hideDetails?: boolean;
   prependIcon?: RuiIcons;
-  prependOuterIcon?: RuiIcons;
   appendIcon?: RuiIcons;
   readonly?: boolean;
   clearable?: boolean;
@@ -51,7 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
   successMessages: () => [],
   hideDetails: false,
   prependIcon: undefined,
-  prependOuterIcon: undefined,
   appendIcon: undefined,
   readonly: false,
   clearable: false,
@@ -194,7 +193,7 @@ onMounted(computeFieldHeight);
 </script>
 
 <template>
-  <div>
+  <div v-bind="getRootAttrs(attrs)">
     <div
       :class="[
         css.wrapper,
@@ -242,7 +241,7 @@ onMounted(computeFieldHeight);
           :style="fieldStyles"
           :disabled="disabled"
           :readonly="readonly"
-          v-bind="objectOmit(attrs, ['class'])"
+          v-bind="getNonRootAttrs(attrs)"
           v-on="
             // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
             objectOmit($listeners, ['input'])
