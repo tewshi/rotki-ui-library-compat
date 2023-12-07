@@ -327,6 +327,9 @@
     "assert": true,
     "injectLocal": true,
     "provideLocal": true,
-    "useFormTextDetail": true
+    "useFormTextDetail": true,
+    "getRootAttrs": true,
+    "getNonRootAttrs": true,
+    "getRootKeys": true
   }
 }
