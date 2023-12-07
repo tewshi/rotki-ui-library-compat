@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { objectOmit } from '@vueuse/shared';
 import { logicAnd, logicNot } from '@vueuse/math';
+import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
 import { type ContextColorsType } from '@/consts/colors';
 import Icon, { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
@@ -127,7 +128,7 @@ const showClearIcon = logicAnd(
 </script>
 
 <template>
-  <div>
+  <div v-bind="getRootAttrs(attrs)">
     <div
       ref="wrapper"
       :class="[
@@ -149,9 +150,7 @@ const showClearIcon = logicAnd(
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <div v-if="slots.prepend">
-          <slot name="prepend" />
-        </div>
+        <slot v-if="slots.prepend" name="prepend" />
         <div v-else-if="prependIcon" :class="[css.icon]">
           <Icon :name="prependIcon" />
         </div>
@@ -164,7 +163,7 @@ const showClearIcon = logicAnd(
           :class="css.input"
           :disabled="disabled"
           :readonly="readonly"
-          v-bind="objectOmit(attrs, ['class'])"
+          v-bind="getNonRootAttrs(attrs)"
           v-on="
             // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
             objectOmit($listeners, ['input'])
@@ -194,9 +193,7 @@ const showClearIcon = logicAnd(
         >
           <RuiIcon name="close-line" size="20" />
         </RuiButton>
-        <div v-if="slots.append">
-          <slot name="append" />
-        </div>
+        <slot v-if="slots.append" name="append" />
         <div v-else-if="appendIcon" :class="[css.icon]">
           <Icon :name="appendIcon" />
         </div>
