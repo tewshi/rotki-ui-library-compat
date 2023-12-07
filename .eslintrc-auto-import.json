@@ -330,6 +330,10 @@
     "useFormTextDetail": true,
     "getRootAttrs": true,
     "getNonRootAttrs": true,
-    "getRootKeys": true
+    "getRootKeys": true,
+    "ExtractDefaultPropTypes": true,
+    "ExtractPropTypes": true,
+    "ExtractPublicPropTypes": true,
+    "useClipboardItems": true
   }
 }
