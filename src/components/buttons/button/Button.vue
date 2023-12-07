@@ -15,6 +15,7 @@ export interface ButtonProps {
   active?: boolean;
   size?: 'sm' | 'lg';
   tag?: 'button' | 'a';
+  type?: 'button' | 'submit';
   value?: ModelType;
 }
 
@@ -33,6 +34,7 @@ const props = withDefaults(defineProps<ButtonProps>(), {
   active: false,
   size: undefined,
   tag: 'button',
+  type: 'button',
   value: undefined,
 });
 
@@ -98,6 +100,7 @@ const slots = useSlots();
       },
     ]"
     :disabled="disabled || loading"
+    :type="tag === 'button' ? type : undefined"
     v-bind="attrs"
     v-on="
       // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api

@@ -14,6 +14,7 @@ describe('Button/Button', () => {
     });
     expect(wrapper.text()).toContain(label);
     expect(wrapper.classes()).toMatch(/_btn_/);
+    expect(wrapper.attributes('type')).toBe('button');
   });
 
   it('passes disabled props', async () => {
