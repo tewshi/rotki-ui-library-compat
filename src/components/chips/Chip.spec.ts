@@ -29,7 +29,7 @@ describe('Chips/Chip', () => {
     expect(wrapper.emitted()).toHaveProperty('click:close');
   });
 
-  it("disabled chip can't close close", async () => {
+  it("disabled chip can't be closed", async () => {
     const wrapper = createWrapper({
       propsData: {
         closeable: true,

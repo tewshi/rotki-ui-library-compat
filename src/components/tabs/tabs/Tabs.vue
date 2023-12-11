@@ -84,6 +84,8 @@ const updateValue = (newValue: string | number) => {
   set(internalValue, newValue);
 };
 
+const route = useRoute();
+
 const isPathMatch = (
   path: string,
   {
@@ -94,7 +96,6 @@ const isPathMatch = (
     exact?: boolean;
   },
 ) => {
-  const route = useRoute();
   const currentRoute = route.fullPath;
 
   if (exactPath) {
@@ -109,10 +110,51 @@ const isPathMatch = (
   return currentRoute.startsWith(routeWithoutQueryParams);
 };
 
-onMounted(() => {
-  if (get(value) !== undefined) {
-    return;
-  }
+const keepActiveTabVisible = () => {
+  nextTick(() => {
+    if (!get(showArrows)) {
+      return;
+    }
+
+    const elem = get(wrapper);
+    const barElem = get(bar);
+    if (elem) {
+      const activeTab = (elem.querySelector('.active-tab') ??
+        elem.querySelector('.active-tab-link')) as HTMLElement;
+
+      if (!activeTab || !barElem) {
+        return;
+      }
+
+      const childLeft = activeTab.offsetLeft - elem.offsetLeft;
+      const childTop = activeTab.offsetTop - elem.offsetTop;
+      const childWidth = activeTab.offsetWidth;
+      const childHeight = activeTab.offsetHeight;
+      const parentScrollLeft = barElem.scrollLeft;
+      const parentScrollTop = barElem.scrollTop;
+      const parentWidth = barElem.offsetWidth;
+      const parentHeight = barElem.offsetHeight;
+
+      const scrollLeft = Math.max(
+        Math.min(parentScrollLeft, childLeft),
+        childLeft + childWidth - parentWidth,
+      );
+
+      const scrollTop = Math.max(
+        Math.min(parentScrollTop, childTop),
+        childTop + childHeight - parentHeight,
+      );
+
+      barElem.scrollTo({
+        left: scrollLeft,
+        top: scrollTop,
+        behavior: 'smooth',
+      });
+    }
+  });
+};
+
+const applyNewValue = (onlyLink = false) => {
   const enabledChildren = get(children).filter(
     (child) => !(child.node.componentOptions?.propsData as TabProps).disabled,
   );
@@ -120,7 +162,7 @@ onMounted(() => {
     let newValue: string | number = 0;
     enabledChildren.forEach((child, index) => {
       const props = child.node.componentOptions?.propsData as TabProps;
-      if (index === 0 && props.tabValue) {
+      if (!onlyLink && index === 0 && props.tabValue) {
         newValue = props.tabValue;
       }
       if (props.link !== false && props.to && isPathMatch(props.to, props)) {
@@ -130,6 +172,17 @@ onMounted(() => {
     updateValue(newValue);
   }
   keepActiveTabVisible();
+};
+
+onMounted(() => {
+  if (get(value) !== undefined) {
+    return;
+  }
+  applyNewValue();
+});
+
+watch(route, () => {
+  applyNewValue(true);
 });
 
 const css = useCssModule();
@@ -204,50 +257,6 @@ const onNextSliderClick = () => {
   } else {
     set(y, get(y) + get(height));
   }
-};
-
-const keepActiveTabVisible = () => {
-  nextTick(() => {
-    if (!get(showArrows)) {
-      return;
-    }
-
-    const elem = get(wrapper);
-    const barElem = get(bar);
-    if (elem) {
-      const activeTab = (elem.querySelector('.active-tab') ??
-        elem.querySelector('.active-tab-link')) as HTMLElement;
-
-      if (!activeTab || !barElem) {
-        return;
-      }
-
-      const childLeft = activeTab.offsetLeft - elem.offsetLeft;
-      const childTop = activeTab.offsetTop - elem.offsetTop;
-      const childWidth = activeTab.offsetWidth;
-      const childHeight = activeTab.offsetHeight;
-      const parentScrollLeft = barElem.scrollLeft;
-      const parentScrollTop = barElem.scrollTop;
-      const parentWidth = barElem.offsetWidth;
-      const parentHeight = barElem.offsetHeight;
-
-      const scrollLeft = Math.max(
-        Math.min(parentScrollLeft, childLeft),
-        childLeft + childWidth - parentWidth,
-      );
-
-      const scrollTop = Math.max(
-        Math.min(parentScrollTop, childTop),
-        childTop + childHeight - parentHeight,
-      );
-
-      barElem.scrollTo({
-        left: scrollLeft,
-        top: scrollTop,
-        behavior: 'smooth',
-      });
-    }
-  });
 };
 
 useResizeObserver(bar, () => {

@@ -41,3 +41,7 @@ vi.mock('vue', async () => {
     ),
   };
 });
+
+vi.mock('vue-router/composables', () => ({
+  useRoute: vi.fn(),
+}));
