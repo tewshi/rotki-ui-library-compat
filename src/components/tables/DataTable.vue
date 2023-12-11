@@ -32,7 +32,7 @@ export interface Props {
   /**
    * list of items for each row
    */
-  rows: Array<Record<string, any>>;
+  rows: any[];
   /**
    * the attribute used to identify each row uniquely for selection, usually `id`
    */
