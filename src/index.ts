@@ -16,7 +16,7 @@ export {
   ThemeMode,
 } from '@/types/theme';
 
-export { type ContextColorsType } from '@/consts/colors';
+export { type ContextColorsType, contextColors } from '@/consts/colors';
 
 export * from '@/composables';
 export * from '@/components';
