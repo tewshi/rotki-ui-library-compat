@@ -2,7 +2,12 @@ import '@/assets/main.css';
 import '@rotki/ui-library-compat/style.css';
 import '@fontsource/roboto/latin.css';
 
-import { PiniaVuePlugin, createPinia, setActivePinia } from 'pinia';
+import {
+  PiniaVuePlugin,
+  createPinia,
+  setActivePinia,
+  storeToRefs,
+} from 'pinia';
 import {
   RiAddFill,
   RiAlertLine,
@@ -30,10 +35,13 @@ import {
 import Vue from 'vue';
 import App from '@/App.vue';
 import router from '@/router';
+import { useCounterStore } from '@/stores/counter';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 setActivePinia(pinia);
+
+const { itemsPerPage } = storeToRefs(useCounterStore());
 
 const RuiPlugin = createRui({
   theme: {
@@ -61,6 +69,11 @@ const RuiPlugin = createRui({
       RiArrowDownCircleLine,
     ],
   },
+  defaults: {
+    table: {
+      itemsPerPage,
+    },
+  },
 });
 Vue.use(RuiPlugin);
 
@@ -68,5 +81,8 @@ new Vue({
   // @ts-ignore
   pinia,
   router,
+  setup() {
+    RuiPlugin.setupProvide();
+  },
   render: (h) => h(App),
 }).$mount('#app');

@@ -1,8 +1,20 @@
+/* eslint-disable max-lines */
 import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import DataTable, { type TableColumn } from '@/components/tables/DataTable.vue';
+import TablePagination from '@/components/tables/TablePagination.vue';
+import { RuiSimpleSelect } from '~/src';
 
-const createWrapper = (options?: any) => mount(DataTable, options);
+const createWrapper = (options?: any) =>
+  mount(DataTable, {
+    ...options,
+    provide: {
+      [TableSymbol.valueOf()]: {
+        itemsPerPage: ref(10),
+        globalItemsPerPage: get(false),
+      },
+    },
+  });
 
 describe('DataTable', () => {
   const data = [
@@ -302,5 +314,152 @@ describe('DataTable', () => {
     await wrapper.setProps({ stickyHeader: false });
 
     expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
+  });
+
+  describe('global settings', () => {
+    it('should follow global settings', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        components: {
+          DataTable,
+        },
+        provide: {
+          [TableSymbol.valueOf()]: createTableDefaults({
+            itemsPerPage,
+            globalItemsPerPage: true,
+          }),
+        },
+      });
+
+      await nextTick();
+
+      const paginate = wrapper.findAllComponents(TablePagination);
+      expect(paginate).toHaveLength(2);
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      const select = paginate.at(0).findComponent(RuiSimpleSelect);
+      select.vm.$emit('input', 10);
+
+      await nextTick();
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
+
+    it('should respect local setting override', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='false' :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        components: {
+          DataTable,
+        },
+        provide: {
+          [TableSymbol.valueOf()]: createTableDefaults({
+            itemsPerPage,
+            globalItemsPerPage: true,
+          }),
+        },
+      });
+
+      await nextTick();
+
+      const paginate = wrapper.findAllComponents(TablePagination);
+      expect(paginate).toHaveLength(2);
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      const globalSelect = paginate.at(0).findComponent(RuiSimpleSelect);
+      const localSelect = paginate.at(1).findComponent(RuiSimpleSelect);
+      globalSelect.vm.$emit('input', 10);
+      localSelect.vm.$emit('input', 25);
+
+      await nextTick();
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
+
+    it('should follow single global setting', async () => {
+      const itemsPerPage = ref(25);
+      const wrapperComponent = {
+        template:
+          "<div><DataTable :rows='[]' row-attr='id'/><DataTable :globalItemsPerPage='true' :rows='[]' row-attr='id'/></div>",
+      };
+
+      const wrapper = mount(wrapperComponent, {
+        components: {
+          DataTable,
+        },
+        provide: {
+          [TableSymbol.valueOf()]: createTableDefaults({
+            itemsPerPage,
+          }),
+        },
+      });
+
+      await nextTick();
+
+      const paginate = wrapper.findAllComponents(TablePagination);
+      expect(paginate).toHaveLength(2);
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      const globalSelect = paginate.at(0).findComponent(RuiSimpleSelect);
+      const localSelect = paginate.at(1).findComponent(RuiSimpleSelect);
+      globalSelect.vm.$emit('input', 25);
+      localSelect.vm.$emit('input', 10);
+
+      await nextTick();
+
+      expect(paginate.at(0).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 25 }),
+      );
+
+      expect(paginate.at(1).vm.value).toMatchObject(
+        expect.objectContaining({ limit: 10 }),
+      );
+
+      expect(get(itemsPerPage)).toBe(10);
+    });
   });
 });

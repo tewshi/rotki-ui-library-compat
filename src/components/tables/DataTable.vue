@@ -138,6 +138,11 @@ export interface Props {
    */
   stickyHeader?: boolean;
   stickyOffset?: number;
+  /**
+   * Affects how the items per page work across the app.
+   * When true, changing the items per page setting in one table will affect other tables.
+   */
+  globalItemsPerPage?: boolean;
 }
 
 defineOptions({
@@ -165,6 +170,7 @@ const props = withDefaults(defineProps<Props>(), {
   singleExpand: false,
   stickyHeader: false,
   stickyOffset: 0,
+  globalItemsPerPage: undefined,
 });
 
 const emit = defineEmits<{
@@ -195,6 +201,13 @@ const {
 
 const css = useCssModule();
 const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
+const tableDefaults = useTable();
+const globalItemsPerPageSettings = computed(() => {
+  if (props.globalItemsPerPage !== undefined) {
+    return props.globalItemsPerPage;
+  }
+  return get(tableDefaults.globalItemsPerPage);
+});
 
 /**
  * Prepare the columns from props or generate using first item in the list
@@ -238,6 +251,25 @@ watchImmediate(pagination, (pagination) => {
 });
 
 const expandable = computed(() => get(expanded) && slots['expanded-item']);
+
+/**
+ * Keeps the global items per page in sync with the internal state.
+ */
+watch(internalPaginationState, (pagination) => {
+  if (pagination?.limit && get(globalItemsPerPageSettings)) {
+    set(tableDefaults.itemsPerPage, pagination.limit);
+  }
+});
+
+watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
+  if (!get(globalItemsPerPageSettings)) {
+    return;
+  }
+  set(paginationData, {
+    ...get(paginationData),
+    limit: itemsPerPage,
+  });
+});
 
 /**
  * Pagination is different for search
@@ -594,6 +626,16 @@ watch(search, () => {
   if (pagination) {
     pagination.page = 1;
   }
+});
+
+onMounted(() => {
+  if (!get(globalItemsPerPageSettings)) {
+    return;
+  }
+  set(paginationData, {
+    ...get(paginationData),
+    limit: get(tableDefaults.itemsPerPage),
+  });
 });
 
 const slots = useSlots();

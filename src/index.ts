@@ -1,8 +1,13 @@
 /* eslint-disable max-lines,import/max-dependencies */
-import Vue, { type VueConstructor } from 'vue';
+import Vue, { type VueConstructor, provide } from 'vue';
 import { isClient } from '@vueuse/core';
 import { StepperState } from '@/types/stepper';
 import { createTeleport } from '@/components/overlays/teleport-container';
+import {
+  type TableOptions,
+  TableSymbol,
+  createTableDefaults,
+} from '@/composables/defaults/table';
 import type { InitThemeOptions } from '@/types/theme';
 import '@/style.scss';
 
@@ -25,6 +30,9 @@ export { StepperState };
 
 export interface RuiOptions {
   theme?: InitThemeOptions;
+  defaults?: {
+    table?: TableOptions;
+  };
 }
 
 const installTeleport = () => {
@@ -50,7 +58,13 @@ export function createRui(options: RuiOptions = {}) {
     installTeleport();
   };
 
+  const setupProvide = () => {
+    const tableDefaults = createTableDefaults(options.defaults?.table);
+    provide(TableSymbol, tableDefaults);
+  };
+
   return {
     install,
+    setupProvide,
   };
 }
