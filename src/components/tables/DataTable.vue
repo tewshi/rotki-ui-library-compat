@@ -18,6 +18,8 @@ export interface TableColumn {
   [key: string]: any;
 }
 
+type TableRow = Record<string, any>;
+
 export interface SortColumn {
   column?: string;
   direction: 'asc' | 'desc';
@@ -32,7 +34,7 @@ export interface Props {
   /**
    * list of items for each row
    */
-  rows: any[];
+  rows: TableRow[];
   /**
    * the attribute used to identify each row uniquely for selection, usually `id`
    */
@@ -122,6 +124,11 @@ export interface Props {
    * should add zebra-striping to the table row
    */
   striped?: boolean;
+  /**
+   * make expansion work like accordion
+   */
+  stickyHeader?: boolean;
+  stickyOffset?: number;
 }
 
 defineOptions({
@@ -145,6 +152,8 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: 'md',
   hideDefaultFooter: false,
   striped: false,
+  stickyHeader: false,
+  stickyOffset: 0,
 });
 
 const emit = defineEmits<{
@@ -167,9 +176,11 @@ const {
   sort,
   loading,
   sortModifiers,
+  stickyOffset,
 } = toRefs(props);
 
 const css = useCssModule();
+const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
 
 /**
  * Prepare the columns from props or generate using first item in the list
@@ -394,6 +405,15 @@ const indeterminate = computed(() => {
 
 const noData = computed(() => get(filtered).length === 0);
 
+const colspan = computed(() => {
+  let columnLength = get(columns).length;
+  if (get(selectedData)) {
+    columnLength++;
+  }
+
+  return columnLength;
+});
+
 const isSortedBy = (key: string) => key in get(sortedMap);
 
 const getSortIndex = (key: string) => {
@@ -529,9 +549,19 @@ const slots = useSlots();
       { [css.outlined]: outlined },
     ]"
   >
-    <div :class="css.scroller">
-      <table :class="[css.table, { [css.dense]: dense }]" aria-label="">
-        <thead :class="css.thead">
+    <div ref="tableScroller" :class="css.scroller">
+      <table
+        ref="table"
+        :class="[css.table, { [css.dense]: dense }]"
+        aria-label=""
+      >
+        <thead
+          data-id="head-main"
+          :class="[
+            css.thead,
+            { [css.sticky__header]: stickyHeader, [css.stick__top]: stick },
+          ]"
+        >
           <tr :class="css.tr">
             <th v-if="selectedData" :class="css.checkbox" scope="col">
               <Checkbox
@@ -628,6 +658,26 @@ const slots = useSlots();
                 />
               </div>
             </th>
+          </tr>
+        </thead>
+        <thead v-if="stickyHeader" :class="css.thead" data-id="head-clone">
+          <tr :class="css.tr">
+            <th v-if="selectedData" scope="col" :class="css.checkbox" />
+
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              scope="col"
+              :class="[
+                css.th,
+                column.class,
+                css[`align__${column.align ?? 'start'}`],
+                {
+                  capitalize: !cols,
+                  [css.sortable]: column.sortable,
+                },
+              ]"
+            />
           </tr>
         </thead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
@@ -754,14 +804,29 @@ const slots = useSlots();
 
   .scroller {
     @apply overflow-x-auto overflow-y-hidden;
+    clip-path: inset(0 0 0 0);
   }
 
   .table {
-    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0;
-    max-width: fit-content;
+    @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative;
 
     .thead {
       @apply divide-y divide-black/[0.12];
+
+      &.sticky__header {
+        @apply top-0 z-10 absolute;
+
+        &.stick__top {
+          @apply fixed;
+
+          tr {
+            th {
+              @apply bg-white border-b border-b-black/[0.12];
+            }
+          }
+        }
+      }
+
       .tr {
         .th {
           @apply p-4;
@@ -784,7 +849,7 @@ const slots = useSlots();
             }
 
             &.align__center {
-              @apply pl-3;
+              @apply px-3;
               .sort__button {
                 @apply ml-6;
               }
@@ -939,6 +1004,13 @@ const slots = useSlots();
       @apply divide-gray-700;
       .thead {
         @apply divide-y divide-gray-700;
+
+        &.sticky__header.stick__top {
+          th {
+            @apply bg-[#121212] border-b border-b-gray-700;
+          }
+        }
+
         .tr {
           .th {
             @apply text-white;
