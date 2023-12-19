@@ -84,6 +84,10 @@ import {
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
 import {
+  type Props as ExpandButtonProps,
+  default as RuiTableRowExpander,
+} from '@/components/tables/ExpandButton.vue';
+import {
   default as RuiTablePagination,
   type TablePaginationData,
   type Props as TablePaginationProps,
@@ -139,6 +143,7 @@ export {
   RuiDivider,
   RuiSkeletonLoader,
   RuiTextArea,
+  RuiTableRowExpander,
   ProgressProps,
   ChipProps,
   TextFieldProps,
@@ -169,4 +174,5 @@ export {
   TablePaginationProps,
   SkeletonLoaderProps,
   TextAreaProps,
+  ExpandButtonProps,
 };

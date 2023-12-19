@@ -4,6 +4,7 @@ import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 import Badge from '@/components/overlays/badge/Badge.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Progress from '@/components/progress/Progress.vue';
+import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, {
   type TablePaginationData,
 } from './TablePagination.vue';
@@ -125,6 +126,14 @@ export interface Props {
    */
   striped?: boolean;
   /**
+   * model for expanded rows
+   */
+  expanded?: TableRow[];
+  /**
+   * make expansion work like accordion
+   */
+  singleExpand?: boolean;
+  /**
    * make expansion work like accordion
    */
   stickyHeader?: boolean;
@@ -152,12 +161,15 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: 'md',
   hideDefaultFooter: false,
   striped: false,
+  expanded: undefined,
+  singleExpand: false,
   stickyHeader: false,
   stickyOffset: 0,
 });
 
 const emit = defineEmits<{
   (e: 'input', value?: string[]): void;
+  (e: 'update:expanded', value?: TableRow[]): void;
   (e: 'update:pagination', value: TablePaginationData): void;
   (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
   (e: 'update:options', value: TableOptions): void;
@@ -176,6 +188,8 @@ const {
   sort,
   loading,
   sortModifiers,
+  expanded,
+  singleExpand,
   stickyOffset,
 } = toRefs(props);
 
@@ -185,16 +199,28 @@ const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
 /**
  * Prepare the columns from props or generate using first item in the list
  */
-const columns = computed(
-  () =>
+const columns = computed(() => {
+  const data =
     get(cols) ??
     Object.keys(get(rows)[0] ?? {}).map((key) => ({
       key,
       [get(columnAttr)]: key,
       sortable: false,
       class: '',
-    })),
-);
+    }));
+
+  if (get(expandable)) {
+    return [
+      ...data,
+      {
+        key: 'expand',
+        sortable: false,
+      },
+    ];
+  }
+
+  return data;
+});
 
 const selectedData = computed({
   get() {
@@ -210,6 +236,8 @@ const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
 watchImmediate(pagination, (pagination) => {
   set(internalPaginationState, pagination);
 });
+
+const expandable = computed(() => get(expanded) && slots['expanded-item']);
 
 /**
  * Pagination is different for search
@@ -433,6 +461,36 @@ const isSelected = (identifier: string) => {
   }
 
   return selection.includes(identifier);
+};
+
+const isExpanded = (identifier: string) => {
+  const expandedRows = get(expanded);
+  if (!expandedRows?.length) {
+    return false;
+  }
+
+  return expandedRows.some((data) => data[get(rowAttr)] === identifier);
+};
+
+const onToggleExpand = (row: TableRow) => {
+  const expandedRows = get(expanded);
+  if (!expandedRows) {
+    return;
+  }
+
+  const key = get(rowAttr);
+  const rowExpanded = isExpanded(row[key]);
+
+  if (get(singleExpand)) {
+    return emit('update:expanded', rowExpanded ? [] : [row]);
+  }
+
+  return emit(
+    'update:expanded',
+    rowExpanded
+      ? expandedRows.filter((item) => item[key] !== row[key])
+      : [...expandedRows, row],
+  );
 };
 
 /**
@@ -681,40 +739,71 @@ const slots = useSlots();
           </tr>
         </thead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
-          <tr
-            v-for="(row, index) in filtered"
-            :key="index"
-            :class="[css.tr, { [css.tr__selected]: isSelected(row[rowAttr]) }]"
-          >
-            <td v-if="selectedData" :class="css.checkbox">
-              <Checkbox
-                :data-cy="`table-toggle-check-${index}`"
-                :value="isSelected(row[rowAttr])"
-                color="primary"
-                hide-details
-                @input="onSelect($event, row[rowAttr])"
-              />
-            </td>
-
-            <td
-              v-for="(column, subIndex) in columns"
-              :key="subIndex"
+          <template v-for="(row, index) in filtered">
+            <tr
+              :key="`row-${index}`"
               :class="[
-                css.td,
-                column.cellClass,
-                css[`align__${column.align ?? 'start'}`],
+                css.tr,
+                { [css.tr__selected]: isSelected(row[rowAttr]) },
               ]"
             >
-              <slot
-                :column="column"
-                :index="index"
-                :name="`item.${column.key}`"
-                :row="row"
+              <td v-if="selectedData" :class="css.checkbox">
+                <Checkbox
+                  :data-cy="`table-toggle-check-${index}`"
+                  :value="isSelected(row[rowAttr])"
+                  color="primary"
+                  hide-details
+                  @input="onSelect($event, row[rowAttr])"
+                />
+              </td>
+
+              <td
+                v-for="(column, subIndex) in columns"
+                :key="subIndex"
+                :class="[
+                  css.td,
+                  column.cellClass,
+                  css[`align__${column.align ?? 'start'}`],
+                ]"
               >
-                {{ row[column.key] }}
-              </slot>
-            </td>
-          </tr>
+                <slot
+                  v-if="column.key === 'expand'"
+                  :name="`item.${column.key}`"
+                  :column="column"
+                  :row="row"
+                  :index="index"
+                >
+                  <ExpandButton
+                    v-if="!slots['item.expand']"
+                    :expanded="isExpanded(row[rowAttr])"
+                    @click="onToggleExpand(row)"
+                  />
+                </slot>
+                <slot
+                  v-else
+                  :column="column"
+                  :index="index"
+                  :name="`item.${column.key}`"
+                  :row="row"
+                >
+                  {{ row[column.key] }}
+                </slot>
+              </td>
+            </tr>
+
+            <tr
+              v-if="expandable"
+              :key="`row-expand-${index}`"
+              :hidden="!isExpanded(row[rowAttr])"
+              :class="[css.tr, css.tr__expandable]"
+            >
+              <td :colspan="colspan" :class="[css.td]">
+                <slot name="expanded-item" :row="row" :index="index">
+                  expansion content placeholder
+                </slot>
+              </td>
+            </tr>
+          </template>
           <tr
             v-if="noData && empty && !loading"
             :class="[css.tr, css.tr__empty]"
@@ -921,14 +1010,14 @@ const slots = useSlots();
       @apply divide-y divide-black/[0.12];
 
       &--striped {
-        .tr {
+        > .tr {
           &:nth-child(even) {
             @apply bg-rui-grey-50;
           }
         }
       }
 
-      .tr {
+      > .tr {
         @apply hover:bg-black/[0.04];
 
         &__selected {
@@ -938,33 +1027,37 @@ const slots = useSlots();
         &__empty {
           @apply hover:bg-transparent;
         }
-      }
 
-      .td {
-        @apply p-4 text-rui-text text-body-2;
-        text-wrap: initial;
-
-        &.align__start {
-          @apply text-left rtl:text-right;
+        &__expandable {
+          @apply bg-[#f9fafb] hover:bg-[#f9fafb];
         }
 
-        &.align__center {
-          @apply text-center;
-        }
+        .td {
+          @apply p-4 text-rui-text text-body-2;
+          text-wrap: initial;
 
-        &.align__end {
-          @apply text-right rtl:text-left;
-        }
-
-        .empty {
-          @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
-
-          &__label {
-            @apply text-body-1 font-bold text-center text-current;
+          &.align__start {
+            @apply text-left rtl:text-right;
           }
 
-          &__description {
-            @apply text-body-2 text-center text-rui-text-secondary;
+          &.align__center {
+            @apply text-center;
+          }
+
+          &.align__end {
+            @apply text-right rtl:text-left;
+          }
+
+          .empty {
+            @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
+
+            &__label {
+              @apply text-body-1 font-bold text-center text-current;
+            }
+
+            &__description {
+              @apply text-body-2 text-center text-rui-text-secondary;
+            }
           }
         }
       }
@@ -1022,21 +1115,25 @@ const slots = useSlots();
         @apply divide-white/[0.12];
 
         &--striped {
-          .tr {
+          > .tr {
             &:nth-child(even) {
               @apply bg-rui-grey-900;
             }
           }
         }
 
-        .tr {
+        > .tr {
           &__selected {
             @apply bg-rui-dark-primary/[0.08];
           }
-        }
 
-        .td {
-          @apply text-gray-400;
+          &__expandable {
+            @apply bg-[#121212] hover:bg-[#121212];
+          }
+
+          .td {
+            @apply text-gray-400;
+          }
         }
       }
     }

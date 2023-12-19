@@ -10,6 +10,7 @@ import {
   RiAlignJustify,
   RiAlignLeft,
   RiAlignRight,
+  RiArrowDownCircleLine,
   RiArrowDownSLine,
   RiArrowLeftLine,
   RiArrowLeftSLine,
@@ -57,6 +58,7 @@ const RuiPlugin = createRui({
       RiArrowRightSLine,
       RiArrowUpSLine,
       RiArrowDownSLine,
+      RiArrowDownCircleLine,
     ],
   },
 });
