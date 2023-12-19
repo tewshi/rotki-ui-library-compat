@@ -3,11 +3,12 @@ import { objectOmit } from '@vueuse/shared';
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
+import Card from '@/components/cards/Card.vue';
 import DataTable, { type Props, type TableColumn } from './DataTable.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 const render: StoryFn<Props> = (args) => ({
-  components: { DataTable, Button, Icon, TextField },
+  components: { DataTable, Button, Icon, TextField, Card },
   setup() {
     const value = computed({
       get() {
@@ -76,12 +77,10 @@ const render: StoryFn<Props> = (args) => ({
                 ])
             "
         v-model="value"
-        :pagination="pagination"
-        :sort="sort"
+        :pagination.sync="pagination"
+        :sort.sync="sort"
         :search="search"
-        :expanded="expanded"
-        @update:pagination="pagination = $event"
-        @update:sort="sort = $event"
+        :expanded.sync="expanded"
       >
         <template #item.action>
           <Button icon variant="text" size="sm">

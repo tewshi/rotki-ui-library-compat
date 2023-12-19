@@ -688,11 +688,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
           <RuiDataTable
             v-bind="objectOmit(table, ['value', 'pagination', 'sort'])"
             v-model="table.value"
-            :pagination="table.pagination"
-            :sort="table.sort"
+            :pagination.sync="table.pagination"
+            :sort.sync="table.sort"
             :data-cy="`table-empty-${i}`"
-            @update:pagination="table.pagination = $event"
-            @update:sort="table.sort = $event"
           >
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
@@ -730,12 +728,11 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
               ])
             "
             v-model="table.value"
-            :pagination="table.pagination"
-            :sort="table.sort"
-            :expanded="table.expanded"
+            :pagination.sync="table.pagination"
+            :sort.sync="table.sort"
+            :expanded.sync="table.expanded"
             :rows="table.rows"
             :data-cy="`table-expandable-${i}`"
-            @update:expanded="table.expanded = $event"
           >
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
@@ -792,11 +789,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
           <RuiDataTable
             v-bind="objectOmit(table, ['value', 'pagination', 'sort'])"
             v-model="table.value"
-            :pagination="table.pagination"
-            :sort="table.sort"
+            :pagination.sync="table.pagination"
+            :sort.sync="table.sort"
             :data-cy="`table-${i}`"
-            @update:pagination="table.pagination = $event"
-            @update:sort="table.sort = $event"
           >
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
@@ -836,12 +831,10 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :loading="table.loading"
             :pagination-modifiers="{ external: true }"
             :sort-modifiers="{ external: true }"
-            :pagination="table.pagination"
-            :sort="table.sort"
+            :pagination.sync="table.pagination"
+            :sort.sync="table.sort"
             :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
-            @update:pagination="table.pagination = $event"
-            @update:sort="table.sort = $event"
           >
             <template #item.action>
               <RuiButton icon variant="text" size="sm">

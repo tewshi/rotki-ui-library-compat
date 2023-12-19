@@ -30,8 +30,7 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
   <Checkbox
     v-bind="args"
     v-model="modelValue"
-    :indeterminate="indeterminate"
-    @update:indeterminate="indeterminate = $event"
+    :indeterminate.sync="indeterminate"
   >
     {{ args.label }}
   </Checkbox>`,
