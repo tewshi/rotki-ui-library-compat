@@ -24,40 +24,43 @@ import {
   RiMoonLine,
   RiStarFill,
   RiSunLine,
-  RuiPlugin,
+  createRui,
 } from '@rotki/ui-library-compat';
 import Vue from 'vue';
 import App from '@/App.vue';
 import router from '@/router';
 
 Vue.use(PiniaVuePlugin);
-Vue.use(RuiPlugin, {
-  icons: [
-    RiMoonLine,
-    RiStarFill,
-    RiSunLine,
-    RiMacbookLine,
-    RiArrowLeftLine,
-    RiArrowRightLine,
-    RiAddFill,
-    RiAlertLine,
-    RiAlignCenter,
-    RiAlignLeft,
-    RiAlignRight,
-    RiAlignJustify,
-    RiCheckboxCircleLine,
-    RiCloseFill,
-    RiInformationLine,
-    RiErrorWarningLine,
-    RiArrowLeftSLine,
-    RiArrowRightSLine,
-    RiArrowUpSLine,
-    RiArrowDownSLine,
-  ],
-});
-
 const pinia = createPinia();
 setActivePinia(pinia);
+
+const RuiPlugin = createRui({
+  theme: {
+    icons: [
+      RiMoonLine,
+      RiStarFill,
+      RiSunLine,
+      RiMacbookLine,
+      RiArrowLeftLine,
+      RiArrowRightLine,
+      RiAddFill,
+      RiAlertLine,
+      RiAlignCenter,
+      RiAlignLeft,
+      RiAlignRight,
+      RiAlignJustify,
+      RiCheckboxCircleLine,
+      RiCloseFill,
+      RiInformationLine,
+      RiErrorWarningLine,
+      RiArrowLeftSLine,
+      RiArrowRightSLine,
+      RiArrowUpSLine,
+      RiArrowDownSLine,
+    ],
+  },
+});
+Vue.use(RuiPlugin);
 
 new Vue({
   // @ts-ignore

@@ -23,6 +23,10 @@ export * from '@/components';
 
 export { StepperState };
 
+export interface RuiOptions {
+  theme?: InitThemeOptions;
+}
+
 const installTeleport = () => {
   if (!isClient) {
     return;
@@ -36,11 +40,17 @@ const installTeleport = () => {
   });
 };
 
-export const RuiPlugin = {
-  install: (app: VueConstructor, options?: InitThemeOptions) => {
+export function createRui(options: RuiOptions = {}) {
+  const { theme } = options;
+
+  const install = (_app: VueConstructor) => {
     const { registerIcons } = useIcons();
-    registerIcons(options?.icons || []);
-    useRotkiTheme().init({ ...options });
+    registerIcons(theme?.icons || []);
+    useRotkiTheme().init({ ...theme });
     installTeleport();
-  },
-};
+  };
+
+  return {
+    install,
+  };
+}
