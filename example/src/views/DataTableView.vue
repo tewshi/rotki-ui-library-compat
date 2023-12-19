@@ -5,8 +5,10 @@ import {
   type DataTableProps,
   type DataTableSortColumn,
   RuiButton,
+  RuiCard,
   RuiDataTable,
   RuiIcon,
+  RuiTableRowExpander,
   RuiTextField,
 } from '@rotki/ui-library-compat/components';
 import { useFetch } from '@vueuse/core';
@@ -124,16 +126,55 @@ const fixedColumns: DataTableColumn[] = [
     label: 'Website',
   },
   {
-    key: 'company.name',
-    label: 'Company',
-  },
-  {
-    key: 'phone',
-    label: 'Phone',
-    align: 'end',
-  },
-  {
     key: 'action',
+  },
+];
+
+const fixedRows = [
+  {
+    id: 5,
+    name: 'Chelsey Dietrich',
+    username: 'Kamren',
+    email: 'Lucio_Hettinger@annie.ca',
+    website: 'demarco.info',
+    'address.street': 'Skiles Walks',
+    'address.city': 'Roscoeview',
+  },
+  {
+    id: 10,
+    name: 'Clementina DuBuque',
+    username: 'Moriah.Stanton',
+    email: 'Rey.Padberg@karina.biz',
+    website: 'ambrose.net',
+    'address.street': 'Kattie Turnpike',
+    'address.city': 'Lebsackbury',
+  },
+  {
+    id: 3,
+    name: 'Clementine Bauch',
+    username: 'Samantha',
+    email: 'Nathan@yesenia.net',
+    website: 'ramiro.info',
+    'address.street': 'Douglas Extension',
+    'address.city': 'McKenziehaven',
+  },
+  {
+    id: 2,
+    name: 'Ervin Howell',
+    username: 'Antonette',
+    email: 'Shanna@melissa.tv',
+    website: 'anastasia.net',
+    'address.street': 'Victor Plains',
+    'address.city': 'Wisokyburgh',
+  },
+  {
+    id: 9,
+    name: 'Glenna Reichert',
+    username: 'Delphine',
+    email: 'Chaim_McDermott@dana.io',
+    website: 'conrad.com',
+    'address.street': 'Dayna Park',
+    'address.city': 'Bartholomebury',
   },
 ];
 
@@ -147,12 +188,15 @@ const emptyTables = ref<
       rows: [],
       cols: fixedColumns,
       outlined: true,
+      rounded: 'sm',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
       empty: {
         label: 'No item found',
         description: 'No user found',
       },
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
   {
@@ -163,6 +207,7 @@ const emptyTables = ref<
       rows: [],
       cols: fixedColumns,
       outlined: true,
+      rounded: 'md',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
       empty: {
@@ -178,6 +223,7 @@ const emptyTables = ref<
       cols: fixedColumns,
       loading: true,
       outlined: true,
+      rounded: 'lg',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
     },
@@ -186,68 +232,65 @@ const emptyTables = ref<
     title: 'Loading with Data',
     table: {
       rowAttr: 'id',
-      rows: [
-        {
-          id: 5,
-          name: 'Chelsey Dietrich',
-          username: 'Kamren',
-          email: 'Lucio_Hettinger@annie.ca',
-          phone: '(254)954-1289',
-          website: 'demarco.info',
-          'address.street': 'Skiles Walks',
-          'address.city': 'Roscoeview',
-          'company.name': 'Keebler LLC',
-        },
-        {
-          id: 10,
-          name: 'Clementina DuBuque',
-          username: 'Moriah.Stanton',
-          email: 'Rey.Padberg@karina.biz',
-          phone: '024-648-3804',
-          website: 'ambrose.net',
-          'address.street': 'Kattie Turnpike',
-          'address.city': 'Lebsackbury',
-          'company.name': 'Hoeger LLC',
-        },
-        {
-          id: 3,
-          name: 'Clementine Bauch',
-          username: 'Samantha',
-          email: 'Nathan@yesenia.net',
-          phone: '1-463-123-4447',
-          website: 'ramiro.info',
-          'address.street': 'Douglas Extension',
-          'address.city': 'McKenziehaven',
-          'company.name': 'Romaguera-Jacobson',
-        },
-        {
-          id: 2,
-          name: 'Ervin Howell',
-          username: 'Antonette',
-          email: 'Shanna@melissa.tv',
-          phone: '010-692-6593 x09125',
-          website: 'anastasia.net',
-          'address.street': 'Victor Plains',
-          'address.city': 'Wisokyburgh',
-          'company.name': 'Deckow-Crist',
-        },
-        {
-          id: 9,
-          name: 'Glenna Reichert',
-          username: 'Delphine',
-          email: 'Chaim_McDermott@dana.io',
-          phone: '(775)976-6794 x41206',
-          website: 'conrad.com',
-          'address.street': 'Dayna Park',
-          'address.city': 'Bartholomebury',
-          'company.name': 'Yost and Sons',
-        },
-      ],
+      rows: fixedRows,
       cols: fixedColumns,
       loading: true,
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      stickyOffset: 72,
+    },
+  },
+]);
+
+const expandableTables = ref<
+  {
+    title: string;
+    table: DataTableProps;
+    customToggle?: boolean;
+  }[]
+>([
+  {
+    title: 'Multiple Expandable',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      expanded: [],
+      stickyHeader: true,
+      stickyOffset: 72,
+    },
+  },
+  {
+    title: 'Single Expandable',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      expanded: [],
+      singleExpand: true,
+    },
+  },
+  {
+    title: 'Custom Expandable control',
+    customToggle: true,
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      expanded: [],
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
 ]);
@@ -278,6 +321,8 @@ const datatables = ref<{ title: string; table: DataTableProps }[]>([
       cols: columns,
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
+      stickyHeader: true,
+      stickyOffset: 72,
     },
   },
   {
@@ -615,6 +660,17 @@ onBeforeMount(async () => {
     );
   });
 });
+
+const isExpanded = (row: any, expanded: any[] | undefined) =>
+  expanded?.some((item: any) => item.id === row.id);
+
+const toggleRow = (row: any, expanded: any[] | undefined) => {
+  if (isExpanded(row, expanded)) {
+    expanded?.splice(expanded.indexOf(row), 1);
+  } else {
+    expanded?.push(row);
+  }
+};
 </script>
 
 <template>
@@ -653,6 +709,62 @@ onBeforeMount(async () => {
                   </template>
                 </RuiButton>
               </div>
+            </template>
+          </RuiDataTable>
+        </div>
+        <div
+          v-for="({ title, table, customToggle }, i) in expandableTables"
+          :key="i"
+          class="flex flex-col space-y-3"
+          :data-cy="title"
+        >
+          <h4>{{ title }}</h4>
+          <RuiDataTable
+            v-bind="
+              objectOmit(table, [
+                'value',
+                'pagination',
+                'sort',
+                'expanded',
+                'rows',
+              ])
+            "
+            v-model="table.value"
+            :pagination="table.pagination"
+            :sort="table.sort"
+            :expanded="table.expanded"
+            :rows="table.rows"
+            :data-cy="`table-expandable-${i}`"
+            @update:expanded="table.expanded = $event"
+          >
+            <template #item.action>
+              <RuiButton icon variant="text" size="sm">
+                <RuiIcon name="more-fill" color="primary" />
+              </RuiButton>
+            </template>
+            <template v-if="customToggle" #item.expand="{ row }">
+              <RuiTableRowExpander
+                icon="arrow-down-circle-line"
+                :expanded="isExpanded(row, table.expanded)"
+                @click="toggleRow(row, table.expanded)"
+              />
+            </template>
+            <template #expanded-item>
+              <RuiCard data-cy="expanded-content">
+                <template #header> Expanded content</template>
+                <RuiDataTable
+                  v-bind="
+                    objectOmit(table, [
+                      'value',
+                      'pagination',
+                      'sort',
+                      'expanded',
+                      'stickyHeader',
+                    ])
+                  "
+                  :data-cy="`table-expanded-${i}`"
+                />
+              </RuiCard>
             </template>
           </RuiDataTable>
         </div>
