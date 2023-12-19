@@ -18,7 +18,7 @@ const createWrapper = (options?: any) =>
 describe('Badge', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
-      props: {
+      propsData: {
         text: 'Badge content',
         value: false,
       },
@@ -43,7 +43,7 @@ describe('Badge', () => {
 
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
-      props: {
+      propsData: {
         text: 'Badge content',
         value: false,
       },

@@ -334,6 +334,7 @@
     "ExtractDefaultPropTypes": true,
     "ExtractPropTypes": true,
     "ExtractPublicPropTypes": true,
-    "useClipboardItems": true
+    "useClipboardItems": true,
+    "useStickyTableHeader": true
   }
 }

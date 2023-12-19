@@ -68,8 +68,19 @@ describe('DataTable', () => {
         search: '',
         sort: [{ column: 'name', direction: 'asc' }],
         pagination: { limit: 10, page: 1, total: 50 },
+        expanded: [],
+      },
+      slots: {
+        'expanded-item': {
+          template: '<div data-cy="expanded-content">Expanded content</div>',
+        },
       },
     });
+
+    wrapper.vm.$on('update:expanded', (e: typeof data) =>
+      wrapper.setProps({ expanded: e }),
+    );
+
     expect(
       wrapper.find('table thead th[class*=_checkbox_]').exists(),
     ).toBeTruthy();
@@ -91,5 +102,205 @@ describe('DataTable', () => {
     expect(
       wrapper.find('div div[class*=_navigation_] button[disabled]').exists(),
     ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeFalsy();
+  });
+
+  it('multiple expand toggles correctly', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        rows: data,
+        rowAttr: 'id',
+        cols: columns,
+        modelValue: [],
+        expanded: [],
+      },
+      slots: {
+        'expanded-item': {
+          template: '<div data-cy="expanded-content">Expanded content</div>',
+        },
+      },
+    });
+
+    wrapper.vm.$on('update:expanded', (e: typeof data) =>
+      wrapper.setProps({ expanded: e }),
+    );
+
+    expect(wrapper.props().expanded).toHaveLength(0);
+
+    expect(
+      wrapper
+        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(wrapper.props().expanded).toHaveLength(1);
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(3) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(wrapper.props().expanded).toHaveLength(2);
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+  });
+
+  it('single expand toggles correctly', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        rows: data,
+        rowAttr: 'id',
+        cols: columns,
+        value: [],
+        singleExpand: true,
+        expanded: [],
+      },
+      slots: {
+        'expanded-item': {
+          template: '<div data-cy="expanded-content">Expanded content</div>',
+        },
+      },
+    });
+
+    wrapper.vm.$on('update:expanded', (e: typeof data) =>
+      wrapper.setProps({ expanded: e }),
+    );
+
+    expect(wrapper.props().expanded).toHaveLength(0);
+
+    expect(
+      wrapper
+        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(wrapper.props().expanded).toHaveLength(1);
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(wrapper.props().expanded).toHaveLength(0);
+
+    expect(
+      wrapper
+        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    await wrapper
+      .find('tbody tr:nth-child(3) button[class*=_tr__expander_button]')
+      .trigger('click');
+
+    expect(wrapper.props().expanded).toHaveLength(1);
+
+    expect(
+      wrapper
+        .find('tbody tr:nth-child(1) button[class*=_tr__expander_button_open]')
+        .exists(),
+    ).toBeFalsy();
+
+    expect(
+      wrapper
+        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+  });
+
+  it('sticky header behaves as expected', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        rows: data,
+        rowAttr: 'id',
+        cols: columns,
+        value: [],
+        stickyHeader: true,
+        stickyOffset: 40,
+      },
+    });
+
+    expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeTruthy();
+
+    await wrapper.setProps({ stickyHeader: false });
+
+    expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
   });
 });

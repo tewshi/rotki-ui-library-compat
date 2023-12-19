@@ -1,3 +1,5 @@
+/* eslint-disable max-lines */
+import { objectOmit } from '@vueuse/shared';
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
@@ -39,8 +41,16 @@ const render: StoryFn<Props> = (args) => ({
         args.search = val;
       },
     });
+    const expanded = computed({
+      get() {
+        return args.expanded;
+      },
+      set(val) {
+        args.expanded = val;
+      },
+    });
 
-    return { args, value, pagination, search, sort };
+    return { args, value, pagination, search, sort, expanded, objectOmit };
   },
   template: `<div class="flex flex-col space-y-4">
       <div class="flex items-center space-x-4">
@@ -57,11 +67,19 @@ const render: StoryFn<Props> = (args) => ({
         <span v-if="value">selected: {{ value.length }}</span>
       </div>
       <DataTable
-        v-bind="args"
+        v-bind="
+                objectOmit(args, [
+                  'value',
+                  'pagination',
+                  'sort',
+                  'expanded',
+                ])
+            "
         v-model="value"
         :pagination="pagination"
         :sort="sort"
         :search="search"
+        :expanded="expanded"
         @update:pagination="pagination = $event"
         @update:sort="sort = $event"
       >
@@ -69,6 +87,21 @@ const render: StoryFn<Props> = (args) => ({
           <Button icon variant="text" size="sm">
             <Icon name="more-fill" color="primary" />
           </Button>
+        </template>
+        <template v-if="args.expanded" #expanded-item>
+          <Card>
+            <template #header> Expanded content</template>
+            <DataTable
+              v-bind="
+                    objectOmit(args, [
+                      'modelValue',
+                      'pagination',
+                      'sort',
+                      'expanded',
+                    ])
+                  "
+            />
+          </Card>
         </template>
       </DataTable>
     </div>`,
@@ -178,7 +211,13 @@ const meta: Meta<Props> = {
   component: DataTable,
   tags: ['autodocs'],
   render,
-  argTypes: {},
+  argTypes: {
+    rounded: {
+      control: 'select',
+      defaultValue: 'md',
+      options: ['sm', 'md', 'lg'],
+    },
+  },
   args: {
     value: undefined,
     rowAttr: 'id',
@@ -202,6 +241,9 @@ const meta: Meta<Props> = {
           'empty-description',
           'header.`${column.key}`',
           'item.`${column.key}`',
+          'body.append',
+          'item.expand',
+          'expanded-item',
         ],
       },
     },
@@ -363,6 +405,55 @@ export const EmptyState: Story = {
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+  },
+};
+
+export const Expandable: Story = {
+  args: {
+    rows: data,
+    value: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+  },
+};
+
+export const SingleExpandable: Story = {
+  args: {
+    rows: data,
+    value: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    singleExpand: true,
+  },
+};
+
+export const StickyHeader: Story = {
+  args: {
+    rows: data,
+    value: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    singleExpand: true,
+    stickyHeader: true,
+    stickyOffset: 40,
   },
 };
 
