@@ -19,7 +19,7 @@ export interface TableColumn {
   [key: string]: any;
 }
 
-type TableRow = Record<string, any>;
+type TableRow = any;
 
 export interface SortColumn {
   column?: string;
