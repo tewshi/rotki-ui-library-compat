@@ -1114,6 +1114,7 @@ const slots = useSlots();
 
     .checkbox {
       @apply ps-4 w-14;
+      @apply max-w-[3.125rem] #{!important};
     }
 
     &.dense {
@@ -1143,13 +1144,13 @@ const slots = useSlots();
     }
 
     .table {
-      @apply divide-gray-700;
+      @apply divide-white/[0.12];
       .thead {
-        @apply divide-y divide-gray-700;
+        @apply divide-y divide-white/[0.12];
 
         &.sticky__header.stick__top {
           th {
-            @apply bg-[#121212] border-b border-b-gray-700;
+            @apply bg-[#121212] border-b border-b-white/[0.12];
           }
         }
 
@@ -1172,16 +1173,14 @@ const slots = useSlots();
         }
 
         > .tr {
+          @apply hover:bg-white/[0.04];
+
           &__selected {
             @apply bg-rui-dark-primary/[0.08];
           }
 
           &__expandable {
             @apply bg-[#121212] hover:bg-[#121212];
-          }
-
-          .td {
-            @apply text-gray-400;
           }
         }
       }

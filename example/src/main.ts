@@ -72,7 +72,7 @@ const RuiPlugin = createRui({
   defaults: {
     table: {
       itemsPerPage,
-      globalItemsPerPage: true,
+      globalItemsPerPage: false,
     },
   },
 });
