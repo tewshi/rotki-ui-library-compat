@@ -218,6 +218,7 @@ describe('DataTable', () => {
       });
 
     cy.window()
+      .get('body')
       .scrollTo('top')
       .get('@sticky')
       .find('> div > table thead[data-id=head-main][class*=_sticky__header_]')
