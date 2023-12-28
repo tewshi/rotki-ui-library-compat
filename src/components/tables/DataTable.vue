@@ -197,10 +197,14 @@ const {
   expanded,
   singleExpand,
   stickyOffset,
+  stickyHeader,
 } = toRefs(props);
 
 const css = useCssModule();
-const { stick, table, tableScroller } = useStickyTableHeader(stickyOffset);
+const { stick, table, tableScroller } = useStickyTableHeader(
+  stickyOffset,
+  stickyHeader,
+);
 const tableDefaults = useTable();
 const globalItemsPerPageSettings = computed(() => {
   if (props.globalItemsPerPage !== undefined) {
@@ -285,6 +289,10 @@ const paginationData: Ref<TablePaginationData> = computed({
         limit: get(itemsPerPage),
         page: 1,
       };
+    }
+
+    if (get(paginationModifiers)?.external) {
+      return paginated;
     }
 
     return {
@@ -745,11 +753,7 @@ const slots = useSlots();
               { [css.thead__loader_linear]: !noData },
             ]"
           >
-            <th
-              :class="css.progress"
-              :colspan="columns.length + (selectedData ? 1 : 0)"
-              scope="col"
-            >
+            <th :class="css.progress" :colspan="colspan" scope="col">
               <div :class="css.progress__wrapper">
                 <Progress
                   :circular="noData"
@@ -781,6 +785,11 @@ const slots = useSlots();
           </tr>
         </thead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
+          <slot
+            v-if="slots['body.prepend'] && !(loading && noData)"
+            :colspan="colspan"
+            name="body.prepend"
+          />
           <template v-for="(row, index) in filtered">
             <tr
               :key="`row-${index}`"
@@ -859,10 +868,7 @@ const slots = useSlots();
               leave-from-class="opacity-100 translate-y-0"
               leave-to-class="opacity-0 translate-y-1"
             >
-              <td
-                :class="css.td"
-                :colspan="columns.length + (selectedData ? 1 : 0)"
-              >
+              <td :class="css.td" :colspan="colspan">
                 <slot name="no-data">
                   <div :class="css.empty">
                     <p v-if="empty.label" :class="css.empty__label">
@@ -884,6 +890,7 @@ const slots = useSlots();
           </tr>
           <slot
             v-if="slots['body.append'] && !(loading && noData)"
+            :colspan="colspan"
             name="body.append"
           />
         </tbody>
@@ -1094,11 +1101,11 @@ const slots = useSlots();
             @apply flex flex-col space-y-3 items-center justify-center flex-1 py-2;
 
             &__label {
-              @apply text-body-1 font-bold text-center text-current;
+              @apply text-body-1 font-bold text-center text-current pb-0 mb-0;
             }
 
             &__description {
-              @apply text-body-2 text-center text-rui-text-secondary;
+              @apply text-body-2 text-center text-rui-text-secondary pb-0 mb-0;
             }
           }
         }
