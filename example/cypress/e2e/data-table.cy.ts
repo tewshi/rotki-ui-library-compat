@@ -196,7 +196,7 @@ describe('DataTable', () => {
     });
   });
 
-  it.only('checks for data tables with sticky header', () => {
+  it('checks for data tables with sticky header', () => {
     cy.get('div[data-cy="table-expandable-0"]').as('sticky');
 
     cy.get('@sticky')
