@@ -3,7 +3,10 @@ import { type Ref } from 'vue';
 /**
  * Setup sticky table header
  */
-export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
+export const useStickyTableHeader = (
+  offsetTop: Ref<number> = ref(0),
+  sticky: Ref<boolean> = ref(false),
+) => {
   const table: Ref<HTMLTableElement | null> = ref(null);
   const tableScroller: Ref<HTMLElement | null> = ref(null);
   const stick: Ref<boolean> = ref(false);
@@ -18,7 +21,7 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
   const updateHeaderCellWidth = () => {
     const root = get(table);
 
-    if (!root) {
+    if (!get(sticky) || !root) {
       return;
     }
 
@@ -40,10 +43,10 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
     });
   };
 
-  const addStickyClass = () => {
+  const toggleStickyClass = () => {
     const root = get(table);
 
-    if (!root) {
+    if (!get(sticky) || !root) {
       return;
     }
 
@@ -99,28 +102,19 @@ export const useStickyTableHeader = (offsetTop: Ref<number> = ref(0)) => {
   };
 
   const updateHeader = () => {
-    addStickyClass();
+    if (!get(sticky) || !get(table)?.querySelector(selectors.head)) {
+      return;
+    }
+    toggleStickyClass();
     updateHeaderCellWidth();
   };
 
-  watchEffect(() => {
-    if (!get(table)?.querySelector(selectors.head)) {
-      return;
-    }
-
-    updateHeader();
-
-    const scroller = get(tableScroller);
-
-    if (scroller) {
-      useResizeObserver(get(tableScroller), updateHeader);
-    }
-  });
-
   onMounted(() => {
-    useEventListener(window, 'scroll', addStickyClass);
+    updateHeader();
+    useEventListener(document.body, 'scroll', toggleStickyClass);
     useEventListener(window, 'resize', updateHeader);
     useEventListener(tableScroller, 'scroll', updateHeader);
+    useResizeObserver(get(tableScroller), updateHeader);
   });
 
   return {
