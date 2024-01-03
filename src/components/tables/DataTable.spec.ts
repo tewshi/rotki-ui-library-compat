@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
 import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
-import DataTable, { type TableColumn } from '@/components/tables/DataTable.vue';
+import DataTable from '@/components/tables/DataTable.vue';
+import { type TableColumn } from '@/components/tables/TableHead.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
 import { RuiSimpleSelect } from '~/src';
 
@@ -341,10 +342,11 @@ describe('DataTable', () => {
       const paginate = wrapper.findAllComponents(TablePagination);
       expect(paginate).toHaveLength(2);
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
-      expect(paginate.at(1).vm.value).toMatchObject(
+      const first = paginate.at(0).vm as unknown as typeof TablePagination;
+      const second = paginate.at(1).vm as unknown as typeof TablePagination;
+
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 25 }));
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
@@ -353,11 +355,9 @@ describe('DataTable', () => {
 
       await nextTick();
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 10 }));
 
-      expect(paginate.at(1).vm.value).toMatchObject(
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
@@ -388,10 +388,11 @@ describe('DataTable', () => {
       const paginate = wrapper.findAllComponents(TablePagination);
       expect(paginate).toHaveLength(2);
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
-      expect(paginate.at(1).vm.value).toMatchObject(
+      const first = paginate.at(0).vm as unknown as typeof TablePagination;
+      const second = paginate.at(1).vm as unknown as typeof TablePagination;
+
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 25 }));
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 
@@ -402,11 +403,9 @@ describe('DataTable', () => {
 
       await nextTick();
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 10 }));
 
-      expect(paginate.at(1).vm.value).toMatchObject(
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
@@ -436,11 +435,12 @@ describe('DataTable', () => {
       const paginate = wrapper.findAllComponents(TablePagination);
       expect(paginate).toHaveLength(2);
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 10 }),
-      );
+      const first = paginate.at(0).vm as unknown as typeof TablePagination;
+      const second = paginate.at(1).vm as unknown as typeof TablePagination;
 
-      expect(paginate.at(1).vm.value).toMatchObject(
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 10 }));
+
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 25 }),
       );
 
@@ -451,11 +451,9 @@ describe('DataTable', () => {
 
       await nextTick();
 
-      expect(paginate.at(0).vm.value).toMatchObject(
-        expect.objectContaining({ limit: 25 }),
-      );
+      expect(first.value).toMatchObject(expect.objectContaining({ limit: 25 }));
 
-      expect(paginate.at(1).vm.value).toMatchObject(
+      expect(second.value).toMatchObject(
         expect.objectContaining({ limit: 10 }),
       );
 

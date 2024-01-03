@@ -15,7 +15,7 @@ import { useFetch } from '@vueuse/core';
 import { get, objectOmit, useDebounceFn } from '@vueuse/shared';
 import { computed, onBeforeMount, ref } from 'vue';
 
-interface _User {
+interface User {
   id: number;
   name: string;
   username: string;
@@ -170,7 +170,7 @@ const fixedRows = [
   {
     id: 9,
     name: 'Glenna Reichert',
-    username: 'Delphine',
+    username: 'Kamren',
     email: 'Chaim_McDermott@dana.io',
     website: 'conrad.com',
     'address.street': 'Dayna Park',
@@ -240,6 +240,8 @@ const emptyTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
       stickyOffset: 72,
+      group: ['username'],
+      collapsed: [],
     },
   },
 ]);
@@ -507,7 +509,7 @@ const users = computed<Record<string, any>[]>(() =>
   JSON.parse(get(_users) ?? '[]').map(normalize),
 );
 
-const normalize = (user: _User): Record<string, any> => {
+const normalize = (user: User): Record<string, any> => {
   const { address, company } = user;
   return {
     ...objectOmit(user, ['address', 'company']),
@@ -545,19 +547,19 @@ const fakeFetch = async (
 
     const sort = (by: DataTableSortColumn) => {
       result.sort((a, b) => {
-        if (!by.column) {
+        if (!by.column?.toString()) {
           return 0;
         }
         if (by.direction === 'desc') {
-          return `${b[by.column]}`.localeCompare(
-            `${a[by.column]}`,
+          return `${b[by.column?.toString()]}`.localeCompare(
+            `${a[by.column?.toString()]}`,
             undefined,
             sortOptions,
           );
         }
 
-        return `${a[by.column]}`.localeCompare(
-          `${b[by.column]}`,
+        return `${a[by.column?.toString()]}`.localeCompare(
+          `${b[by.column?.toString()]}`,
           undefined,
           sortOptions,
         );
@@ -691,7 +693,10 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :pagination.sync="table.pagination"
             :sort.sync="table.sort"
             :data-cy="`table-empty-${i}`"
+            :group.sync="table.group"
+            :collapsed.sync="table.collapsed"
           >
+            <template #header.address.city> city custom header </template>
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
@@ -833,6 +838,8 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :sort-modifiers="{ external: true }"
             :pagination.sync="table.pagination"
             :sort.sync="table.sort"
+            :group.sync="table.group"
+            :collapsed.sync="table.collapsed"
             :data-cy="`table-api-${i}`"
             @update:options="fetchData(i, $event, table.search, true)"
           >
@@ -840,6 +847,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
+            </template>
+            <template #group.header.content="{ group }">
+              custom group content {{ group }}
             </template>
           </RuiDataTable>
         </div>
