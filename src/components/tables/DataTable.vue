@@ -225,7 +225,7 @@ const headerSlots = computed(() =>
 );
 
 const globalItemsPerPageSettings = computed(() => {
-  if (typeof props.globalItemsPerPage !== 'undefined') {
+  if (props.globalItemsPerPage !== undefined) {
     return props.globalItemsPerPage;
   }
   return get(tableDefaults.globalItemsPerPage);
