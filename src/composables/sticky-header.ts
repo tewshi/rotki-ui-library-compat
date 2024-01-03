@@ -18,7 +18,7 @@ export const useStickyTableHeader = (
     row: ':scope > tbody > tr:not([hidden])',
   };
 
-  const updateHeaderCellWidth = () => {
+  const watchCellWidth = () => {
     const root = get(table);
 
     if (!get(sticky) || !root) {
@@ -31,15 +31,22 @@ export const useStickyTableHeader = (
 
     const head: HTMLHeadElement | null =
       root.querySelector(selectors.head) ?? null;
+
     const columns: NodeListOf<HTMLElement> | undefined = head?.querySelectorAll(
       selectors.th,
     );
+
     const clonedColumns: NodeListOf<HTMLElement> | undefined =
       theadClone?.querySelectorAll(selectors.th);
 
-    columns?.forEach((column: HTMLElement, i: number) => {
-      const cellRect = clonedColumns?.item(i)?.getBoundingClientRect();
-      column.style.width = `${cellRect?.width ?? 0}px`;
+    clonedColumns?.forEach((th: HTMLElement, i: number) => {
+      useResizeObserver(th, (entries) => {
+        const cellRect = entries[0].target.getBoundingClientRect();
+        const column = columns?.item(i);
+        if (column) {
+          column.style.width = `${cellRect.width}px`;
+        }
+      });
     });
   };
 
@@ -76,7 +83,6 @@ export const useStickyTableHeader = (
     const top = get(offsetTop) ?? 0;
 
     head.style.width = `${theadWidth}px`;
-    theadClone.style.height = `${headRect.height}px`;
 
     const rows = root.querySelectorAll(selectors.row);
 
@@ -101,20 +107,11 @@ export const useStickyTableHeader = (
     }
   };
 
-  const updateHeader = () => {
-    if (!get(sticky) || !get(table)?.querySelector(selectors.head)) {
-      return;
-    }
-    toggleStickyClass();
-    updateHeaderCellWidth();
-  };
-
   onMounted(() => {
-    updateHeader();
+    toggleStickyClass();
     useEventListener(document.body, 'scroll', toggleStickyClass);
-    useEventListener(window, 'resize', updateHeader);
-    useEventListener(tableScroller, 'scroll', updateHeader);
-    useResizeObserver(get(tableScroller), updateHeader);
+    useEventListener(window, 'resize', toggleStickyClass);
+    watchCellWidth();
   });
 
   return {

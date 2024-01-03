@@ -1,14 +1,23 @@
 /* eslint-disable max-lines */
 import { objectOmit } from '@vueuse/shared';
+import { ref } from 'vue';
+import { TableSymbol, createTableDefaults } from '@/composables/defaults/table';
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Card from '@/components/cards/Card.vue';
-import DataTable, { type Props, type TableColumn } from './DataTable.vue';
+import DataTable, { type Props } from './DataTable.vue';
+import { type TableColumn } from './TableHead.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 const render: StoryFn<Props> = (args) => ({
   components: { DataTable, Button, Icon, TextField, Card },
+  provide: {
+    [TableSymbol.valueOf()]: createTableDefaults({
+      itemsPerPage: ref(10),
+      globalItemsPerPage: false,
+    }),
+  },
   setup() {
     const value = computed({
       get() {
@@ -50,8 +59,34 @@ const render: StoryFn<Props> = (args) => ({
         args.expanded = val;
       },
     });
+    const group = computed({
+      get() {
+        return args.group;
+      },
+      set(val) {
+        args.group = val;
+      },
+    });
+    const collapsed = computed({
+      get() {
+        return args.collapsed;
+      },
+      set(val) {
+        args.collapsed = val;
+      },
+    });
 
-    return { args, value, pagination, search, sort, expanded, objectOmit };
+    return {
+      args,
+      value,
+      pagination,
+      search,
+      sort,
+      expanded,
+      group,
+      collapsed,
+      objectOmit,
+    };
   },
   template: `<div class="flex flex-col space-y-4">
       <div class="flex items-center space-x-4">
@@ -74,6 +109,8 @@ const render: StoryFn<Props> = (args) => ({
                   'pagination',
                   'sort',
                   'expanded',
+                  'group',
+                  'collapsed',
                 ])
             "
         v-model="value"
@@ -81,6 +118,8 @@ const render: StoryFn<Props> = (args) => ({
         :sort.sync="sort"
         :search="search"
         :expanded.sync="expanded"
+        :group.sync="group"
+        :collapsed.sync="collapsed"
       >
         <template #item.action>
           <Button icon variant="text" size="sm">
@@ -97,6 +136,8 @@ const render: StoryFn<Props> = (args) => ({
                       'pagination',
                       'sort',
                       'expanded',
+                      'group',
+                      'collapsed',
                     ])
                   "
             />
@@ -242,6 +283,7 @@ const meta: Meta<Props> = {
           'item.`${column.key}`',
           'body.append',
           'item.expand',
+          'group.header',
           'expanded-item',
         ],
       },
@@ -453,6 +495,23 @@ export const StickyHeader: Story = {
     singleExpand: true,
     stickyHeader: true,
     stickyOffset: 40,
+  },
+};
+
+export const Grouped: Story = {
+  args: {
+    rows: data,
+    value: [],
+    cols: columns,
+    outlined: true,
+    pagination: { limit: 5, page: 1, total: 50 },
+    sort: [
+      { column: 'name', direction: 'asc' },
+      { column: 'email', direction: 'asc' },
+    ],
+    expanded: [],
+    collapsed: [],
+    group: 'name',
   },
 };
 
