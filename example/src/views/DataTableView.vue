@@ -104,6 +104,7 @@ const fixedColumns: DataTableColumn[] = [
   {
     key: 'name',
     label: 'Full name',
+    sortable: true,
   },
   {
     key: 'username',
@@ -132,6 +133,15 @@ const fixedColumns: DataTableColumn[] = [
 
 const fixedRows = [
   {
+    id: 9,
+    name: 'Glenna Reichert',
+    username: 'Kamren',
+    email: 'Chaim_McDermott@dana.io',
+    website: 'conrad.com',
+    'address.street': 'Dayna Park',
+    'address.city': 'Bartholomebury',
+  },
+  {
     id: 5,
     name: 'Chelsey Dietrich',
     username: 'Kamren',
@@ -152,7 +162,7 @@ const fixedRows = [
   {
     id: 3,
     name: 'Clementine Bauch',
-    username: 'Samantha',
+    username: 'Kamren',
     email: 'Nathan@yesenia.net',
     website: 'ramiro.info',
     'address.street': 'Douglas Extension',
@@ -166,15 +176,6 @@ const fixedRows = [
     website: 'anastasia.net',
     'address.street': 'Victor Plains',
     'address.city': 'Wisokyburgh',
-  },
-  {
-    id: 9,
-    name: 'Glenna Reichert',
-    username: 'Kamren',
-    email: 'Chaim_McDermott@dana.io',
-    website: 'conrad.com',
-    'address.street': 'Dayna Park',
-    'address.city': 'Bartholomebury',
   },
 ];
 
@@ -488,6 +489,8 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
       search: '',
       sort: { column: 'name', direction: 'asc' },
       pagination: { limit: 5, page: 1, total: 0 },
+      group: ['username'],
+      collapsed: [],
     },
   },
   {
@@ -848,8 +851,8 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
                 <RuiIcon name="more-fill" color="primary" />
               </RuiButton>
             </template>
-            <template #group.header.content="{ group }">
-              custom group content {{ group }}
+            <template #group.header.content="{ groupValue }">
+              custom group content: {{ groupValue }}
             </template>
           </RuiDataTable>
         </div>
