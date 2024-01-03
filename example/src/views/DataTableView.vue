@@ -153,7 +153,7 @@ const fixedRows = [
   {
     id: 10,
     name: 'Clementina DuBuque',
-    username: 'Moriah.Stanton',
+    username: 'Antonette',
     email: 'Rey.Padberg@karina.biz',
     website: 'ambrose.net',
     'address.street': 'Kattie Turnpike',
@@ -691,15 +691,20 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
         >
           <h4>{{ title }}</h4>
           <RuiDataTable
-            v-bind="objectOmit(table, ['value', 'pagination', 'sort'])"
+            v-bind="
+              objectOmit(table, [
+                'value',
+                'pagination',
+                'sort',
+                'group',
+                'collapsed',
+              ])
+            "
             v-model="table.value"
             :pagination.sync="table.pagination"
             :sort.sync="table.sort"
             :data-cy="`table-empty-${i}`"
-            :group.sync="table.group"
-            :collapsed.sync="table.collapsed"
           >
-            <template #header.address.city> city custom header </template>
             <template #item.action>
               <RuiButton icon variant="text" size="sm">
                 <RuiIcon name="more-fill" color="primary" />
@@ -809,7 +814,7 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
           </RuiDataTable>
         </div>
       </div>
-      <div class="grid grid-cols-1 gap-12">
+      <div class="grid grid-cols-1 gap-12 mb-14">
         <div
           v-for="({ title, table }, i) in apiDatatables"
           :key="`${title}${i}`"
@@ -853,6 +858,43 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             </template>
             <template #group.header.content="{ groupValue }">
               custom group content: {{ groupValue }}
+            </template>
+          </RuiDataTable>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-12">
+        <div
+          v-for="({ table, emptySlot }, i) in emptyTables.slice(3)"
+          :key="`grouped${i}`"
+          class="flex flex-col space-y-3"
+          data-cy="grouped"
+        >
+          <h4>Grouped data table with sorting</h4>
+          <RuiDataTable
+            v-bind="objectOmit(table, ['value', 'pagination', 'sort'])"
+            v-model="table.value"
+            :pagination.sync="table.pagination"
+            :sort.sync="table.sort"
+            :data-cy="`table-empty-${i}`"
+            :group.sync="table.group"
+            :collapsed.sync="table.collapsed"
+          >
+            <template #item.action>
+              <RuiButton icon variant="text" size="sm">
+                <RuiIcon name="more-fill" color="primary" />
+              </RuiButton>
+            </template>
+            <template v-if="emptySlot" #empty-description>
+              <div class="flex space-x-1 items-center">
+                <span>No user found,</span>
+                <RuiButton variant="text" size="sm">
+                  create users
+                  <template #append>
+                    <RuiIcon name="add-fill" color="primary" />
+                  </template>
+                </RuiButton>
+              </div>
             </template>
           </RuiDataTable>
         </div>
