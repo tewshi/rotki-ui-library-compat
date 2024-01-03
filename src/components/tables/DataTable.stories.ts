@@ -1,5 +1,7 @@
 /* eslint-disable max-lines */
 import { objectOmit } from '@vueuse/shared';
+import { ref } from 'vue';
+import { TableSymbol, createTableDefaults } from '@/composables/defaults/table';
 import Button from '@/components/buttons/button/Button.vue';
 import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
@@ -9,6 +11,12 @@ import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 const render: StoryFn<Props> = (args) => ({
   components: { DataTable, Button, Icon, TextField, Card },
+  provide: {
+    [TableSymbol.valueOf()]: createTableDefaults({
+      itemsPerPage: ref(10),
+      globalItemsPerPage: false,
+    }),
+  },
   setup() {
     const value = computed({
       get() {
