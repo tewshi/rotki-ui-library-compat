@@ -77,12 +77,15 @@ import {
   type Props as StepperProps,
 } from '@/components/steppers/Stepper.vue';
 import {
-  type TableColumn as DataTableColumn,
   type TableOptions as DataTableOptions,
   type Props as DataTableProps,
-  type SortColumn as DataTableSortColumn,
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
+import {
+  type TableColumn as DataTableColumn,
+  type SortColumn as DataTableSortColumn,
+  type TableSortData as DataTableSortData,
+} from '@/components/tables/TableHead.vue';
 import {
   type Props as ExpandButtonProps,
   default as RuiTableRowExpander,
@@ -175,4 +178,5 @@ export {
   SkeletonLoaderProps,
   TextAreaProps,
   ExpandButtonProps,
+  DataTableSortData,
 };

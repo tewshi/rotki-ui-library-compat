@@ -24,7 +24,9 @@ import {
   RiArrowUpSLine,
   RiCheckboxCircleLine,
   RiCloseFill,
+  RiDeleteBinLine,
   RiErrorWarningLine,
+  RiFileCopyLine,
   RiInformationLine,
   RiMacbookLine,
   RiMoonLine,
@@ -67,6 +69,8 @@ const RuiPlugin = createRui({
       RiArrowUpSLine,
       RiArrowDownSLine,
       RiArrowDownCircleLine,
+      RiDeleteBinLine,
+      RiFileCopyLine,
     ],
   },
   defaults: {

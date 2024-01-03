@@ -1,34 +1,29 @@
 <script lang="ts" setup>
-import Button from '@/components/buttons/button/Button.vue';
+import { type ComputedRef, type Ref } from 'vue';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
-import Badge from '@/components/overlays/badge/Badge.vue';
+import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
-import Progress from '@/components/progress/Progress.vue';
+import Tooltip from '@/components/overlays/tooltip/Tooltip.vue';
 import ExpandButton from '@/components/tables/ExpandButton.vue';
 import TablePagination, {
   type TablePaginationData,
 } from './TablePagination.vue';
-
-export interface TableColumn {
-  key: string;
-  sortable?: boolean;
-  direction?: 'asc' | 'desc';
-  align?: 'start' | 'center' | 'end';
-  class?: string;
-  cellClass?: string;
-  [key: string]: any;
-}
-
-type TableRow = any;
-
-export interface SortColumn {
-  column?: string;
-  direction: 'asc' | 'desc';
-}
+import TableHead, {
+  type SortColumn,
+  type TableColumn,
+  type TableRow,
+  type TableRowKey,
+  type TableSortData,
+} from './TableHead.vue';
 
 export interface TableOptions {
   pagination?: TablePaginationData;
-  sort?: SortColumn | SortColumn[];
+  sort?: TableSortData;
+}
+
+export interface GroupData {
+  key: TableRowKey;
+  value: any;
 }
 
 export interface Props {
@@ -39,7 +34,7 @@ export interface Props {
   /**
    * the attribute used to identify each row uniquely for selection, usually `id`
    */
-  rowAttr: string;
+  rowAttr: TableRowKey;
   /**
    * model for selected rows, add a v-model to support row selection
    */
@@ -73,7 +68,7 @@ export interface Props {
    * multi columns sort
    * @example v-model:sort="[{ column: 'name', direction: 'asc' }]"
    */
-  sort?: SortColumn | SortColumn[];
+  sort?: TableSortData;
   /**
    * modifiers for specifying externally sorted tables
    * use this when api controls sorting
@@ -88,11 +83,11 @@ export interface Props {
   /**
    * list of column definitions
    */
-  cols?: Array<TableColumn>;
+  cols?: TableColumn[];
   /**
    * attribute to use from column definitions to display column titles
    */
-  columnAttr?: string;
+  columnAttr?: keyof TableColumn;
   /**
    * flag to show a more or less spacious table
    */
@@ -134,7 +129,7 @@ export interface Props {
    */
   singleExpand?: boolean;
   /**
-   * make expansion work like accordion
+   * make table head stick to top on scroll
    */
   stickyHeader?: boolean;
   stickyOffset?: number;
@@ -143,6 +138,15 @@ export interface Props {
    * When true, changing the items per page setting in one table will affect other tables.
    */
   globalItemsPerPage?: boolean;
+  /**
+   * model for grouping column/columns data
+   * single column grouping
+   * @example v-model:group="'name'"
+   * multi columns grouping
+   * @example v-model:group="['name', 'country']"
+   */
+  group?: TableRowKey | TableRowKey[];
+  collapsed?: TableRow[];
 }
 
 defineOptions({
@@ -162,7 +166,7 @@ const props = withDefaults(defineProps<Props>(), {
   outlined: false,
   paginationModifiers: undefined,
   sortModifiers: undefined,
-  empty: () => ({ label: 'No item found' }),
+  empty: () => ({ description: 'No item found' }),
   rounded: 'md',
   hideDefaultFooter: false,
   striped: false,
@@ -171,14 +175,20 @@ const props = withDefaults(defineProps<Props>(), {
   stickyHeader: false,
   stickyOffset: 0,
   globalItemsPerPage: undefined,
+  group: undefined,
+  collapsed: undefined,
+  customGroupBy: undefined,
 });
 
 const emit = defineEmits<{
-  (e: 'input', value?: string[]): void;
-  (e: 'update:expanded', value?: TableRow[]): void;
-  (e: 'update:pagination', value: TablePaginationData): void;
-  (e: 'update:sort', value?: SortColumn | SortColumn[]): void;
+  (e: 'input', value?: Props['value']): void;
+  (e: 'update:expanded', value?: Props['expanded']): void;
+  (e: 'update:pagination', value: Props['pagination']): void;
+  (e: 'update:sort', value?: Props['sort']): void;
   (e: 'update:options', value: TableOptions): void;
+  (e: 'update:group', value?: Props['group']): void;
+  (e: 'update:collapsed', value?: Props['collapsed']): void;
+  (e: 'copy:group', value: GroupData): void;
 }>();
 
 const {
@@ -198,16 +208,24 @@ const {
   singleExpand,
   stickyOffset,
   stickyHeader,
+  group,
+  collapsed,
 } = toRefs(props);
 
 const css = useCssModule();
+const slots = useSlots();
 const { stick, table, tableScroller } = useStickyTableHeader(
   stickyOffset,
   stickyHeader,
 );
 const tableDefaults = useTable();
+
+const headerSlots = computed(() =>
+  Object.keys(slots).filter((slotName) => slotName.startsWith('header.')),
+);
+
 const globalItemsPerPageSettings = computed(() => {
-  if (props.globalItemsPerPage !== undefined) {
+  if (typeof props.globalItemsPerPage !== 'undefined') {
     return props.globalItemsPerPage;
   }
   return get(tableDefaults.globalItemsPerPage);
@@ -216,7 +234,7 @@ const globalItemsPerPageSettings = computed(() => {
 /**
  * Prepare the columns from props or generate using first item in the list
  */
-const columns = computed(() => {
+const columns = computed<TableColumn[]>(() => {
   const data =
     get(cols) ??
     Object.keys(get(rows)[0] ?? {}).map((key) => ({
@@ -232,11 +250,20 @@ const columns = computed(() => {
       {
         key: 'expand',
         sortable: false,
+        class: 'w-16',
+        cellClass: '!py-0 w-16',
+        align: 'end',
       },
     ];
   }
 
-  return data;
+  const groupByKeys = get(groupKeys);
+
+  if (groupByKeys.length === 0) {
+    return data;
+  }
+
+  return data.filter((column) => !groupByKeys.includes(column.key));
 });
 
 const selectedData = computed({
@@ -249,9 +276,14 @@ const selectedData = computed({
 });
 
 const internalPaginationState: Ref<TablePaginationData | undefined> = ref();
+const collapsedRows: Ref<TableRow[]> = ref([]);
 
 watchImmediate(pagination, (pagination) => {
   set(internalPaginationState, pagination);
+});
+
+watchImmediate(collapsed, (value) => {
+  set(collapsedRows, value ?? []);
 });
 
 const expandable = computed(() => get(expanded) && slots['expanded-item']);
@@ -330,7 +362,7 @@ const sortData = computed({
  * for easily checking if a column is sorted instead of looping through the array
  */
 const sortedMap = computed(() => {
-  const mapped: Record<string, SortColumn> = {};
+  const mapped: Record<TableRowKey, SortColumn> = {};
   const sortBy = get(sortData);
   if (!sortBy) {
     return mapped;
@@ -383,7 +415,7 @@ const isAllSelected = computed(() => {
 /**
  * rows filtered based on search query if it exists
  */
-const searchData = computed(() => {
+const searchData: ComputedRef<TableRow[]> = computed(() => {
   const query = get(search)?.toLocaleLowerCase();
   if (!query) {
     return get(rows);
@@ -399,7 +431,7 @@ const searchData = computed(() => {
 /**
  * sort the search results
  */
-const sorted = computed(() => {
+const sorted: ComputedRef<TableRow[]> = computed(() => {
   const sortBy = get(sortData);
   const data = [...get(searchData)];
   if (!sortBy || get(sortModifiers)?.external) {
@@ -445,7 +477,7 @@ const sorted = computed(() => {
 /**
  * comprises search, sorted and paginated data
  */
-const filtered = computed(() => {
+const filtered: ComputedRef<TableRow[]> = computed(() => {
   const result = get(sorted);
 
   const paginated = get(paginationData);
@@ -457,6 +489,77 @@ const filtered = computed(() => {
   }
 
   return result;
+});
+
+const groupKeys = computed(() => {
+  const groupBy = get(group);
+
+  if (!groupBy) {
+    // no grouping
+    return [];
+  }
+
+  if (!Array.isArray(groupBy)) {
+    // currently only supports a single grouping
+    // only the first item in the array is used
+    return [groupBy];
+  }
+
+  return groupBy;
+});
+
+const groupKey = computed(() => get(groupKeys).join(':'));
+
+const isGrouped = computed(() => !!get(groupKey));
+
+/**
+ * comprises search, sorted paginated, and grouped data
+ */
+const mappedGroups: ComputedRef<Record<string, TableRow[]>> = computed(() => {
+  if (!get(isGrouped)) {
+    // no grouping
+    return {};
+  }
+
+  const result = get(filtered);
+  const identifier = get(rowAttr);
+
+  return result.reduce((acc, row) => {
+    if (!isDefined(row[identifier]) || row[identifier] === '') {
+      return acc;
+    }
+
+    const group = getRowGroup(row);
+    const groupVal = Object.values(group).filter(isDefined).join(',');
+    if (!acc[groupVal]) {
+      acc[groupVal] = [
+        {
+          [identifier]: 'group.header',
+          group,
+          groupVal,
+        },
+      ];
+    }
+
+    acc[groupVal].push(row);
+
+    return acc;
+  }, {});
+});
+
+/**
+ * comprises search, sorted paginated, and grouped data
+ */
+const grouped: ComputedRef<TableRow[]> = computed(() => {
+  const result = get(filtered);
+  const groupByKey = get(groupKey);
+
+  if (!groupByKey) {
+    // no grouping
+    return result;
+  }
+
+  return Object.values(get(mappedGroups)).flatMap((grouped) => grouped);
 });
 
 const filteredMap = computed(() =>
@@ -482,9 +585,9 @@ const colspan = computed(() => {
   return columnLength;
 });
 
-const isSortedBy = (key: string) => key in get(sortedMap);
+const isSortedBy = (key: TableRowKey) => key in get(sortedMap);
 
-const getSortIndex = (key: string) => {
+const getSortIndex = (key: TableRowKey) => {
   const sortBy = get(sortData);
 
   if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
@@ -533,6 +636,71 @@ const onToggleExpand = (row: TableRow) => {
   );
 };
 
+const getRowGroup = (row: TableRow) => {
+  const group = get(groupKeys);
+  const result: Record<keyof TableRow, any> = {};
+  if (group.length === 0) {
+    return result;
+  }
+
+  return group.reduce<Record<keyof TableRow, any>>(
+    (acc, key) => ({ ...acc, [key]: row[key] }),
+    result,
+  );
+};
+
+const getGroupRows = (groupVal: string) => {
+  if (!get(isGrouped)) {
+    return [];
+  }
+
+  return get(mappedGroups)[groupVal].filter(
+    (row) => row[get(rowAttr)] !== 'group.header',
+  );
+};
+
+const compareGroupsFn = (a: TableRow, b: TableRow) => {
+  const group = get(groupKeys);
+  if (group.length === 0) {
+    return false;
+  }
+
+  return group.every((key) => a[key] === b[key]);
+};
+
+const isExpandedGroup = (value: any) =>
+  get(collapsedRows).every((row) => !compareGroupsFn(row, value));
+
+const isHiddenRow = (row: TableRow) => get(isGrouped) && !isExpandedGroup(row);
+
+const onToggleExpandGroup = (group: any, value: string) => {
+  const collapsed = get(collapsedRows);
+
+  const groupExpanded = isExpandedGroup(group);
+
+  const groupRows = getGroupRows(value);
+
+  set(
+    collapsedRows,
+    groupExpanded
+      ? [...collapsed, ...groupRows]
+      : collapsed.filter((row) => !compareGroupsFn(row, group)),
+  );
+
+  emit('update:collapsed', get(collapsedRows));
+};
+
+const onUngroup = () => {
+  set(collapsedRows, []);
+
+  emit('update:collapsed', []);
+  emit('update:group', Array.isArray(get(group)) ? [] : undefined);
+};
+
+const onCopyGroup = (value: GroupData) => {
+  emit('copy:group', value);
+};
+
 /**
  * Sort to handle single sort or multiple sort columns
  */
@@ -540,7 +708,7 @@ const onSort = ({
   key,
   direction,
 }: {
-  key: string;
+  key: TableRowKey;
   direction?: 'asc' | 'desc';
 }) => {
   const sortBy = get(sortData);
@@ -561,7 +729,7 @@ const onSort = ({
         });
       }
     } else {
-      set(sortData, { column: key, direction: direction || 'asc' });
+      set(sortData, { column: key, direction: direction ?? 'asc' });
     }
     return;
   }
@@ -579,7 +747,7 @@ const onSort = ({
     }
     set(sortData, sortBy);
   } else {
-    set(sortData, [...sortBy, { column: key, direction: direction || 'asc' }]);
+    set(sortData, [...sortBy, { column: key, direction: direction ?? 'asc' }]);
   }
 };
 
@@ -645,8 +813,6 @@ onMounted(() => {
     limit: get(tableDefaults.itemsPerPage),
   });
 });
-
-const slots = useSlots();
 </script>
 
 <template>
@@ -663,197 +829,183 @@ const slots = useSlots();
         :class="[css.table, { [css.dense]: dense }]"
         aria-label=""
       >
-        <thead
+        <TableHead
+          :loading="loading"
+          :indeterminate="indeterminate"
+          :capitalize-headers="!cols"
+          :colspan="colspan"
+          :column-attr="columnAttr"
+          :columns="columns"
+          :dense="dense"
+          :disable-check-all="!filtered?.length"
+          :is-all-selected="isAllSelected"
+          :no-data="noData"
+          :selectable="!!selectedData"
+          :sort-data="sortData"
+          :sorted-map="sortedMap"
+          :stick="stick"
+          :sticky-header="stickyHeader"
           data-id="head-main"
-          :class="[
-            css.thead,
-            { [css.sticky__header]: stickyHeader, [css.stick__top]: stick },
-          ]"
+          @sort="onSort($event)"
+          @select:all="onToggleAll($event)"
         >
-          <tr :class="css.tr">
-            <th v-if="selectedData" :class="css.checkbox" scope="col">
-              <Checkbox
-                :disabled="!filtered?.length"
-                :indeterminate="indeterminate"
-                :value="isAllSelected"
-                color="primary"
-                data-cy="table-toggle-check-all"
-                hide-details
-                @input="onToggleAll($event)"
-              />
-            </th>
-
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="[
-                css.th,
-                column.class,
-                css[`align__${column.align ?? 'start'}`],
-                {
-                  capitalize: !cols,
-                  [css.sortable]: column.sortable,
-                },
-              ]"
-              scope="col"
-            >
-              <slot :column="column" :name="`header.${column.key}`">
-                <Badge
-                  v-if="column.sortable"
-                  :value="getSortIndex(column.key) >= 0"
-                  :text="`${getSortIndex(column.key) + 1}`"
-                  color="secondary"
-                  size="sm"
-                >
-                  <Button
-                    :class="[
-                      css.sort__button,
-                      {
-                        [css.sort__active]: isSortedBy(column.key),
-                        [css[`sort__${sortedMap[column.key]?.direction}`]]:
-                          isSortedBy(column.key),
-                      },
-                    ]"
-                    size="sm"
-                    variant="text"
-                    @click="onSort(column)"
-                  >
-                    <span :class="css.column__text">
-                      {{ column[columnAttr] }}
-                    </span>
-
-                    <template v-if="column.align === 'end'" #prepend>
-                      <Icon
-                        :class="css.sort__icon"
-                        name="arrow-down-line"
-                        size="18"
-                      />
-                    </template>
-
-                    <template #append>
-                      <Icon
-                        v-if="column.align !== 'end'"
-                        :class="css.sort__icon"
-                        name="arrow-down-line"
-                        size="18"
-                      />
-                    </template>
-                  </Button>
-                </Badge>
-                <span v-else :class="css.column__text">
-                  {{ column[columnAttr] }}
-                </span>
-              </slot>
-            </th>
-          </tr>
-          <tr
-            v-if="loading"
-            :class="[
-              css.thead__loader,
-              { [css.thead__loader_linear]: !noData },
-            ]"
-          >
-            <th :class="css.progress" :colspan="colspan" scope="col">
-              <div :class="css.progress__wrapper">
-                <Progress
-                  :circular="noData"
-                  color="primary"
-                  variant="indeterminate"
-                />
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <thead v-if="stickyHeader" :class="css.thead" data-id="head-clone">
-          <tr :class="css.tr">
-            <th v-if="selectedData" scope="col" :class="css.checkbox" />
-
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              scope="col"
-              :class="[
-                css.th,
-                column.class,
-                css[`align__${column.align ?? 'start'}`],
-                {
-                  capitalize: !cols,
-                  [css.sortable]: column.sortable,
-                },
-              ]"
-            />
-          </tr>
-        </thead>
+          <template v-for="headerSlot in headerSlots" #[headerSlot]="slotData">
+            <slot :name="headerSlot" v-bind="slotData" />
+          </template>
+        </TableHead>
+        <TableHead
+          v-if="stickyHeader"
+          :loading="loading"
+          :indeterminate="indeterminate"
+          :capitalize-headers="!cols"
+          :colspan="colspan"
+          :column-attr="columnAttr"
+          :columns="columns"
+          :dense="dense"
+          :disable-check-all="!filtered?.length"
+          :is-all-selected="isAllSelected"
+          :no-data="noData"
+          :selectable="!!selectedData"
+          :sort-data="sortData"
+          :sorted-map="sortedMap"
+          data-id="head-clone"
+          class="opacity-0 invisible"
+        >
+          <template v-for="headerSlot in headerSlots" #[headerSlot]="slotData">
+            <slot :name="headerSlot" v-bind="slotData" />
+          </template>
+        </TableHead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
           <slot
             v-if="slots['body.prepend'] && !(loading && noData)"
             :colspan="colspan"
             name="body.prepend"
           />
-          <template v-for="(row, index) in filtered">
+          <template v-for="(row, index) in grouped">
             <tr
+              v-if="row[rowAttr] === 'group.header'"
               :key="`row-${index}`"
-              :class="[
-                css.tr,
-                { [css.tr__selected]: isSelected(row[rowAttr]) },
-              ]"
+              :class="[css.tr, css.tr__group]"
             >
-              <td v-if="selectedData" :class="css.checkbox">
-                <Checkbox
-                  :data-cy="`table-toggle-check-${index}`"
-                  :value="isSelected(row[rowAttr])"
-                  color="primary"
-                  hide-details
-                  @input="onSelect($event, row[rowAttr])"
-                />
-              </td>
-
-              <td
-                v-for="(column, subIndex) in columns"
-                :key="subIndex"
-                :class="[
-                  css.td,
-                  column.cellClass,
-                  css[`align__${column.align ?? 'start'}`],
-                ]"
+              <slot
+                name="group.header"
+                :colspan="colspan"
+                :row="row"
+                :group="row.group"
+                :group-key="groupKey"
+                :group-value="row.groupVal"
+                :is-open="isExpandedGroup(row.group)"
+                :toggle="() => onToggleExpandGroup(row.group, row.groupVal)"
               >
-                <slot
-                  v-if="column.key === 'expand'"
-                  :name="`item.${column.key}`"
-                  :column="column"
-                  :row="row"
-                  :index="index"
-                >
-                  <ExpandButton
-                    v-if="!slots['item.expand']"
-                    :expanded="isExpanded(row[rowAttr])"
-                    @click="onToggleExpand(row)"
+                <td :class="[css.td]" class="!p-2" :colspan="colspan">
+                  <div class="flex items-center gap-2">
+                    <ExpandButton
+                      :expanded="isExpandedGroup(row.group)"
+                      @click="onToggleExpandGroup(row.group, row.groupVal)"
+                    />
+                    <slot
+                      name="group.header.content"
+                      :row="row"
+                      :group="row.group"
+                      :group-key="groupKey"
+                      :group-value="row.groupVal"
+                    >
+                      <span>{{ groupKey }}: {{ row.groupVal }}</span>
+                      <Button
+                        size="sm"
+                        variant="text"
+                        icon
+                        @click="
+                          onCopyGroup({ key: groupKey, value: row.group })
+                        "
+                      >
+                        <Icon name="file-copy-line" size="16" />
+                      </Button>
+                    </slot>
+                    <Tooltip
+                      :popper="{ placement: 'top' }"
+                      class="ml-auto mr-2"
+                    >
+                      <template #activator>
+                        <Button
+                          size="sm"
+                          variant="text"
+                          icon
+                          @click="onUngroup()"
+                        >
+                          <Icon name="delete-bin-line" size="14" />
+                        </Button>
+                      </template>
+                      Ungroup
+                    </Tooltip>
+                  </div>
+                </td>
+              </slot>
+            </tr>
+            <template v-else>
+              <tr
+                :key="`row-${index}`"
+                :class="[
+                  css.tr,
+                  { [css.tr__selected]: isSelected(row[rowAttr]) },
+                ]"
+                :hidden="isHiddenRow(row)"
+              >
+                <td v-if="selectedData" :class="css.checkbox">
+                  <Checkbox
+                    :data-cy="`table-toggle-check-${index}`"
+                    :value="isSelected(row[rowAttr])"
+                    color="primary"
+                    hide-details
+                    @input="onSelect($event, row[rowAttr])"
                   />
-                </slot>
-                <slot
-                  v-else
-                  :column="column"
-                  :index="index"
-                  :name="`item.${column.key}`"
-                  :row="row"
-                >
-                  {{ row[column.key] }}
-                </slot>
-              </td>
-            </tr>
+                </td>
 
-            <tr
-              v-if="expandable"
-              :key="`row-expand-${index}`"
-              :hidden="!isExpanded(row[rowAttr])"
-              :class="[css.tr, css.tr__expandable]"
-            >
-              <td :colspan="colspan" :class="[css.td]">
-                <slot name="expanded-item" :row="row" :index="index">
-                  expansion content placeholder
-                </slot>
-              </td>
-            </tr>
+                <td
+                  v-for="(column, subIndex) in columns"
+                  :key="subIndex"
+                  :class="[
+                    css.td,
+                    column.cellClass,
+                    css[`align__${column.align ?? 'start'}`],
+                  ]"
+                >
+                  <slot
+                    v-if="column.key === 'expand'"
+                    :name="`item.${column.key}`"
+                    :column="column"
+                    :row="row"
+                    :index="index"
+                  >
+                    <ExpandButton
+                      v-if="!slots['item.expand']"
+                      :expanded="isExpanded(row[rowAttr])"
+                      @click="onToggleExpand(row)"
+                    />
+                  </slot>
+                  <slot
+                    v-else
+                    :column="column"
+                    :index="index"
+                    :name="`item.${column.key.toString()}`"
+                    :row="row"
+                  >
+                    {{ row[column.key] }}
+                  </slot>
+                </td>
+              </tr>
+
+              <tr
+                v-if="expandable"
+                :key="`row-expand-${index}`"
+                :hidden="!isExpanded(row[rowAttr])"
+                :class="[css.tr, css.tr__expandable]"
+              >
+                <td :colspan="colspan" :class="[css.td]">
+                  <slot name="expanded-item" :row="row" :index="index" />
+                </td>
+              </tr>
+            </template>
           </template>
           <tr
             v-if="noData && empty && !loading"
@@ -948,113 +1100,6 @@ const slots = useSlots();
   .table {
     @apply min-w-full table-fixed divide-y divide-black/[0.12] whitespace-nowrap mx-auto my-0 max-w-fit relative;
 
-    .thead {
-      @apply divide-y divide-black/[0.12];
-
-      &.sticky__header {
-        @apply top-0 z-10 absolute;
-
-        &.stick__top {
-          @apply fixed;
-
-          tr {
-            th {
-              @apply bg-white border-b border-b-black/[0.12];
-            }
-          }
-        }
-      }
-
-      .tr {
-        .th {
-          @apply p-4;
-
-          &.align__start {
-            @apply text-left rtl:text-right;
-          }
-
-          &.align__center {
-            @apply text-center;
-          }
-
-          &.align__end {
-            @apply text-right rtl:text-left;
-          }
-
-          &.sortable {
-            &.align__start {
-              @apply pl-3;
-            }
-
-            &.align__center {
-              @apply px-3;
-              .sort__button {
-                @apply ml-6;
-              }
-            }
-
-            &.align__end {
-              @apply pr-3;
-            }
-
-            .sort__button {
-              @apply inline-flex;
-
-              &:hover .sort__icon {
-                @apply opacity-60;
-              }
-
-              &.sort {
-                &__active {
-                  .sort__icon {
-                    @apply opacity-100;
-                  }
-                }
-
-                &__desc {
-                  .sort__icon {
-                    @apply rotate-0;
-                  }
-                }
-
-                &__asc {
-                  .sort__icon {
-                    @apply rotate-180;
-                  }
-                }
-              }
-            }
-
-            .sort__icon {
-              @apply transition opacity-0 rotate-180;
-            }
-          }
-
-          .column__text {
-            @apply text-rui-text font-medium text-sm leading-6;
-          }
-        }
-      }
-
-      &__loader {
-        .progress {
-          @apply relative w-full py-8;
-        }
-
-        &_linear {
-          @apply border-none;
-
-          .progress {
-            @apply p-0 h-0;
-          }
-
-          .progress__wrapper {
-            @apply h-0 -mt-1;
-          }
-        }
-      }
-    }
-
     .tbody {
       @apply divide-y divide-black/[0.12];
 
@@ -1079,6 +1124,10 @@ const slots = useSlots();
 
         &__expandable {
           @apply bg-[#f9fafb] hover:bg-[#f9fafb];
+        }
+
+        &__group {
+          @apply bg-black/[0.02];
         }
 
         .td {
@@ -1145,21 +1194,6 @@ const slots = useSlots();
 
     .table {
       @apply divide-white/[0.12];
-      .thead {
-        @apply divide-y divide-white/[0.12];
-
-        &.sticky__header.stick__top {
-          th {
-            @apply bg-[#121212] border-b border-b-white/[0.12];
-          }
-        }
-
-        .tr {
-          .th {
-            @apply text-white;
-          }
-        }
-      }
 
       .tbody {
         @apply divide-white/[0.12];
@@ -1181,6 +1215,10 @@ const slots = useSlots();
 
           &__expandable {
             @apply bg-[#121212] hover:bg-[#121212];
+          }
+
+          &__group {
+            @apply bg-white/[0.02];
           }
         }
       }
