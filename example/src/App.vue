@@ -28,6 +28,15 @@ const navigation = ref([
       { to: { name: 'badges' }, title: 'Badges' },
     ],
   },
+  {
+    title: 'Components',
+    links: [
+      {
+        to: { name: 'breakpoint' },
+        title: 'Breakpoint',
+      },
+    ],
+  },
 ]);
 
 const css = useCssModule();

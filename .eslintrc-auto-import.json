@@ -338,6 +338,7 @@
     "useStickyTableHeader": true,
     "TableSymbol": true,
     "createTableDefaults": true,
-    "useTable": true
+    "useTable": true,
+    "useBreakpoint": true
   }
 }
