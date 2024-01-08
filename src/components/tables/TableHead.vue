@@ -279,7 +279,6 @@ const getSortIndex = (key: TableRowKey) => {
 
     .checkbox {
       @apply ps-4 w-14;
-      @apply max-w-[3.125rem] #{!important};
     }
   }
 

@@ -13,6 +13,7 @@ const createWrapper = (options?: any) =>
       [TableSymbol.valueOf()]: {
         itemsPerPage: ref(10),
         globalItemsPerPage: get(false),
+        limits: [5, 10, 15, 25, 50, 100, 200],
       },
     },
   });
@@ -333,6 +334,7 @@ describe('DataTable', () => {
           [TableSymbol.valueOf()]: createTableDefaults({
             itemsPerPage,
             globalItemsPerPage: true,
+            limits: [5, 10, 15, 25, 50, 100, 200],
           }),
         },
       });
@@ -379,6 +381,7 @@ describe('DataTable', () => {
           [TableSymbol.valueOf()]: createTableDefaults({
             itemsPerPage,
             globalItemsPerPage: true,
+            limits: [5, 10, 15, 25, 50, 100, 200],
           }),
         },
       });
@@ -426,6 +429,7 @@ describe('DataTable', () => {
         provide: {
           [TableSymbol.valueOf()]: createTableDefaults({
             itemsPerPage,
+            limits: [5, 10, 15, 25, 50, 100, 200],
           }),
         },
       });
