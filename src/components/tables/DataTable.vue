@@ -219,6 +219,7 @@ const { stick, table, tableScroller } = useStickyTableHeader(
   stickyHeader,
 );
 const tableDefaults = useTable();
+const groupHeaderKey = 'group.header';
 
 const headerSlots = computed(() =>
   Object.keys(slots).filter((slotName) => slotName.startsWith('header.')),
@@ -265,6 +266,8 @@ const columns = computed<TableColumn[]>(() => {
 
   return data.filter((column) => !groupByKeys.includes(column.key));
 });
+
+const itemsLength = ref(0);
 
 const selectedData = computed({
   get() {
@@ -317,7 +320,7 @@ const paginationData: Ref<TablePaginationData> = computed({
     const paginated = get(internalPaginationState);
     if (!paginated) {
       return {
-        total: get(searchData).length,
+        total: get(itemsLength),
         limit: get(itemsPerPage),
         page: 1,
       };
@@ -328,7 +331,7 @@ const paginationData: Ref<TablePaginationData> = computed({
     }
 
     return {
-      total: get(searchData).length,
+      total: get(itemsLength),
       limit: paginated.limit,
       page: paginated.page,
       limits: paginated.limits,
@@ -394,7 +397,9 @@ const visibleIdentifiers = computed(() => {
     return [];
   }
 
-  return get(filtered)?.map((row) => row[selectBy]) ?? [];
+  return get(filtered)
+    .filter((row) => row[selectBy] !== groupHeaderKey)
+    .map((row) => row[selectBy]);
 });
 
 /**
@@ -474,23 +479,6 @@ const sorted: ComputedRef<TableRow[]> = computed(() => {
   return data;
 });
 
-/**
- * comprises search, sorted and paginated data
- */
-const filtered: ComputedRef<TableRow[]> = computed(() => {
-  const result = get(sorted);
-
-  const paginated = get(paginationData);
-  const limit = paginated.limit;
-  if (paginated && !get(paginationModifiers)?.external) {
-    const start = (paginated.page - 1) * limit;
-    const end = start + limit;
-    return result.slice(start, end);
-  }
-
-  return result;
-});
-
 const groupKeys = computed(() => {
   const groupBy = get(group);
 
@@ -521,7 +509,7 @@ const mappedGroups: ComputedRef<Record<string, TableRow[]>> = computed(() => {
     return {};
   }
 
-  const result = get(filtered);
+  const result = get(sorted);
   const identifier = get(rowAttr);
 
   return result.reduce((acc, row) => {
@@ -534,7 +522,7 @@ const mappedGroups: ComputedRef<Record<string, TableRow[]>> = computed(() => {
     if (!acc[groupVal]) {
       acc[groupVal] = [
         {
-          [identifier]: 'group.header',
+          [identifier]: groupHeaderKey,
           group,
           groupVal,
         },
@@ -551,7 +539,7 @@ const mappedGroups: ComputedRef<Record<string, TableRow[]>> = computed(() => {
  * comprises search, sorted paginated, and grouped data
  */
 const grouped: ComputedRef<TableRow[]> = computed(() => {
-  const result = get(filtered);
+  const result = get(sorted);
   const groupByKey = get(groupKey);
 
   if (!groupByKey) {
@@ -559,12 +547,27 @@ const grouped: ComputedRef<TableRow[]> = computed(() => {
     return result;
   }
 
-  return Object.values(get(mappedGroups)).flatMap((grouped) => grouped);
+  return Object.values(get(mappedGroups))
+    .flatMap((grouped) => grouped)
+    .filter((row) => !isHiddenRow(row));
 });
 
-const filteredMap = computed(() =>
-  get(filtered).map((row) => row[get(rowAttr)]),
-);
+/**
+ * comprises search, sorted and paginated data
+ */
+const filtered: ComputedRef<TableRow[]> = computed(() => {
+  const result = get(grouped);
+
+  const paginated = get(paginationData);
+  const limit = paginated.limit;
+  if (paginated && !get(paginationModifiers)?.external) {
+    const start = (paginated.page - 1) * limit;
+    const end = start + limit;
+    return result.slice(start, end);
+  }
+
+  return result;
+});
 
 const indeterminate = computed(() => {
   const selectedRows = get(selectedData);
@@ -655,7 +658,7 @@ const getGroupRows = (groupVal: string) => {
   }
 
   return get(mappedGroups)[groupVal].filter(
-    (row) => row[get(rowAttr)] !== 'group.header',
+    (row) => row[get(rowAttr)] !== groupHeaderKey,
   );
 };
 
@@ -671,7 +674,13 @@ const compareGroupsFn = (a: TableRow, b: TableRow) => {
 const isExpandedGroup = (value: any) =>
   get(collapsedRows).every((row) => !compareGroupsFn(row, value));
 
-const isHiddenRow = (row: TableRow) => get(isGrouped) && !isExpandedGroup(row);
+const isHiddenRow = (row: TableRow) => {
+  const identifier = get(rowAttr);
+  return (
+    get(isGrouped) &&
+    get(collapsedRows).some((value) => row[identifier] === value[identifier])
+  );
+};
 
 const onToggleExpandGroup = (group: any, value: string) => {
   const collapsed = get(collapsedRows);
@@ -767,7 +776,7 @@ const onToggleAll = (checked: boolean) => {
     set(
       selectedData,
       get(selectedData)?.filter(
-        (identifier) => !get(filteredMap).includes(identifier),
+        (identifier) => !get(visibleIdentifiers).includes(identifier),
       ),
     );
   }
@@ -794,6 +803,16 @@ const onSelect = (checked: boolean, value: string) => {
   }
 };
 
+const onPaginate = () => {
+  emit('update:expanded', []);
+};
+
+const setInternalTotal = (groupedItems: TableRow[]) => {
+  if (!get(paginationModifiers)?.external) {
+    set(itemsLength, groupedItems.length);
+  }
+};
+
 /**
  * on changing search query, need to reset pagination page to 1
  */
@@ -804,7 +823,11 @@ watch(search, () => {
   }
 });
 
+watch(grouped, setInternalTotal);
+
 onMounted(() => {
+  setInternalTotal(get(grouped));
+
   if (!get(globalItemsPerPageSettings)) {
     return;
   }
@@ -881,9 +904,9 @@ onMounted(() => {
             :colspan="colspan"
             name="body.prepend"
           />
-          <template v-for="(row, index) in grouped">
+          <template v-for="(row, index) in filtered">
             <tr
-              v-if="row[rowAttr] === 'group.header'"
+              v-if="row[rowAttr] === groupHeaderKey"
               :key="`row-${index}`"
               :class="[css.tr, css.tr__group]"
             >
@@ -949,7 +972,6 @@ onMounted(() => {
                   css.tr,
                   { [css.tr__selected]: isSelected(row[rowAttr]) },
                 ]"
-                :hidden="isHiddenRow(row)"
               >
                 <td v-if="selectedData" :class="css.checkbox">
                   <Checkbox
@@ -1057,6 +1079,7 @@ onMounted(() => {
       :dense="dense"
       :loading="loading"
       data-cy="table-pagination"
+      @input="onPaginate()"
     />
   </div>
 </template>
