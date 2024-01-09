@@ -1,12 +1,16 @@
 import * as fs from 'node:fs';
 import { defineConfig } from 'cypress';
 
+const captureVideo = !!process.env.CI;
+
 export default defineConfig({
   viewportWidth: 1280,
   viewportHeight: 720,
   e2e: {
     specPattern: 'cypress/e2e/**/*.cy.ts',
     baseUrl: 'http://localhost:4173',
+    video: captureVideo,
+    videoCompression: captureVideo,
     setupNodeEvents: (on): void => {
       on(
         'after:spec',
