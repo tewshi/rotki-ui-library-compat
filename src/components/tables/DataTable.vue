@@ -1018,9 +1018,8 @@ onMounted(() => {
               </tr>
 
               <tr
-                v-if="expandable"
+                v-if="expandable && isExpanded(row[rowAttr])"
                 :key="`row-expand-${index}`"
-                :hidden="!isExpanded(row[rowAttr])"
                 :class="[css.tr, css.tr__expandable]"
               >
                 <td :colspan="colspan" :class="[css.td]">
