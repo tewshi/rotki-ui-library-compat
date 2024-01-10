@@ -120,8 +120,8 @@ describe('DataTable', () => {
     cy.get('@buttons').eq(2).as('button2');
 
     cy.get('@multiple')
-      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
-      .should('exist');
+      .find('table tbody tr div[data-cy=expanded-content]')
+      .should('not.exist');
 
     cy.get('@button1').click();
 
@@ -163,8 +163,8 @@ describe('DataTable', () => {
     cy.get('@buttons').eq(2).as('button2');
 
     cy.get('@single')
-      .find('table tbody tr[hidden] div[data-cy=expanded-content]')
-      .should('exist');
+      .find('table tbody tr div[data-cy=expanded-content]')
+      .should('not.exist');
 
     cy.get('@button1').click();
 

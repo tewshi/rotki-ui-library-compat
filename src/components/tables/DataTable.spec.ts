@@ -125,7 +125,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeFalsy();
 
@@ -141,9 +141,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeFalsy();
+    ).toBeTruthy();
   });
 
   it('multiple expand toggles correctly', async () => {
@@ -236,7 +236,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeFalsy();
 
@@ -266,7 +266,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeFalsy();
 
