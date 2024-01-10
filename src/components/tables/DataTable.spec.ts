@@ -127,7 +127,7 @@ describe('DataTable', () => {
       wrapper
         .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -172,7 +172,7 @@ describe('DataTable', () => {
       wrapper
         .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -188,7 +188,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
 
@@ -206,7 +206,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
   });
@@ -238,7 +238,7 @@ describe('DataTable', () => {
       wrapper
         .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -254,7 +254,7 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(2) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
     ).toBeTruthy();
 
@@ -268,7 +268,7 @@ describe('DataTable', () => {
       wrapper
         .find('tbody tr[hidden]:nth-child(2) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
 
     await wrapper
       .find('tbody tr:nth-child(1) button[class*=_tr__expander_button]')
@@ -294,9 +294,9 @@ describe('DataTable', () => {
 
     expect(
       wrapper
-        .find('tbody tr:not(hidden):nth-child(4) div[data-cy=expanded-content]')
+        .find('tbody tr:nth-child(4) div[data-cy=expanded-content]')
         .exists(),
-    ).toBeTruthy();
+    ).toBeFalsy();
   });
 
   it('sticky header behaves as expected', async () => {
