@@ -1,6 +1,5 @@
 const path = require('node:path');
-const { readdir, writeFile } = require('node:fs/promises');
-const { readFile } = require('node:fs/promises');
+const { readdir, readFile, writeFile, lstat } = require('node:fs/promises');
 const { pascalCase } = require('scule');
 const { XMLParser } = require('fast-xml-parser');
 
@@ -11,15 +10,12 @@ function resolveRoot(...dir) {
   return path.resolve(__dirname, '..', ...dir);
 }
 
-function resolveRemixIconDir(...dir) {
-  return path.resolve(
-    __dirname,
-    '..',
-    'node_modules',
-    'remixicon',
-    'icons',
-    ...dir,
-  );
+function resolveRemixIconDir() {
+  return resolveRoot('node_modules', 'remixicon', 'icons');
+}
+
+function resolveCustomIconDir() {
+  return resolveRoot('src', 'custom-icons');
 }
 
 async function loop(data, cb) {
@@ -36,28 +32,38 @@ function getPathFromSvgString(svg) {
   return obj.svg.path['@_d'];
 }
 
-async function collectAllIconMetas() {
-  const res = [];
-  const categoryDirs = await readdir(resolveRemixIconDir());
+async function getAllSvgDataFromPath(pathDir) {
+  const type = await lstat(pathDir);
 
-  await loop(categoryDirs, async (categoryDir) => {
-    const iconsDirs = await readdir(resolveRemixIconDir(categoryDir));
+  if (type.isDirectory()) {
+    const res = [];
+    const dirs = await readdir(pathDir);
+    await loop(dirs, async (child) => {
+      res.push(...(await getAllSvgDataFromPath(`${pathDir}/${child}`)));
+    });
+    return res;
+  } else if (type.isFile()) {
+    const name = PREFIX + path.basename(pathDir).replace('.svg', '');
+    const generatedName = pascalCase(name);
+    const svg = await readFile(pathDir, 'utf8');
+    const svgPath = getPathFromSvgString(svg);
 
-    await loop(iconsDirs, async (iconName) => {
-      const name = PREFIX + path.basename(iconName).replace('.svg', '');
-      const generatedName = pascalCase(name);
-      const svg = await readFile(
-        resolveRemixIconDir(categoryDir, iconName),
-        'utf8',
-      );
-      const svgPath = getPathFromSvgString(svg);
-
-      res.push({
+    return [
+      {
         name,
         generatedName,
         svgPath,
-      });
-    });
+      },
+    ];
+  }
+}
+
+async function collectAllIconMetas() {
+  const dirs = [resolveRemixIconDir(), resolveCustomIconDir()];
+  const res = [];
+
+  await loop(dirs, async (dir) => {
+    res.push(...(await getAllSvgDataFromPath(dir)));
   });
 
   return res;
@@ -90,7 +96,6 @@ import { type GeneratedIcon } from '@/types/icons';\n
   iconsFile += `export type RuiIcons = ${names
     .map((x) => `"${x.replace('ri-', '')}"`)
     .join(' | ')};\n`;
-
   return iconsFile;
 }
 
