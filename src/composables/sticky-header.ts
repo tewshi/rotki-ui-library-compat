@@ -109,6 +109,7 @@ export const useStickyTableHeader = (
 
   onMounted(() => {
     toggleStickyClass();
+    useEventListener(tableScroller, 'scroll', toggleStickyClass);
     useEventListener(document.body, 'scroll', toggleStickyClass);
     useEventListener(window, 'resize', toggleStickyClass);
     watchCellWidth();
