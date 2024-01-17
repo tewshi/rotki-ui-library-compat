@@ -973,7 +973,12 @@ onMounted(() => {
                   { [css.tr__selected]: isSelected(row[rowAttr]) },
                 ]"
               >
-                <td v-if="selectedData" :class="css.checkbox">
+                <td
+                  v-if="selectedData"
+                  :class="css.checkbox"
+                  colspan="1"
+                  rowspan="1"
+                >
                   <Checkbox
                     :data-cy="`table-toggle-check-${index}`"
                     :value="isSelected(row[rowAttr])"
@@ -991,6 +996,8 @@ onMounted(() => {
                     column.cellClass,
                     css[`align__${column.align ?? 'start'}`],
                   ]"
+                  :colspan="column.colspan ?? 1"
+                  :rowspan="column.rowspan ?? 1"
                 >
                   <slot
                     v-if="column.key === 'expand'"
@@ -1184,7 +1191,10 @@ onMounted(() => {
     }
 
     .checkbox {
-      @apply ps-4 w-14;
+      @apply px-2 w-[3.625rem] max-w-[3.625rem];
+      label {
+        @apply ml-0;
+      }
     }
 
     &.dense {
