@@ -28,26 +28,39 @@ const onSwitchTheme = ({ value }: Theme) => switchThemeScheme(value);
 
 <template>
   <header :class="css.header">
-    <div :class="css['header-wrapper']" class="wrapper">
+    <div
+      :class="css['header-wrapper']"
+      class="wrapper"
+    >
       <RouterLink
         :to="{ name: 'buttons' }"
         aria-label="Home page"
         class="flex items-center space-x-3"
       >
-        <img alt="rotki" class="h-8" src="../assets/logo.png" />
+        <img
+          alt="rotki"
+          class="h-8"
+          src="../assets/logo.png"
+        />
       </RouterLink>
       <div
         class="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow"
       >
         <span class="sr-only">Theme</span>
-        <RuiButtonGroup :value="store" variant="outlined">
+        <RuiButtonGroup
+          :value="store"
+          variant="outlined"
+        >
           <RuiButton
             v-for="theme in themes"
             :key="theme.value"
             :value="theme.value"
             @click="onSwitchTheme(theme)"
           >
-            <RuiIcon :name="theme.icon" :size="16" />
+            <RuiIcon
+              :name="theme.icon"
+              :size="16"
+            />
           </RuiButton>
         </RuiButtonGroup>
       </div>

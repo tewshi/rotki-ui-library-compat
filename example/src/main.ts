@@ -84,11 +84,11 @@ const RuiPlugin = createRui({
 Vue.use(RuiPlugin);
 
 new Vue({
-  // @ts-ignore
+  // @ts-expect-error
   pinia,
   router,
   setup() {
     RuiPlugin.setupProvide();
   },
-  render: (h) => h(App),
+  render: h => h(App),
 }).$mount('#app');

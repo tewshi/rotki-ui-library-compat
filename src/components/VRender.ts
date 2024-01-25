@@ -3,7 +3,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   functional: true,
   render(_h, ctx) {
-    const { vNode, key, ...props } = ctx.props;
+    const { key, vNode, ...props } = ctx.props;
     if (vNode.componentOptions) {
       if (!vNode.componentOptions.initialPropsData) {
         vNode.componentOptions.initialPropsData = {

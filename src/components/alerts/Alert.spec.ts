@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import Alert from '@/components/alerts/Alert.vue';
 
-const createWrapper = (options?: any) =>
-  mount(Alert, {
+function createWrapper(options?: any) {
+  return mount(Alert, {
     ...options,
     stubs: {
       RuiIcon: true,
     },
   });
+}
 
-describe('Forms/Alert', () => {
+describe('forms/Alert', () => {
   it('renders properly', () => {
     const title = 'Text Field Label';
     const wrapper = createWrapper({

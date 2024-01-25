@@ -1026,23 +1026,30 @@ const prependChips = ref<ChipProps[]>([
   },
 ]);
 
-const onRemove = (identifier: number | string) => {
+function onRemove(identifier: number | string) {
   const status = { ...get(dismissed) };
-  if (!(identifier in status)) {
+  if (!(identifier in status))
     status[identifier] = 0;
-  }
 
   status[identifier]++;
 
   set(dismissed, status);
-};
+}
 </script>
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="chips">Chips</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="chips"
+    >
+      Chips
+    </h2>
     <div class="grid gap-6 grid-cols-6">
-      <div v-for="(chip, i) in chips" :key="i">
+      <div
+        v-for="(chip, i) in chips"
+        :key="i"
+      >
         <RuiChip
           :data-cy="`chip-${i}`"
           v-bind="chip"
@@ -1050,12 +1057,22 @@ const onRemove = (identifier: number | string) => {
         >
           Chip
         </RuiChip>
-        <div v-if="dismissed[i]">{{ dismissed[i] }} times</div>
+        <div v-if="dismissed[i]">
+          {{ dismissed[i] }} times
+        </div>
       </div>
     </div>
-    <h2 class="text-h4 mb-6 mt-14" data-cy="chip">Chips with Prepend</h2>
+    <h2
+      class="text-h4 mb-6 mt-14"
+      data-cy="chip"
+    >
+      Chips with Prepend
+    </h2>
     <div class="grid gap-6 grid-cols-6">
-      <div v-for="(chip, i) in prependChips" :key="i">
+      <div
+        v-for="(chip, i) in prependChips"
+        :key="i"
+      >
         <RuiChip
           :data-cy="`pre-chip-${i}`"
           v-bind="chip"

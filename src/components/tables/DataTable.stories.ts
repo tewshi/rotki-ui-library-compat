@@ -7,15 +7,15 @@ import TextField from '@/components/forms/text-field/TextField.vue';
 import Icon from '@/components/icons/Icon.vue';
 import Card from '@/components/cards/Card.vue';
 import DataTable, { type Props } from './DataTable.vue';
-import { type TableColumn } from './TableHead.vue';
+import type { TableColumn } from './TableHead.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
-const render: StoryFn<Props> = (args) => ({
-  components: { DataTable, Button, Icon, TextField, Card },
+const render: StoryFn<Props> = args => ({
+  components: { Button, Card, DataTable, Icon, TextField },
   provide: {
     [TableSymbol.valueOf()]: createTableDefaults({
-      itemsPerPage: ref(10),
       globalItemsPerPage: false,
+      itemsPerPage: ref(10),
       limits: [5, 10, 15, 25, 50, 100, 200],
     }),
   },
@@ -79,14 +79,14 @@ const render: StoryFn<Props> = (args) => ({
 
     return {
       args,
-      value,
+      collapsed,
+      expanded,
+      group,
+      objectOmit,
       pagination,
       search,
       sort,
-      expanded,
-      group,
-      collapsed,
-      objectOmit,
+      value,
     };
   },
   template: `<div class="flex flex-col space-y-4">
@@ -150,68 +150,68 @@ const render: StoryFn<Props> = (args) => ({
 
 const data = [
   {
+    date: '10.09.2023',
+    email: 'Lefteris@example.com',
     id: 1,
     name: 'Lefteris',
-    title: 'Director of Product',
-    email: 'Lefteris@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Kelsos@example.com',
     id: 2,
     name: 'Kelsos',
-    title: 'Director of Product',
-    email: 'Kelsos@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Yabir@example.com',
     id: 3,
     name: 'Yabir',
-    title: 'Director of Product',
-    email: 'Yabir@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Luki@example.com',
     id: 4,
     name: 'Luki',
-    title: 'Director of Product',
-    email: 'Luki@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Celina@example.com',
     id: 5,
     name: 'Celina',
-    title: 'Director of Product',
-    email: 'Celina@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Joseph@example.com',
     id: 6,
     name: 'Joseph',
-    title: 'Director of Product',
-    email: 'Joseph@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   {
+    date: '10.09.2023',
+    email: 'Dimitry@example.com',
     id: 7,
     name: 'Dimitry',
-    title: 'Director of Product',
-    email: 'Dimitry@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Director of Product',
   },
   ...[...new Array(43)].map((_, index) => ({
+    date: '10.09.2023',
+    email: 'lindsay.walton@example.com',
     id: index + 8,
     name: 'Lindsay Walton',
-    title: 'Front-end Developer',
-    email: 'lindsay.walton@example.com',
     role: 'Member',
-    date: '10.09.2023',
+    title: 'Front-end Developer',
   })),
 ];
 
@@ -221,22 +221,22 @@ const columns: TableColumn[] = [
     label: 'ID',
   },
   {
+    align: 'end',
     key: 'name',
     label: 'Full name',
     sortable: true,
-    align: 'end',
   },
   {
+    align: 'start',
     key: 'title',
     label: 'Job position',
     sortable: true,
-    align: 'start',
   },
   {
+    align: 'center',
     key: 'email',
     label: 'Email address',
     sortable: true,
-    align: 'center',
   },
   {
     key: 'role',
@@ -248,10 +248,16 @@ const columns: TableColumn[] = [
 ];
 
 const meta: Meta<Props> = {
-  title: 'Components/Tables/DataTable',
-  component: DataTable,
-  tags: ['autodocs'],
-  render,
+  args: {
+    columnAttr: 'label',
+    dense: false,
+    loading: false,
+    outlined: false,
+    rowAttr: 'id',
+    rows: [],
+    striped: false,
+    value: undefined,
+  },
   argTypes: {
     rounded: {
       control: 'select',
@@ -259,16 +265,7 @@ const meta: Meta<Props> = {
       options: ['sm', 'md', 'lg'],
     },
   },
-  args: {
-    value: undefined,
-    rowAttr: 'id',
-    rows: [],
-    columnAttr: 'label',
-    loading: false,
-    dense: false,
-    outlined: false,
-    striped: false,
-  },
+  component: DataTable,
   parameters: {
     docs: {
       controls: {
@@ -280,8 +277,10 @@ const meta: Meta<Props> = {
           'tfoot',
           'no-data',
           'empty-description',
+          /* eslint-disable no-template-curly-in-string */
           'header.`${column.key}`',
           'item.`${column.key}`',
+          /* eslint-enable no-template-curly-in-string */
           'body.append',
           'item.expand',
           'group.header',
@@ -290,229 +289,232 @@ const meta: Meta<Props> = {
       },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Tables/DataTable',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
-    rows: data,
     cols: columns,
-    sort: [{ column: 'name', direction: 'asc' }],
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+    sort: [{ column: 'name', direction: 'asc' }],
   },
 };
 
 export const Dense: Story = {
   args: {
-    rows: data,
     dense: true,
+    rows: data,
   },
 };
 
 export const Loading: Story = {
   args: {
-    rows: [],
     cols: columns,
     loading: true,
+    rows: [],
   },
 };
 
 export const WithColumnDefinitions: Story = {
   args: {
-    rows: data,
     cols: columns,
+    rows: data,
   },
 };
 
 export const Selectable: Story = {
   args: {
-    rows: data,
     cols: columns,
+    rows: data,
     value: [],
   },
 };
 
 export const SelectableAndDense: Story = {
   args: {
-    rows: data,
     cols: columns,
-    value: [],
     dense: true,
+    rows: data,
+    value: [],
   },
 };
 
 export const WithPagination: Story = {
   args: {
+    pagination: { limit: 10, page: 1, total: 50 },
     rows: data,
     value: [],
-    pagination: { limit: 10, page: 1, total: 50 },
   },
 };
 
 export const ColumnsWithPagination: Story = {
   args: {
-    rows: data,
     cols: columns,
-    value: [],
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+    value: [],
   },
 };
 
 export const Outlined: Story = {
   args: {
-    rows: data,
     cols: columns,
-    value: [],
     outlined: true,
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+    value: [],
   },
 };
 
 export const Striped: Story = {
   args: {
-    rows: data,
     cols: columns,
-    value: [],
-    striped: true,
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
+    striped: true,
+    value: [],
   },
 };
 
 export const SingleSort: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
     sort: { column: 'name', direction: 'asc' },
+    value: [],
   },
 };
 
 export const MultipleSort: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
     pagination: { limit: 10, page: 1, total: 50 },
+    rows: data,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+    value: [],
   },
 };
 
 export const LoadingWithData: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
     loading: true,
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+    value: [],
   },
 };
 
 export const LoadingWithoutData: Story = {
   args: {
-    rows: [],
-    value: [],
     cols: columns,
     loading: true,
     outlined: true,
     pagination: { limit: 5, page: 1, total: 0 },
+    rows: [],
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+    value: [],
   },
 };
 
 export const EmptyState: Story = {
   args: {
-    rows: [],
-    value: [],
     cols: columns,
+    empty: {
+      description: 'Start by adding an account',
+      label: 'No item found',
+    },
     outlined: true,
     pagination: { limit: 5, page: 1, total: 0 },
-    empty: {
-      label: 'No item found',
-      description: 'Start by adding an account',
-    },
+    rows: [],
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
+    value: [],
   },
 };
 
 export const Expandable: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
+    expanded: [],
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
-    expanded: [],
+    value: [],
   },
 };
 
 export const SingleExpandable: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
+    expanded: [],
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+    singleExpand: true,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
-    expanded: [],
-    singleExpand: true,
+    value: [],
   },
 };
 
 export const StickyHeader: Story = {
   args: {
-    rows: data,
-    value: [],
     cols: columns,
+    expanded: [],
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
+    singleExpand: true,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
-    expanded: [],
-    singleExpand: true,
     stickyHeader: true,
     stickyOffset: 40,
+    value: [],
   },
 };
 
 export const Grouped: Story = {
   args: {
-    rows: data,
-    value: [],
+    collapsed: [],
     cols: columns,
+    expanded: [],
+    group: 'name',
     outlined: true,
     pagination: { limit: 5, page: 1, total: 50 },
+    rows: data,
     sort: [
       { column: 'name', direction: 'asc' },
       { column: 'email', direction: 'asc' },
     ],
-    expanded: [],
-    collapsed: [],
-    group: 'name',
+    value: [],
   },
 };
 

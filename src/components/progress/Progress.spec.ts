@@ -4,7 +4,7 @@ import Progress from '@/components/progress/Progress.vue';
 
 const createWrapper = (options?: any) => mount(Progress, options);
 
-describe('Progress', () => {
+describe('progress', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       propsData: {
@@ -23,9 +23,9 @@ describe('Progress', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       propsData: {
+        color: 'secondary',
         value: 50,
         variant: 'indeterminate',
-        color: 'secondary',
       },
     });
     expect(wrapper.get('div[role=progressbar]').classes()).toMatch(

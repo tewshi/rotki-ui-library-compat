@@ -1,4 +1,4 @@
-import { type ComponentPublicInstance } from 'vue';
+import type { ComponentPublicInstance } from 'vue';
 import type { ThisTypedMountOptions, Wrapper } from '@vue/test-utils';
 
 declare module '@vue/test-utils' {

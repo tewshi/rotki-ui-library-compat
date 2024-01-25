@@ -1,10 +1,10 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { contextColors } from '@/consts/colors';
 import { default as Radio, type RadioProps } from './Radio.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 type PropsAndLabel = RadioProps & { label: string };
 
-const render: StoryFn<PropsAndLabel> = (args) => ({
+const render: StoryFn<PropsAndLabel> = args => ({
   components: { Radio },
   setup() {
     const modelValue = computed({
@@ -23,99 +23,99 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
-  title: 'Components/Forms/Radio/Radio',
-  component: Radio,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    label: { control: 'text' },
-    value: { control: 'text' },
-    internalValue: { control: 'text' },
-    hint: { control: 'text' },
+    color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    color: { control: 'select', options: contextColors },
+    hint: { control: 'text' },
+    internalValue: { control: 'text' },
+    label: { control: 'text' },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    value: { control: 'text' },
   },
+  component: Radio,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Radio/Radio',
 };
 
 type Story = StoryObj<PropsAndLabel>;
 
 export const Checked: Story = {
   args: {
-    value: '',
     internalValue: 'test',
+    value: '',
   },
 };
 
 export const Large: Story = {
   args: {
+    internalValue: 'test',
     size: 'lg',
     value: '',
-    internalValue: 'test',
   },
 };
 
 export const Small: Story = {
   args: {
+    internalValue: 'test',
     size: 'sm',
     value: '',
-    internalValue: 'test',
   },
 };
 
 export const Primary: Story = {
   args: {
     color: 'primary',
-    value: '',
     internalValue: 'test',
+    value: '',
   },
 };
 
 export const WithLabel: Story = {
   args: {
+    internalValue: 'test',
     label: 'With Label',
     value: '',
-    internalValue: 'test',
   },
 };
 
 export const Disabled: Story = {
   args: {
     disabled: true,
-    label: 'Disabled',
     internalValue: 'test',
+    label: 'Disabled',
   },
 };
 
 export const WithErrorMessage: Story = {
   args: {
-    label: 'Label',
     errorMessages: ['With error messages'],
     internalValue: 'test',
+    label: 'Label',
   },
 };
 
 export const WithHint: Story = {
   args: {
-    label: 'Label',
     hint: 'With hint',
     internalValue: 'test',
+    label: 'Label',
   },
 };
 
 export const HideDetails: Story = {
   args: {
-    label: 'Label',
-    hint: 'Hint (should be invisible)',
     hideDetails: true,
+    hint: 'Hint (should be invisible)',
     internalValue: 'test',
+    label: 'Label',
   },
 };
 

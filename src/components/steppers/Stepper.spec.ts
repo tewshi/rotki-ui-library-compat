@@ -9,11 +9,11 @@ import {
 
 const createWrapper = (options: any) => mount(Stepper, options);
 
-describe('Components/Stepper', () => {
+describe('components/Stepper', () => {
   const steps: StepperStep[] = [
-    { title: 'Step', description: 'lorem ipsum', state: StepperState.done },
-    { title: 'Step', description: 'lorem ipsum', state: StepperState.active },
-    { title: 'Step', description: 'lorem ipsum', state: StepperState.inactive },
+    { description: 'lorem ipsum', state: StepperState.done, title: 'Step' },
+    { description: 'lorem ipsum', state: StepperState.active, title: 'Step' },
+    { description: 'lorem ipsum', state: StepperState.inactive, title: 'Step' },
   ];
 
   it('renders properly', () => {

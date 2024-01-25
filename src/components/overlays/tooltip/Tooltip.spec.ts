@@ -16,7 +16,7 @@ const TeleportPlugin = {
   },
 };
 
-const createWrapper = (options?: any) => {
+function createWrapper(options?: any) {
   Vue.use(TeleportPlugin);
   return mount(Tooltip, {
     ...options,
@@ -28,14 +28,15 @@ const createWrapper = (options?: any) => {
     },
     stubs: { RuiButton: Button },
   });
-};
+}
 
-const delay = (time: number = 100) =>
-  new Promise((resolve) => {
+function delay(time: number = 100) {
+  return new Promise((resolve) => {
     setTimeout(resolve, time);
   });
+}
 
-describe('Tooltip', () => {
+describe('tooltip', () => {
   const text = 'Tooltip content';
 
   it('renders properly', async () => {
@@ -63,8 +64,8 @@ describe('Tooltip', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       propsData: {
-        text,
         disabled: true,
+        text,
       },
     });
     expect(wrapper.get('#trigger')).toBeTruthy();
@@ -75,8 +76,8 @@ describe('Tooltip', () => {
   it('disabled does not trigger tooltip', async () => {
     const wrapper = createWrapper({
       propsData: {
-        text,
         disabled: true,
+        text,
       },
     });
 
@@ -109,9 +110,9 @@ describe('Tooltip', () => {
   it('tooltip only appears after `openDelay` timeout', async () => {
     const wrapper = createWrapper({
       propsData: {
-        text,
-        openDelay: 400,
         closeDelay: 50000,
+        openDelay: 400,
+        text,
       },
     });
 
@@ -147,8 +148,8 @@ describe('Tooltip', () => {
   it('tooltip disappears after `closeDelay` timeout', async () => {
     const wrapper = createWrapper({
       propsData: {
-        text,
         closeDelay: 1000,
+        text,
       },
     });
 

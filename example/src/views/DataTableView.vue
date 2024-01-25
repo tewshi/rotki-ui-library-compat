@@ -133,92 +133,92 @@ const fixedColumns: DataTableColumn[] = [
 
 const fixedRows = [
   {
-    id: 9,
-    name: 'Glenna Reichert',
-    username: 'Kamren',
-    email: 'Chaim_McDermott@dana.io',
-    website: 'conrad.com',
+    'id': 9,
+    'name': 'Glenna Reichert',
+    'username': 'Kamren',
+    'email': 'Chaim_McDermott@dana.io',
+    'website': 'conrad.com',
     'address.street': 'Dayna Park',
     'address.city': 'Bartholomebury',
   },
   {
-    id: 5,
-    name: 'Chelsey Dietrich',
-    username: 'Kamren',
-    email: 'Lucio_Hettinger@annie.ca',
-    website: 'demarco.info',
+    'id': 5,
+    'name': 'Chelsey Dietrich',
+    'username': 'Kamren',
+    'email': 'Lucio_Hettinger@annie.ca',
+    'website': 'demarco.info',
     'address.street': 'Skiles Walks',
     'address.city': 'Roscoeview',
   },
   {
-    id: 10,
-    name: 'Clementina DuBuque',
-    username: 'Moriah.Stanton',
-    email: 'Rey.Padberg@karina.biz',
-    website: 'ambrose.net',
+    'id': 10,
+    'name': 'Clementina DuBuque',
+    'username': 'Moriah.Stanton',
+    'email': 'Rey.Padberg@karina.biz',
+    'website': 'ambrose.net',
     'address.street': 'Kattie Turnpike',
     'address.city': 'Lebsackbury',
   },
   {
-    id: 3,
-    name: 'Clementine Bauch',
-    username: 'Kamren',
-    email: 'Nathan@yesenia.net',
-    website: 'ramiro.info',
+    'id': 3,
+    'name': 'Clementine Bauch',
+    'username': 'Kamren',
+    'email': 'Nathan@yesenia.net',
+    'website': 'ramiro.info',
     'address.street': 'Douglas Extension',
     'address.city': 'McKenziehaven',
   },
   {
-    id: 2,
-    name: 'Ervin Howell',
-    username: 'Antonette',
-    email: 'Shanna@melissa.tv',
-    website: 'anastasia.net',
+    'id': 2,
+    'name': 'Ervin Howell',
+    'username': 'Antonette',
+    'email': 'Shanna@melissa.tv',
+    'website': 'anastasia.net',
     'address.street': 'Victor Plains',
     'address.city': 'Wisokyburgh',
   },
   {
-    id: 19,
-    name: 'Glenna Reichert',
-    username: 'Kamren',
-    email: 'Chaim_McDermott@dana.io',
-    website: 'conrad.com',
+    'id': 19,
+    'name': 'Glenna Reichert',
+    'username': 'Kamren',
+    'email': 'Chaim_McDermott@dana.io',
+    'website': 'conrad.com',
     'address.street': 'Dayna Park',
     'address.city': 'Bartholomebury',
   },
   {
-    id: 15,
-    name: 'Chelsey Dietrich',
-    username: 'Kamren',
-    email: 'Lucio_Hettinger@annie.ca',
-    website: 'demarco.info',
+    'id': 15,
+    'name': 'Chelsey Dietrich',
+    'username': 'Kamren',
+    'email': 'Lucio_Hettinger@annie.ca',
+    'website': 'demarco.info',
     'address.street': 'Skiles Walks',
     'address.city': 'Roscoeview',
   },
   {
-    id: 110,
-    name: 'Clementina DuBuque',
-    username: 'Moriah.Stanton',
-    email: 'Rey.Padberg@karina.biz',
-    website: 'ambrose.net',
+    'id': 110,
+    'name': 'Clementina DuBuque',
+    'username': 'Moriah.Stanton',
+    'email': 'Rey.Padberg@karina.biz',
+    'website': 'ambrose.net',
     'address.street': 'Kattie Turnpike',
     'address.city': 'Lebsackbury',
   },
   {
-    id: 13,
-    name: 'Clementine Bauch',
-    username: 'Kamren',
-    email: 'Nathan@yesenia.net',
-    website: 'ramiro.info',
+    'id': 13,
+    'name': 'Clementine Bauch',
+    'username': 'Kamren',
+    'email': 'Nathan@yesenia.net',
+    'website': 'ramiro.info',
     'address.street': 'Douglas Extension',
     'address.city': 'McKenziehaven',
   },
   {
-    id: 12,
-    name: 'Ervin Howell',
-    username: 'Antonette',
-    email: 'Shanna@melissa.tv',
-    website: 'anastasia.net',
+    'id': 12,
+    'name': 'Ervin Howell',
+    'username': 'Antonette',
+    'email': 'Shanna@melissa.tv',
+    'website': 'anastasia.net',
     'address.street': 'Victor Plains',
     'address.city': 'Wisokyburgh',
   },
@@ -557,7 +557,7 @@ const users = computed<Record<string, any>[]>(() =>
   JSON.parse(get(_users) ?? '[]').map(normalize),
 );
 
-const normalize = (user: User): Record<string, any> => {
+function normalize(user: User): Record<string, any> {
   const { address, company } = user;
   return {
     ...objectOmit(user, ['address', 'company']),
@@ -571,13 +571,9 @@ const normalize = (user: User): Record<string, any> => {
     'company.catchPhrase': company.catchPhrase,
     'company.bs': company.bs,
   };
-};
+}
 
-const fakeFetch = async (
-  options?: DataTableOptions,
-  search?: string,
-  api?: boolean,
-): Promise<{ data: Record<string, any>[]; total: number }> => {
+async function fakeFetch(options?: DataTableOptions, search?: string, api?: boolean): Promise<{ data: Record<string, any>[]; total: number }> {
   await new Promise((resolve) => {
     setTimeout(resolve, 1500);
   });
@@ -595,9 +591,9 @@ const fakeFetch = async (
 
     const sort = (by: DataTableSortColumn) => {
       result.sort((a, b) => {
-        if (!by.column?.toString()) {
+        if (!by.column?.toString())
           return 0;
-        }
+
         if (by.direction === 'desc') {
           return `${b[by.column?.toString()]}`.localeCompare(
             `${a[by.column?.toString()]}`,
@@ -616,8 +612,8 @@ const fakeFetch = async (
 
     // search
     if (query) {
-      result = result.filter((row) =>
-        Object.keys(row).some((key) =>
+      result = result.filter(row =>
+        Object.keys(row).some(key =>
           `${row[key]}`.toLocaleLowerCase().includes(query),
         ),
       );
@@ -625,11 +621,10 @@ const fakeFetch = async (
 
     // sort
     if (sortBy) {
-      if (!Array.isArray(sortBy)) {
+      if (!Array.isArray(sortBy))
         sort(sortBy);
-      } else {
+      else
         sortBy.forEach(sort);
-      }
     }
 
     // paginate
@@ -644,34 +639,27 @@ const fakeFetch = async (
     data: result,
     total: search ? result.length : [...(get(users) ?? [])].length,
   };
-};
+}
 
-const fetchData = async (
-  index: number,
-  options?: DataTableOptions,
-  search?: string,
-  api?: boolean,
-) => {
+async function fetchData(index: number, options?: DataTableOptions, search?: string, api?: boolean) {
   const row = get(api ? apiDatatables : datatables)[index];
-  if (api) {
+  if (api)
     row.table.loading = true;
-  }
-  if (options?.pagination) {
+
+  if (options?.pagination)
     row.table.pagination = options.pagination;
-  }
-  if (options?.sort) {
+
+  if (options?.sort)
     row.table.sort = options.sort;
-  }
+
   const response = await fakeFetch(options, search, api);
   row.table.rows = response.data;
-  if (row.table.pagination) {
+  if (row.table.pagination)
     row.table.pagination.total = response.total;
-  }
 
-  if (api) {
+  if (api)
     row.table.loading = false;
-  }
-};
+}
 
 const onSearch = useDebounceFn(async (query: string, index: number) => {
   const { table } = get(apiDatatables)[index];
@@ -684,15 +672,13 @@ const onSearch = useDebounceFn(async (query: string, index: number) => {
   );
 
   // reset to page 1 on search
-  if (table.pagination) {
+  if (table.pagination)
     table.pagination.page = 1;
-  }
 }, 500);
 
 onBeforeMount(async () => {
-  if (get(isFetching)) {
+  if (get(isFetching))
     await execute().catch();
-  }
 
   get(datatables).forEach((row, i) => {
     fetchData(
@@ -711,21 +697,26 @@ onBeforeMount(async () => {
   });
 });
 
-const isExpanded = (row: any, expanded: any[] | undefined) =>
-  expanded?.some((item: any) => item.id === row.id);
+function isExpanded(row: any, expanded: any[] | undefined) {
+  return expanded?.some((item: any) => item.id === row.id);
+}
 
-const toggleRow = (row: any, expanded: any[] | undefined) => {
-  if (isExpanded(row, expanded)) {
+function toggleRow(row: any, expanded: any[] | undefined) {
+  if (isExpanded(row, expanded))
     expanded?.splice(expanded.indexOf(row), 1);
-  } else {
+  else
     expanded?.push(row);
-  }
-};
+}
 </script>
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="datatables">Data Tables</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="datatables"
+    >
+      Data Tables
+    </h2>
     <template v-if="!isFetching">
       <div class="grid grid-cols-1 gap-12 mb-14">
         <div
@@ -744,19 +735,37 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :group.sync="table.group"
             :collapsed.sync="table.collapsed"
           >
-            <template #header.address.city> city custom header </template>
+            <template #header.address.city>
+              city custom header
+            </template>
             <template #item.action>
-              <RuiButton icon variant="text" size="sm">
-                <RuiIcon name="more-fill" color="primary" />
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
               </RuiButton>
             </template>
-            <template v-if="emptySlot" #empty-description>
+            <template
+              v-if="emptySlot"
+              #empty-description
+            >
               <div class="flex space-x-1 items-center">
                 <span>No user found,</span>
-                <RuiButton variant="text" size="sm">
+                <RuiButton
+                  variant="text"
+                  size="sm"
+                >
                   create users
                   <template #append>
-                    <RuiIcon name="add-fill" color="primary" />
+                    <RuiIcon
+                      name="add-fill"
+                      color="primary"
+                    />
                   </template>
                 </RuiButton>
               </div>
@@ -788,11 +797,21 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :data-cy="`table-expandable-${i}`"
           >
             <template #item.action>
-              <RuiButton icon variant="text" size="sm">
-                <RuiIcon name="more-fill" color="primary" />
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
               </RuiButton>
             </template>
-            <template v-if="customToggle" #item.expand="{ row }">
+            <template
+              v-if="customToggle"
+              #item.expand="{ row }"
+            >
               <RuiTableRowExpander
                 icon="arrow-down-circle-line"
                 :expanded="isExpanded(row, table.expanded)"
@@ -801,7 +820,9 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             </template>
             <template #expanded-item>
               <RuiCard data-cy="expanded-content">
-                <template #header> Expanded content</template>
+                <template #header>
+                  Expanded content
+                </template>
                 <RuiDataTable
                   v-bind="
                     objectOmit(table, [
@@ -847,8 +868,15 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             :data-cy="`table-${i}`"
           >
             <template #item.action>
-              <RuiButton icon variant="text" size="sm">
-                <RuiIcon name="more-fill" color="primary" />
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
               </RuiButton>
             </template>
           </RuiDataTable>
@@ -892,8 +920,15 @@ const toggleRow = (row: any, expanded: any[] | undefined) => {
             @update:options="fetchData(i, $event, table.search, true)"
           >
             <template #item.action>
-              <RuiButton icon variant="text" size="sm">
-                <RuiIcon name="more-fill" color="primary" />
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
               </RuiButton>
             </template>
             <template #group.header.content="{ groupValue }">

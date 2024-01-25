@@ -1,4 +1,3 @@
-/* eslint-disable max-lines,import/max-dependencies */
 import Vue, { type VueConstructor, provide } from 'vue';
 import { isClient } from '@vueuse/core';
 import { StepperState } from '@/types/stepper';
@@ -24,6 +23,7 @@ export {
 export { type ContextColorsType, contextColors } from '@/consts/colors';
 
 export * from '@/composables';
+
 export * from '@/components';
 
 export { StepperState };
@@ -35,10 +35,9 @@ export interface RuiOptions {
   };
 }
 
-const installTeleport = () => {
-  if (!isClient) {
+function installTeleport() {
+  if (!isClient)
     return;
-  }
 
   const teleport = createTeleport();
   Object.defineProperty(Vue.prototype, '$teleport', {
@@ -46,7 +45,7 @@ const installTeleport = () => {
       return teleport;
     },
   });
-};
+}
 
 export function createRui(options: RuiOptions = {}) {
   const { theme } = options;

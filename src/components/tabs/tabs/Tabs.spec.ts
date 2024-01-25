@@ -4,16 +4,9 @@ import Tabs from '@/components/tabs/tabs/Tabs.vue';
 import Tab from '@/components/tabs/tab/Tab.vue';
 import { RouterLinkStub } from '~/tests/stubs/RouterLinkStub';
 
-const createWrapper = (options?: any) =>
-  mount(Tabs, {
+function createWrapper(options?: any) {
+  return mount(Tabs, {
     ...options,
-    stubs: {
-      RouterLink: RouterLinkStub,
-      Tab,
-      Transition: {
-        template: `<span><slot></slot></span>`,
-      },
-    },
     slots: {
       default: [
         `<Tab>Tab 1</Tab>`,
@@ -22,15 +15,23 @@ const createWrapper = (options?: any) =>
         `<Tab>Tab 4</Tab>`,
       ],
     },
+    stubs: {
+      RouterLink: RouterLinkStub,
+      Tab,
+      Transition: {
+        template: `<span><slot></slot></span>`,
+      },
+    },
   });
+}
 
-describe('Tabs/Tabs', () => {
+describe('tabs/Tabs', () => {
   it('renders properly', async () => {
     const value = ref();
     const wrapper = createWrapper({
       propsData: {
-        value,
         input: (e: any) => set(value, e),
+        value,
       },
     });
 
@@ -104,11 +105,11 @@ describe('Tabs/Tabs', () => {
   it('click tab change the value', async () => {
     const value = ref();
     const wrapper = createWrapper({
-      propsData: {
-        value,
-      },
       listeners: {
         input: (e: any) => set(value, e),
+      },
+      propsData: {
+        value,
       },
     });
 

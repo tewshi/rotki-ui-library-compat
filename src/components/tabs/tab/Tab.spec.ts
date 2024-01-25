@@ -3,22 +3,23 @@ import { describe, expect, it } from 'vitest';
 import Tab from '@/components/tabs/tab/Tab.vue';
 import { RouterLinkStub } from '~/tests/stubs/RouterLinkStub';
 
-const createWrapper = (options?: any) =>
-  mount(Tab, {
+function createWrapper(options?: any) {
+  return mount(Tab, {
     ...options,
     propsData: { tabValue: 'tab-1', ...options?.propsData },
     stubs: {
       RouterLink: RouterLinkStub,
     },
   });
+}
 
-describe('Tabs/Tab', () => {
+describe('tabs/Tab', () => {
   it('renders properly', () => {
     const label = 'Tab 1';
     const wrapper = createWrapper({
       slots: {
-        prepend: 'prepend',
         default: label,
+        prepend: 'prepend',
       },
     });
     const elem = wrapper.find('button');
@@ -83,10 +84,10 @@ describe('Tabs/Tab', () => {
   it('tab as link', async () => {
     const wrapper = createWrapper({
       propsData: {
-        link: true,
-        to: '/tabs',
         exact: true,
         exactPath: true,
+        link: true,
+        to: '/tabs',
       },
     });
 

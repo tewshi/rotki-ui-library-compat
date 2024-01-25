@@ -27,12 +27,11 @@ vi.mock('vue', async () => {
         {},
         {
           get: (o, name) => {
-            if (name === '__v_isRef') {
+            if (name === '__v_isRef')
               return ref(name);
-            }
-            if (name === '__ob__') {
+
+            if (name === '__ob__')
               return ref(name);
-            }
 
             return `abc_${String(name)}_abc`;
           },

@@ -2,8 +2,8 @@
 import { default as RuiTextField } from '@/components/forms/text-field/TextField.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import { default as RuiIcon } from '@/components/icons/Icon.vue';
-import { type ContextColorsType } from '@/consts/colors';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 // keep these props in sync with TextField props
 export interface Props {
@@ -60,7 +60,10 @@ const slots = useSlots();
       $listeners
     "
   >
-    <template v-if="slots.prepend" #prepend>
+    <template
+      v-if="slots.prepend"
+      #prepend
+    >
       <slot name="prepend" />
     </template>
     <template #append>

@@ -9,9 +9,9 @@ const config: StorybookConfig = {
     {
       name: '@storybook/addon-essentials',
       options: {
-        backgrounds: false
-      }
-    }
+        backgrounds: false,
+      },
+    },
   ],
   framework: {
     name: '@storybook/vue-vite',
@@ -21,7 +21,8 @@ const config: StorybookConfig = {
     autodocs: 'tag',
   },
   typescript: {
-    check: true
-  }
+    check: true,
+  },
 };
+
 export default config;

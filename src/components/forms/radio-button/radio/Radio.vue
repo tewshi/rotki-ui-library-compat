@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface RadioProps {
   internalValue: string;
@@ -38,31 +38,30 @@ const emit = defineEmits<{
   (e: 'input', modelValue: string): void;
 }>();
 
-const { value, size, internalValue, successMessages, errorMessages } =
-  toRefs(props);
+const { value, size, internalValue, successMessages, errorMessages }
+  = toRefs(props);
 
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
-  if (sizeVal === 'lg') {
+  if (sizeVal === 'lg')
     return 28;
-  }
-  if (sizeVal === 'sm') {
+
+  if (sizeVal === 'sm')
     return 20;
-  }
+
   return 24;
 });
 
 const selected = computed(() => get(value) === get(internalValue));
 
-const input = (target: EventTarget | null) => {
-  if (!target) {
+function input(target: EventTarget | null) {
+  if (!target)
     return;
-  }
+
   const { checked } = target as HTMLInputElement;
-  if (checked && !get(selected)) {
+  if (checked && !get(selected))
     emit('input', get(internalValue));
-  }
-};
+}
 
 const css = useCssModule();
 const attrs = useAttrs();
@@ -106,10 +105,21 @@ const { hasError, hasSuccess } = useFormTextDetail(
           },
         ]"
       >
-        <Icon v-if="selected" name="radio-button-line" :size="iconSize" />
-        <Icon v-else name="checkbox-blank-circle-line" :size="iconSize" />
+        <Icon
+          v-if="selected"
+          name="radio-button-line"
+          :size="iconSize"
+        />
+        <Icon
+          v-else
+          name="checkbox-blank-circle-line"
+          :size="iconSize"
+        />
       </div>
-      <div :class="css.label" class="text-body-1">
+      <div
+        :class="css.label"
+        class="text-body-1"
+      >
         <slot>{{ label }}</slot>
       </div>
     </label>

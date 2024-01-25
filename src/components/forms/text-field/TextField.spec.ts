@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TextField from '@/components/forms/text-field/TextField.vue';
 
-const createWrapper = (options?: any) =>
-  mount(TextField, { ...options, stubs: { RuiIcon: true } });
+function createWrapper(options?: any) {
+  return mount(TextField, { ...options, stubs: { RuiIcon: true } });
+}
 
-describe('Forms/TextField', () => {
+describe('forms/TextField', () => {
   it('renders properly', () => {
     const label = 'Text Field Label';
     const wrapper = createWrapper({
@@ -119,8 +120,8 @@ describe('Forms/TextField', () => {
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
       propsData: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();

@@ -1,4 +1,4 @@
-/* eslint-disable max-lines,import/max-dependencies */
+/* eslint-disable import/max-dependencies */
 import {
   type Props as AlertProps,
   default as RuiAlert,
@@ -82,11 +82,6 @@ import {
   default as RuiDataTable,
 } from '@/components/tables/DataTable.vue';
 import {
-  type TableColumn as DataTableColumn,
-  type SortColumn as DataTableSortColumn,
-  type TableSortData as DataTableSortData,
-} from '@/components/tables/TableHead.vue';
-import {
   type Props as ExpandButtonProps,
   default as RuiTableRowExpander,
 } from '@/components/tables/ExpandButton.vue';
@@ -116,6 +111,11 @@ import {
   default as RuiSkeletonLoader,
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
+import type {
+  TableColumn as DataTableColumn,
+  SortColumn as DataTableSortColumn,
+  TableSortData as DataTableSortData,
+} from '@/components/tables/TableHead.vue';
 
 export {
   RuiAlert,

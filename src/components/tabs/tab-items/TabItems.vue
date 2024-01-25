@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VRender from '@/components/VRender';
-import { type TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
+import type { TabItemProps } from '@/components/tabs/tab-item/TabItem.vue';
 
 export interface Props {
   value?: number | string;
@@ -31,7 +31,7 @@ const children = computed(() => {
   const tabs = slots.default?.() ?? [];
   let anyActive = false;
   const children = tabs
-    .filter((tab) => !!tab.tag)
+    .filter(tab => !!tab.tag)
     .map((tab, index) => {
       const propsData = (tab.componentOptions?.propsData || {}) as TabItemProps;
       const tabValue = propsData.value ?? index;
@@ -52,9 +52,8 @@ const children = computed(() => {
       return tab;
     });
 
-  if (!anyActive) {
+  if (!anyActive)
     set(currIndex, -1);
-  }
 
   return children;
 });
@@ -67,7 +66,10 @@ const css = useCssModule();
 </script>
 
 <template>
-  <div ref="wrapper" :class="css.tabs">
+  <div
+    ref="wrapper"
+    :class="css.tabs"
+  >
     <div ref="inner">
       <VRender
         v-for="(child, i) in children"

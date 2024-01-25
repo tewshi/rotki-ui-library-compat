@@ -1,7 +1,10 @@
 export default defineComponent({
   name: 'RuiTeleport',
   props: {
-    disabled: { type: Boolean, default: false },
+    disabled: { default: false, type: Boolean },
+  },
+  render(_h) {
+    return _h();
   },
   setup(props) {
     const { disabled } = toRefs(props);
@@ -18,22 +21,17 @@ export default defineComponent({
     onUpdated(() => {
       const containerEl = getTeleportContainer();
       if (!get(disabled) && containerEl) {
-        if (slots.default) {
+        if (slots.default)
           containerEl.updateNodes(id, slots.default);
-        } else {
+        else
           containerEl.clearNodes(id);
-        }
       }
     });
 
     onBeforeUnmount(() => {
       const teleport = getTeleportContainer();
-      if (teleport) {
+      if (teleport)
         teleport.clearNodes(id);
-      }
     });
-  },
-  render(_h) {
-    return _h();
   },
 });

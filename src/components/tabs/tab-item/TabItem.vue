@@ -32,11 +32,17 @@ const css = useCssModule();
       leave-active-class="w-full transform duration-300 transition !h-0 overflow-hidden"
       leave-class="opacity-100 translate-x-0 !h-0 overflow-hidden"
     >
-      <div v-if="active" class="w-full">
+      <div
+        v-if="active"
+        class="w-full"
+      >
         <slot />
       </div>
     </Transition>
-    <div v-if="eager && !active" class="hidden">
+    <div
+      v-if="eager && !active"
+      class="hidden"
+    >
       <slot />
     </div>
   </div>

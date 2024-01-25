@@ -25,6 +25,31 @@
   ],
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "default": "./dist/index.es.js"
+    },
+    "./theme": {
+      "types": "./dist/theme/index.d.ts",
+      "import": "./dist/theme/index.es.js",
+      "default": "./dist/theme/index.es.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.es.js",
+      "default": "./dist/components/index.es.js"
+    },
+    "./composables": {
+      "types": "./dist/composables/index.d.ts",
+      "import": "./dist/composables/index.es.js",
+      "default": "./dist/composables/index.es.js"
+    },
+    "./style.css": {
+      "default": "./dist/style.css"
+    }
+  },
   "typesVersions": {
     "*": {
       "theme": [
@@ -36,31 +61,6 @@
       "components": [
         "./dist/components/index.d.ts"
       ]
-    }
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.es.js",
-      "default": "./dist/index.es.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./theme": {
-      "import": "./dist/theme/index.es.js",
-      "default": "./dist/theme/index.es.js",
-      "types": "./dist/theme/index.d.ts"
-    },
-    "./components": {
-      "import": "./dist/components/index.es.js",
-      "default": "./dist/components/index.es.js",
-      "types": "./dist/components/index.d.ts"
-    },
-    "./composables": {
-      "import": "./dist/composables/index.es.js",
-      "default": "./dist/composables/index.es.js",
-      "types": "./dist/composables/index.d.ts"
-    },
-    "./style.css": {
-      "default": "./dist/style.css"
     }
   },
   "scripts": {
@@ -102,7 +102,7 @@
     "@commitlint/config-conventional": "18.6.0",
     "@fontsource/roboto": "5.0.8",
     "@popperjs/core": "2.11.8",
-    "@rotki/eslint-config": "1.1.2",
+    "@rotki/eslint-config": "2.4.4",
     "@storybook/addon-essentials": "7.6.10",
     "@storybook/addon-interactions": "7.6.10",
     "@storybook/addon-links": "7.6.10",
@@ -127,6 +127,8 @@
     "bumpp": "9.3.0",
     "css-loader": "6.9.1",
     "eslint": "8.56.0",
+    "eslint-plugin-cypress": "2.15.1",
+    "eslint-plugin-storybook": "0.6.15",
     "fast-glob": "3.3.2",
     "fast-xml-parser": "4.3.3",
     "fs-extra": "11.2.0",

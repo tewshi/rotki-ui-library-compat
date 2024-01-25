@@ -4,7 +4,7 @@ import SimpleSelect from '@/components/forms/select/SimpleSelect.vue';
 
 const createWrapper = (options?: any) => mount(SimpleSelect, options);
 
-describe('Simple select', () => {
+describe('simple select', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
       propsData: {
@@ -27,6 +27,7 @@ describe('Simple select', () => {
   it('passes props correctly', async () => {
     const wrapper = createWrapper({
       propsData: {
+        disabled: true,
         options: [
           'Option 0',
           'Option 1',
@@ -36,7 +37,6 @@ describe('Simple select', () => {
           'Option 5',
         ],
         value: 'Option 5',
-        disabled: true,
       },
     });
     expect(wrapper.find('select[disabled]').exists()).toBeTruthy();

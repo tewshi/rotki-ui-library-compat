@@ -94,7 +94,12 @@ const alerts = ref<AlertData[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="alerts">Alerts</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="alerts"
+    >
+      Alerts
+    </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-3">
       <RuiAlert
         v-for="(alert, i) in alerts"

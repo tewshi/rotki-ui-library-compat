@@ -4,7 +4,7 @@ import Button from './Button.vue';
 
 const createWrapper = (options?: any) => mount(Button, options);
 
-describe('Button/Button', () => {
+describe('button/Button', () => {
   it('renders properly', () => {
     const label = 'Primary Button';
     const wrapper = createWrapper({

@@ -9,12 +9,12 @@ import {
 import { objectOmit } from '@vueuse/shared';
 import { ref } from 'vue';
 
-type ExtraProperties = {
+interface ExtraProperties {
   clicks: number;
   prepend?: string;
   append?: string;
   iconName?: string;
-};
+}
 
 type ButtonData = ButtonProps & ExtraProperties;
 
@@ -576,7 +576,12 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="buttons">Buttons</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="buttons"
+    >
+      Buttons
+    </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-6 justify-items-start mb-14">
       <RuiButton
         v-for="(button, i) in buttons"
@@ -585,36 +590,68 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
         v-bind="button"
         @click="button.clicks++"
       >
-        <template v-if="button.prepend" #prepend>
+        <template
+          v-if="button.prepend"
+          #prepend
+        >
           <RuiIcon :name="button.prepend" />
         </template>
-        <span v-if="!button.icon" class="capitalize">
+        <span
+          v-if="!button.icon"
+          class="capitalize"
+        >
           {{ button.color }} {{ button.clicks }}
         </span>
-        <RuiIcon v-else :name="button.iconName" />
-        <template v-if="button.append" #append>
+        <RuiIcon
+          v-else
+          :name="button.iconName"
+        />
+        <template
+          v-if="button.append"
+          #append
+        >
           <RuiIcon :name="button.append" />
         </template>
       </RuiButton>
     </div>
-    <h2 class="text-h4 mb-6" data-cy="button-groups">Button Groups</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="button-groups"
+    >
+      Button Groups
+    </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14">
-      <div v-for="(buttonGroup, i) in buttonGroups" :key="i">
+      <div
+        v-for="(buttonGroup, i) in buttonGroups"
+        :key="i"
+      >
         <RuiButtonGroup v-bind="objectOmit(buttonGroup, ['count', 'rounded'])">
-          <RuiButton @click="buttonGroup.count--">Decrease</RuiButton>
-          <RuiButton @click="buttonGroup.count++">Increase</RuiButton>
+          <RuiButton @click="buttonGroup.count--">
+            Decrease
+          </RuiButton>
+          <RuiButton @click="buttonGroup.count++">
+            Increase
+          </RuiButton>
           <RuiButton @click="buttonGroup.count++">
             <RuiIcon name="add-fill" />
           </RuiButton>
         </RuiButtonGroup>
-        <div class="mt-2">Counts: {{ buttonGroup.count }}</div>
+        <div class="mt-2">
+          Counts: {{ buttonGroup.count }}
+        </div>
       </div>
     </div>
-    <h2 class="text-h4 mb-6" data-cy="toggleable-button-groups">
+    <h2
+      class="text-h4 mb-6"
+      data-cy="toggleable-button-groups"
+    >
       Toggleable Button Groups
     </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start mb-14">
-      <div v-for="(buttonGroup, i) in toggleButtons" :key="i">
+      <div
+        v-for="(buttonGroup, i) in toggleButtons"
+        :key="i"
+      >
         <RuiButtonGroup
           v-model="buttonGroup.value"
           v-bind="objectOmit(buttonGroup, ['value', 'count', 'rounded'])"
@@ -632,21 +669,33 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
             <RuiIcon name="align-justify" />
           </RuiButton>
         </RuiButtonGroup>
-        <div v-if="buttonGroup.required" class="mt-2 text-rui-error">
+        <div
+          v-if="buttonGroup.required"
+          class="mt-2 text-rui-error"
+        >
           required: *
         </div>
       </div>
     </div>
-    <h2 class="text-h4 mb-6" data-cy="multiple-toggleable-button-groups">
+    <h2
+      class="text-h4 mb-6"
+      data-cy="multiple-toggleable-button-groups"
+    >
       Multiple Toggleable Button Groups
     </h2>
     <div class="grid gap-4 grid-rows-2 grid-cols-2 justify-items-start">
-      <div v-for="(buttonGroup, i) in multipleToggleButtons" :key="i">
+      <div
+        v-for="(buttonGroup, i) in multipleToggleButtons"
+        :key="i"
+      >
         <RuiButtonGroup
           v-model="buttonGroup.value"
           v-bind="objectOmit(buttonGroup, ['value', 'count', 'rounded'])"
         >
-          <RuiButton value="left" disabled>
+          <RuiButton
+            value="left"
+            disabled
+          >
             <RuiIcon name="align-left" />
           </RuiButton>
           <RuiButton value="center">
@@ -659,7 +708,10 @@ const multipleToggleButtons = ref<ButtonGroupData[]>([
             <RuiIcon name="align-justify" />
           </RuiButton>
         </RuiButtonGroup>
-        <div v-if="buttonGroup.required" class="mt-2 text-rui-error">
+        <div
+          v-if="buttonGroup.required"
+          class="mt-2 text-rui-error"
+        >
           required: *
         </div>
       </div>

@@ -54,7 +54,10 @@ const {
       $listeners
     "
   >
-    <slot name="activator" :open="open" />
+    <slot
+      name="activator"
+      :open="open"
+    />
 
     <RuiTeleport v-if="!disabled">
       <div

@@ -1,10 +1,10 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { contextColors } from '@/consts/colors';
 import { default as Checkbox, type Props } from './Checkbox.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 type PropsAndLabel = Props & { label: string };
 
-const render: StoryFn<PropsAndLabel> = (args) => ({
+const render: StoryFn<PropsAndLabel> = args => ({
   components: { Checkbox },
   setup() {
     const modelValue = computed({
@@ -24,7 +24,7 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
         args.indeterminate = val;
       },
     });
-    return { args, modelValue, indeterminate };
+    return { args, indeterminate, modelValue };
   },
   template: `
   <Checkbox
@@ -37,26 +37,26 @@ const render: StoryFn<PropsAndLabel> = (args) => ({
 });
 
 const meta: Meta<PropsAndLabel> = {
-  title: 'Components/Forms/Checkbox',
-  component: Checkbox,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    label: { control: 'text' },
-    value: { control: 'boolean' },
-    indeterminate: { control: 'boolean' },
-    hint: { control: 'text' },
+    color: { control: 'select', options: contextColors },
+    disabled: { control: 'boolean', table: { category: 'State' } },
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
-    disabled: { control: 'boolean', table: { category: 'State' } },
-    color: { control: 'select', options: contextColors },
+    hint: { control: 'text' },
+    indeterminate: { control: 'boolean' },
+    label: { control: 'text' },
     size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    value: { control: 'boolean' },
   },
+  component: Checkbox,
   parameters: {
     docs: {
       controls: { exclude: ['default'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Checkbox',
 };
 
 type Story = StoryObj<PropsAndLabel>;
@@ -106,23 +106,23 @@ export const Disabled: Story = {
 
 export const WithErrorMessage: Story = {
   args: {
-    label: 'Label',
     errorMessages: ['With error messages'],
+    label: 'Label',
   },
 };
 
 export const WithHint: Story = {
   args: {
-    label: 'Label',
     hint: 'With hint',
+    label: 'Label',
   },
 };
 
 export const HideDetails: Story = {
   args: {
-    label: 'Label',
-    hint: 'Hint (should be invisible)',
     hideDetails: true,
+    hint: 'Hint (should be invisible)',
+    label: 'Label',
   },
 };
 

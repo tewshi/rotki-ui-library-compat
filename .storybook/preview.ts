@@ -1,22 +1,11 @@
 import '../src/style.scss';
 import './preview.scss';
 import '@fontsource/roboto/latin.css';
-import type { Preview } from '@storybook/vue';
-import { vueInstance } from './app';
 
 import { useEffect, useGlobals } from '@storybook/addons';
 import { useRotkiTheme } from '../src';
-
-export const useTheme = (StoryFn) => {
-  const [{ theme }] = useGlobals();
-  const { switchThemeScheme } = useRotkiTheme();
-
-  useEffect(() => {
-    switchThemeScheme(theme);
-  }, [theme]);
-
-  return StoryFn();
-};
+import { vueInstance } from './app';
+import type { Preview } from '@storybook/vue';
 
 const preview: Preview = {
   parameters: {
@@ -29,8 +18,8 @@ const preview: Preview = {
     },
     vueInstance: {
       defaultValue: vueInstance,
-      control: { type: 'object' }
-    }
+      control: { type: 'object' },
+    },
   },
   globalTypes: {
     theme: {
@@ -44,14 +33,23 @@ const preview: Preview = {
         items: [
           { value: 'auto', title: 'Auto' },
           { value: 'light', icon: 'sun', title: 'Light' },
-          { value: 'dark', icon: 'moon', title: 'Dark' }
+          { value: 'dark', icon: 'moon', title: 'Dark' },
         ],
         // Change title based on selected value
         dynamicTitle: true,
       },
     },
   },
-  decorators: [useTheme],
+  decorators: [function (story) {
+    const [{ theme }] = useGlobals();
+    const { switchThemeScheme } = useRotkiTheme();
+
+    useEffect(() => {
+      switchThemeScheme(theme);
+    }, [theme]);
+
+    return story();
+  }],
 };
 
 export default preview;

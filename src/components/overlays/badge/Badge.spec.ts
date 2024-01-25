@@ -3,19 +3,20 @@ import { mount } from '@vue/test-utils';
 import Button from '@/components/buttons/button/Button.vue';
 import Badge from '@/components/overlays/badge/Badge.vue';
 
-const createWrapper = (options?: any) =>
-  mount(Badge, {
+function createWrapper(options?: any) {
+  return mount(Badge, {
     ...options,
-    slots: {
-      default: '<rui-button>Badge</rui-button>',
-    },
+    components: { RuiButton: Button },
     global: {
       stubs: { 'rui-button': Button },
     },
-    components: { RuiButton: Button },
+    slots: {
+      default: '<rui-button>Badge</rui-button>',
+    },
   });
+}
 
-describe('Badge', () => {
+describe('badge', () => {
   it('renders properly', async () => {
     const wrapper = createWrapper({
       propsData: {

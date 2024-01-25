@@ -4,7 +4,7 @@ import FooterStepper from '@/components/steppers/FooterStepper.vue';
 
 const createWrapper = (options: any) => mount(FooterStepper, options);
 
-describe('FooterStepper', () => {
+describe('footerStepper', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       propsData: {
@@ -20,8 +20,8 @@ describe('FooterStepper', () => {
     const wrapper = createWrapper({
       propsData: {
         pages: 5,
-        variant: 'bullet',
         value: 1,
+        variant: 'bullet',
       },
     });
 

@@ -3,15 +3,16 @@ import { describe, expect, it, vi } from 'vitest';
 import Button from '@/components/buttons/button/Button.vue';
 import ButtonGroup from './ButtonGroup.vue';
 
-const createWrapper = (options?: any) =>
-  mount(ButtonGroup, {
+function createWrapper(options?: any) {
+  return mount(ButtonGroup, {
     ...options,
     slots: {
       default: [Button, Button, Button],
     },
   });
+}
 
-describe('Button/ButtonGroup', () => {
+describe('button/ButtonGroup', () => {
   it('passes vertical props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.classes()).not.toMatch(/vertical/);
@@ -67,10 +68,10 @@ describe('Button/ButtonGroup', () => {
     const value = ref(0);
     const updateModelValue = vi.fn((v?: number) => set(value, v));
     const wrapper = createWrapper({
+      inheritAttrs: true,
       propsData: {
         value,
       },
-      inheritAttrs: true,
     });
 
     wrapper.vm.$on('input', (e: number) => {
@@ -129,10 +130,10 @@ describe('Button/ButtonGroup', () => {
     const value = ref([0]);
     const updateModelValue = vi.fn((v?: number[]) => set(value, v));
     const wrapper = createWrapper({
+      inheritAttrs: true,
       propsData: {
         value,
       },
-      inheritAttrs: true,
     });
 
     wrapper.vm.$on('input', (e: number[]) => {
@@ -204,10 +205,10 @@ describe('Button/ButtonGroup', () => {
     const value = ref([0]);
     const updateModelValue = vi.fn((v?: number[]) => set(value, v));
     const wrapper = createWrapper({
+      inheritAttrs: true,
       propsData: {
         value,
       },
-      inheritAttrs: true,
     });
 
     wrapper.vm.$on('input', (e: number[]) => {

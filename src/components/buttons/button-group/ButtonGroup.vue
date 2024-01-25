@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import VRender from '@/components/VRender';
-import { type ContextColorsType } from '@/consts/colors';
+import type { ContextColorsType } from '@/consts/colors';
 import type { ButtonProps } from '@/components/buttons/button/Button.vue';
 
 type ModelType = ButtonProps['value'];
@@ -38,8 +38,8 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const { value, required, disabled, color, activeColor, variant, size } =
-  toRefs(props);
+const { value, required, disabled, color, activeColor, variant, size }
+  = toRefs(props);
 const children = computed(() =>
   (slots.default?.() ?? []).map((node, i) => {
     const propsData = (node.componentOptions?.propsData ?? {}) as ButtonProps;
@@ -47,52 +47,52 @@ const children = computed(() =>
     propsData.active = activeItem(propsData?.value ?? i);
 
     // if group is disabled, disable child buttons
-    if (get(disabled)) {
+    if (get(disabled))
       propsData.disabled = true;
-    }
 
     const rootColor = get(color);
     // if given root color, use it
-    if (rootColor) {
+    if (rootColor)
       propsData.color = rootColor;
-    }
 
     const _activeColor = get(activeColor);
     // if given active color, use it
-    if (_activeColor && propsData.active) {
+    if (_activeColor && propsData.active)
       propsData.color = _activeColor;
-    }
+
     return { node, props: propsData };
   }),
 );
 
-const activeItem = (id: ModelType) => {
+function activeItem(id: ModelType) {
   const selected = get(value);
-  if (Array.isArray(selected)) {
+  if (Array.isArray(selected))
     return selected.includes(id);
-  }
-  return selected === id;
-};
 
-const onClick = (id: ModelType) => {
+  return selected === id;
+}
+
+function onClick(id: ModelType) {
   const selected = get(value);
   const mandatory = get(required);
   if (Array.isArray(selected)) {
     const index = selected.indexOf(id);
     if (index >= 0) {
-      if (!mandatory || selected.length !== 1) {
+      if (!mandatory || selected.length !== 1)
         selected.splice(index, 1);
-      }
-    } else {
+    }
+    else {
       selected.push(id);
     }
     emit('input', selected);
-  } else if (mandatory) {
+  }
+  else if (mandatory) {
     emit('input', id);
-  } else {
+  }
+  else {
     emit('input', activeItem(id) ? undefined : id);
   }
-};
+}
 
 const css = useCssModule();
 

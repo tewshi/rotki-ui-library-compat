@@ -58,7 +58,12 @@ const tabs = ref<TabsProps[]>([
 
 <template>
   <div>
-    <h2 class="text-h4 mb-6" data-cy="tabs">Tabs</h2>
+    <h2
+      class="text-h4 mb-6"
+      data-cy="tabs"
+    >
+      Tabs
+    </h2>
     <div
       v-for="(data, i) in tabs"
       :key="i"
@@ -66,7 +71,11 @@ const tabs = ref<TabsProps[]>([
       :data-cy="`wrapper-${i}`"
       class="flex mb-6 gap-x-6"
     >
-      <RuiTabs v-model="data.value" data-cy="tabs" v-bind="data">
+      <RuiTabs
+        v-model="data.value"
+        data-cy="tabs"
+        v-bind="data"
+      >
         <template #default>
           <RuiTab>
             <template #prepend>
@@ -74,14 +83,24 @@ const tabs = ref<TabsProps[]>([
             </template>
             Tab 1
           </RuiTab>
-          <RuiTab disabled>Tab 2</RuiTab>
+          <RuiTab disabled>
+            Tab 2
+          </RuiTab>
           <RuiTab>Tab 3</RuiTab>
           <RuiTab>Tab 4</RuiTab>
           <RuiTab>Tab 5</RuiTab>
-          <RuiTab link to="/steppers">Stepper View</RuiTab>
+          <RuiTab
+            link
+            to="/steppers"
+          >
+            Stepper View
+          </RuiTab>
         </template>
       </RuiTabs>
-      <RuiTabItems v-model="data.value" data-cy="tab-items">
+      <RuiTabItems
+        v-model="data.value"
+        data-cy="tab-items"
+      >
         <template #default>
           <RuiTabItem>
             <RuiCard>Tab 1 Content</RuiCard>

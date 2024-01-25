@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
+import type { ContextColorsType } from '@/consts/colors';
 
 export interface Props {
   value?: boolean;
@@ -42,25 +42,25 @@ const emit = defineEmits<{
 
 const { size, value, errorMessages, successMessages } = toRefs(props);
 
-const input = (target: EventTarget | null) => {
-  if (!target) {
+function input(target: EventTarget | null) {
+  if (!target)
     return;
-  }
+
   const { checked } = target as HTMLInputElement;
-  if (checked) {
+  if (checked)
     emit('update:indeterminate', false);
-  }
+
   emit('input', checked);
-};
+}
 
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
-  if (sizeVal === 'lg') {
+  if (sizeVal === 'lg')
     return 28;
-  }
-  if (sizeVal === 'sm') {
+
+  if (sizeVal === 'sm')
     return 20;
-  }
+
   return 24;
 });
 
@@ -110,8 +110,16 @@ const { hasError, hasSuccess } = useFormTextDetail(
           :size="iconSize"
           name="checkbox-indeterminate-fill"
         />
-        <Icon v-else-if="value" :size="iconSize" name="checkbox-fill" />
-        <Icon v-else :size="iconSize" name="checkbox-blank-line" />
+        <Icon
+          v-else-if="value"
+          :size="iconSize"
+          name="checkbox-fill"
+        />
+        <Icon
+          v-else
+          :size="iconSize"
+          name="checkbox-blank-line"
+        />
       </span>
       <span
         v-if="label || $slots.default"

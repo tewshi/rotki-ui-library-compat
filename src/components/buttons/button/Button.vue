@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { default as RuiProgress } from '@/components/progress/Progress.vue';
-import { type ContextColorsType } from '@/consts/colors';
+import type { ContextColorsType } from '@/consts/colors';
 
 type ModelType = number | string;
 
@@ -49,36 +49,33 @@ const attrs = useAttrs();
 const css = useCssModule();
 
 const usedElevation: ComputedRef<number | string> = computed(() => {
-  if (get(disabled)) {
+  if (get(disabled))
     return 0;
-  }
 
   const elevationProp = get(elevation);
-  if (elevationProp !== null) {
+  if (elevationProp !== null)
     return elevationProp;
-  }
 
-  if (get(variant) === 'fab') {
+  if (get(variant) === 'fab')
     return 6;
-  }
 
   return 0;
 });
 
 const spinnerSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
-  if (sizeVal === 'lg') {
+  if (sizeVal === 'lg')
     return 26;
-  }
-  if (sizeVal === 'sm') {
+
+  if (sizeVal === 'sm')
     return 18;
-  }
+
   return 22;
 });
 
-const onClick = () => {
+function onClick() {
   emit('input', get(value));
-};
+}
 
 const slots = useSlots();
 </script>
@@ -109,9 +106,20 @@ const slots = useSlots();
     "
     @click="onClick()"
   >
-    <slot v-if="slots.prepend" name="prepend" />
-    <span v-if="slots.default" :class="css.label"> <slot /> </span>
-    <slot v-if="slots.append" name="append" />
+    <slot
+      v-if="slots.prepend"
+      name="prepend"
+    />
+    <span
+      v-if="slots.default"
+      :class="css.label"
+    >
+      <slot />
+    </span>
+    <slot
+      v-if="slots.append"
+      name="append"
+    />
     <RuiProgress
       v-if="loading"
       :class="css.spinner"

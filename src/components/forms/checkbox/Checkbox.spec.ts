@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import Checkbox from '@/components/forms/checkbox/Checkbox.vue';
 
-const createWrapper = (options?: any) =>
-  mount(Checkbox, {
+function createWrapper(options?: any) {
+  return mount(Checkbox, {
     ...options,
     stubs: {
       RuiIcon: true,
     },
   });
+}
 
-describe('Forms/Checkbox', () => {
+describe('forms/Checkbox', () => {
   it('renders properly', () => {
     const label = 'Checkbox Label';
     const wrapper = createWrapper({
@@ -39,11 +40,11 @@ describe('Forms/Checkbox', () => {
     expect(wrapper.find('ruiicon-stub').attributes('name')).toBe(
       'checkbox-blank-line',
     );
-    await wrapper.setProps({ value: true, indeterminate: false });
+    await wrapper.setProps({ indeterminate: false, value: true });
     expect(wrapper.find('ruiicon-stub').attributes('name')).toBe(
       'checkbox-fill',
     );
-    await wrapper.setProps({ value: false, indeterminate: true });
+    await wrapper.setProps({ indeterminate: true, value: false });
     expect(wrapper.find('ruiicon-stub').attributes('name')).toBe(
       'checkbox-indeterminate-fill',
     );
@@ -67,7 +68,7 @@ describe('Forms/Checkbox', () => {
     const wrapper = createWrapper({ propsData: { size: 'sm' } });
     expect(wrapper.find('label > span').classes()).toMatch(/_sm_/);
 
-    await wrapper.setProps({ sm: false, size: 'lg' });
+    await wrapper.setProps({ size: 'lg', sm: false });
     expect(wrapper.find('label > span').classes()).toMatch(/_lg_/);
   });
 
@@ -96,8 +97,8 @@ describe('Forms/Checkbox', () => {
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
       propsData: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();

@@ -76,15 +76,14 @@ const onToggleAll = (checked: boolean) => emit('select:all', checked);
 
 const isSortedBy = (key: TableRowKey) => key in get(sortedMap);
 
-const getSortIndex = (key: TableRowKey) => {
+function getSortIndex(key: TableRowKey) {
   const sortBy = get(sortData);
 
-  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key)) {
+  if (!sortBy || !Array.isArray(sortBy) || !isSortedBy(key))
     return -1;
-  }
 
-  return sortBy.findIndex((sort) => sort.column === key) ?? -1;
-};
+  return sortBy.findIndex(sort => sort.column === key) ?? -1;
+}
 </script>
 
 <template>
@@ -133,7 +132,10 @@ const getSortIndex = (key: TableRowKey) => {
         :colspan="column.colspan ?? 1"
         :rowspan="column.rowspan ?? 1"
       >
-        <slot :column="column" :name="`header.${column.key.toString()}`">
+        <slot
+          :column="column"
+          :name="`header.${column.key.toString()}`"
+        >
           <Badge
             v-if="column.sortable"
             :value="getSortIndex(column.key) >= 0"
@@ -158,7 +160,10 @@ const getSortIndex = (key: TableRowKey) => {
                 {{ column[columnAttr] }}
               </span>
 
-              <template v-if="column.align === 'end'" #prepend>
+              <template
+                v-if="column.align === 'end'"
+                #prepend
+              >
                 <Icon
                   :class="css.sort__icon"
                   name="arrow-down-line"
@@ -176,7 +181,10 @@ const getSortIndex = (key: TableRowKey) => {
               </template>
             </Button>
           </Badge>
-          <span v-else :class="css.column__text">
+          <span
+            v-else
+            :class="css.column__text"
+          >
             {{ column[columnAttr] }}
           </span>
         </slot>
@@ -186,7 +194,11 @@ const getSortIndex = (key: TableRowKey) => {
       v-if="loading"
       :class="[css.thead__loader, { [css.thead__loader_linear]: !noData }]"
     >
-      <th :class="css.progress" :colspan="colspan" scope="col">
+      <th
+        :class="css.progress"
+        :colspan="colspan"
+        scope="col"
+      >
         <div :class="css.progress__wrapper">
           <Progress
             :circular="noData"

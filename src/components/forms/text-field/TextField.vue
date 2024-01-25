@@ -2,11 +2,11 @@
 import { objectOmit } from '@vueuse/shared';
 import { logicAnd, logicNot } from '@vueuse/math';
 import { getNonRootAttrs, getRootAttrs } from '@/utils/helpers';
-import { type ContextColorsType } from '@/consts/colors';
 import Icon, { default as RuiIcon } from '@/components/icons/Icon.vue';
 import { default as RuiButton } from '@/components/buttons/button/Button.vue';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
-import { type RuiIcons } from '~/src';
+import type { ContextColorsType } from '@/consts/colors';
+import type { RuiIcons } from '~/src';
 
 export interface Props {
   value?: string;
@@ -68,9 +68,9 @@ const {
 
 const labelWithQuote = computed(() => {
   const labelVal = get(label);
-  if (!labelVal) {
+  if (!labelVal)
     return '"\\200B"';
-  }
+
   return `'  ${get(label)}  '`;
 });
 
@@ -83,8 +83,8 @@ const internalValue = computed({
 });
 
 const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
-const { left: innerWrapperLeft, right: innerWrapperRight } =
-  useElementBounding(innerWrapper);
+const { left: innerWrapperLeft, right: innerWrapperRight }
+  = useElementBounding(innerWrapper);
 
 const prependWidth = computed(
   () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
@@ -102,10 +102,10 @@ const css = useCssModule();
 const attrs = useAttrs();
 const slots = useSlots();
 
-const clearIconClicked = () => {
+function clearIconClicked() {
   set(internalValue, '');
   emit('click:clear');
-};
+}
 
 const input = ref();
 const { focused } = useFocus(input);
@@ -150,12 +150,21 @@ const showClearIcon = logicAnd(
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
-        <slot v-if="slots.prepend" name="prepend" />
-        <div v-else-if="prependIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.prepend"
+          name="prepend"
+        />
+        <div
+          v-else-if="prependIcon"
+          :class="[css.icon]"
+        >
           <Icon :name="prependIcon" />
         </div>
       </div>
-      <div ref="innerWrapper" class="flex flex-1 overflow-hidden">
+      <div
+        ref="innerWrapper"
+        class="flex flex-1 overflow-hidden"
+      >
         <input
           ref="input"
           v-model="internalValue"
@@ -172,7 +181,10 @@ const showClearIcon = logicAnd(
         <label :class="css.label">
           {{ label }}
         </label>
-        <fieldset v-if="variant === 'outlined'" :class="css.fieldset">
+        <fieldset
+          v-if="variant === 'outlined'"
+          :class="css.fieldset"
+        >
           <legend />
         </fieldset>
       </div>
@@ -191,10 +203,19 @@ const showClearIcon = logicAnd(
           :color="color"
           @click="clearIconClicked()"
         >
-          <RuiIcon name="close-line" size="20" />
+          <RuiIcon
+            name="close-line"
+            size="20"
+          />
         </RuiButton>
-        <slot v-if="slots.append" name="append" />
-        <div v-else-if="appendIcon" :class="[css.icon]">
+        <slot
+          v-if="slots.append"
+          name="append"
+        />
+        <div
+          v-else-if="appendIcon"
+          :class="[css.icon]"
+        >
           <Icon :name="appendIcon" />
         </div>
       </div>

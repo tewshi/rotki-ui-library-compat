@@ -1,5 +1,4 @@
 import process from 'node:process';
-import { type Config } from 'tailwindcss';
 import typographyClasses from './src/consts/typography';
 import themePlugin from './src/theme';
 import {
@@ -7,9 +6,10 @@ import {
   baseColorsIntensities,
   contextColors,
 } from './src/consts/colors';
+import type { Config } from 'tailwindcss';
 
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.STORYBOOK;
+const isDevelopment
+  = process.env.NODE_ENV === 'development' || process.env.STORYBOOK;
 
 const safeListedColorVariants = [
   'important',
@@ -31,12 +31,12 @@ export default {
   safelist: [
     // Shadows
     {
-      pattern: new RegExp(`shadow-(?:[1-9]|1[0-9]|2[0-4])`),
+      pattern: /shadow-(?:[1-9]|1\d|2[0-4])/,
     },
     ...(isDevelopment
       ? [
           // Typography
-          ...typographyClasses.map((item) => item.className),
+          ...typographyClasses.map(item => item.className),
           // Colors
           {
             pattern: new RegExp(

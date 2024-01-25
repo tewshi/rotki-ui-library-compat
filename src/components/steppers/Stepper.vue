@@ -42,20 +42,17 @@ const renderedStep = computed(() => {
   const currentStep = get(step);
   const stepsVal = get(steps);
 
-  if (!isDefined(currentStep)) {
+  if (!isDefined(currentStep))
     return stepsVal;
-  }
 
   return stepsVal.map((text, index) => {
     let stepStatus: StepperState = StepperState.inactive;
 
-    if (index + 1 === currentStep) {
+    if (index + 1 === currentStep)
       stepStatus = StepperState.active;
-    }
 
-    if (index + 1 < currentStep) {
+    if (index + 1 < currentStep)
       stepStatus = StepperState.done;
-    }
 
     return {
       ...text,
@@ -68,11 +65,10 @@ const wrapperRef = ref<HTMLDivElement>();
 
 watch(step, () => {
   if (
-    !get(keepActiveVisible) ||
-    get(orientation) !== StepperOrientation.horizontal
-  ) {
+    !get(keepActiveVisible)
+    || get(orientation) !== StepperOrientation.horizontal
+  )
     return;
-  }
 
   nextTick(() => {
     const elem = get(wrapperRef);
@@ -100,9 +96,13 @@ watch(step, () => {
     <template
       v-for="({ title, description, state, loading }, index) in renderedStep"
     >
-      <hr v-if="index > 0" :key="index + 'hr'" :class="css.divider" />
+      <hr
+        v-if="index > 0"
+        :key="`${index}hr`"
+        :class="css.divider"
+      />
       <div
-        :key="index + 'step'"
+        :key="`${index}step`"
         :class="[
           css.step,
           css[state ?? StepperState.inactive],
@@ -111,14 +111,21 @@ watch(step, () => {
           },
         ]"
       >
-        <slot name="icon" v-bind="{ state, index: index + 1 }">
+        <slot
+          name="icon"
+          v-bind="{ state, index: index + 1 }"
+        >
           <div class="relative flex py-2">
             <StepperCustomIcon
               v-if="custom"
               :index="index + 1"
               :state="state"
             />
-            <StepperIcon v-else :index="index + 1" :state="state" />
+            <StepperIcon
+              v-else
+              :index="index + 1"
+              :state="state"
+            />
             <Progress
               v-if="loading"
               class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
@@ -130,7 +137,10 @@ watch(step, () => {
             />
           </div>
         </slot>
-        <div v-if="title || description" :class="css.label">
+        <div
+          v-if="title || description"
+          :class="css.label"
+        >
           <span
             v-if="title"
             :class="[css.title, { [titleClass]: custom }]"

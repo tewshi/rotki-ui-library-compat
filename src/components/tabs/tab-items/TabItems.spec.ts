@@ -3,15 +3,9 @@ import { describe, expect, it } from 'vitest';
 import TabItems from '@/components/tabs/tab-items/TabItems.vue';
 import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 
-const createWrapper = (options?: any) =>
-  mount(TabItems, {
+function createWrapper(options?: any) {
+  return mount(TabItems, {
     ...options,
-    stubs: {
-      TabItem,
-      Transition: {
-        template: `<span><slot></slot></span>`,
-      },
-    },
     slots: {
       default: [
         `<TabItem>Tab Content 1</TabItem>`,
@@ -20,9 +14,16 @@ const createWrapper = (options?: any) =>
         `<TabItem>Tab Content 4</TabItem>`,
       ],
     },
+    stubs: {
+      TabItem,
+      Transition: {
+        template: `<span><slot></slot></span>`,
+      },
+    },
   });
+}
 
-describe('Tabs/TabItems', () => {
+describe('tabs/TabItems', () => {
   it('renders properly', async () => {
     const value = ref(0);
     const wrapper = createWrapper({

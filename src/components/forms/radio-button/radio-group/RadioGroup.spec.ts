@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import RadioGroup from './RadioGroup.vue';
 
-const createWrapper = (options?: any) =>
-  mount(RadioGroup, { ...options, stubs: { RuiIcon: true } });
+function createWrapper(options?: any) {
+  return mount(RadioGroup, { ...options, stubs: { RuiIcon: true } });
+}
 
-describe('Forms/RadioButton/RadioGroup', () => {
+describe('forms/RadioButton/RadioGroup', () => {
   it('passes inline props', async () => {
     const wrapper = createWrapper();
     expect(wrapper.find('div[class*=wrapper]').classes()).not.toMatch(/inline/);
@@ -38,8 +39,8 @@ describe('Forms/RadioButton/RadioGroup', () => {
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
       propsData: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();

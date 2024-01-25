@@ -2,8 +2,8 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 
-const createWrapper = (options?: any) =>
-  mount(TabItem, {
+function createWrapper(options?: any) {
+  return mount(TabItem, {
     ...options,
     propsData: {
       value: 'value',
@@ -13,15 +13,16 @@ const createWrapper = (options?: any) =>
       default: `<div>Tab Content</div>`,
     },
   });
+}
 
-describe('Tabs/TabItem', () => {
+describe('tabs/TabItem', () => {
   it('do not render if not active', () => {
     const wrapper = createWrapper();
 
     expect(wrapper.find('div>div').exists()).toBeFalsy();
   });
 
-  it("render if it's active", async () => {
+  it('render if it\'s active', async () => {
     const wrapper = createWrapper({
       propsData: {
         active: true,

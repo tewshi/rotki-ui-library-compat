@@ -45,7 +45,10 @@ const css = useCssModule();
 <template>
   <div>
     <AppNav />
-    <main :class="css.main" class="wrapper">
+    <main
+      :class="css.main"
+      class="wrapper"
+    >
       <div class="relative flex">
         <div class="relative flex-none">
           <div :class="css.sidenav">

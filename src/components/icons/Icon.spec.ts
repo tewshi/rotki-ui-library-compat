@@ -4,12 +4,12 @@ import Icon from '@/components/icons/Icon.vue';
 
 const createWrapper = (options?: any) => mount(Icon, options);
 
-describe('Forms/Icon', () => {
+describe('forms/Icon', () => {
   it('renders properly', () => {
     const wrapper = createWrapper({
       propsData: {
-        name: 'arrow-down-circle-fill',
         color: 'primary',
+        name: 'arrow-down-circle-fill',
       },
     });
     expect(wrapper.classes()).toMatch(/_remixicon_/);

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useRoute } from 'vue-router/composables';
 import { throttleFilter } from '@vueuse/shared';
-import { type ContextColorsType } from '@/consts/colors';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import VRender from '@/components/VRender';
-import { type TabProps } from '@/components/tabs/tab/Tab.vue';
+import type { ContextColorsType } from '@/consts/colors';
+import type { TabProps } from '@/components/tabs/tab/Tab.vue';
 
 export interface Props {
   color?: ContextColorsType;
@@ -50,19 +50,19 @@ const children = computed(() => {
   };
 
   return tabs
-    .filter((tab) => !!tab.tag)
+    .filter(tab => !!tab.tag)
     .map((tab, index) => {
-      // @ts-ignore
+      // @ts-expect-error
       // The componentOptions.propsData is messed when combined with props from the parent.
       // So use `initialPropsData`, the original `propsData` that haven't touched by the code below.
-      const propsData = (tab.componentOptions?.initialPropsData ||
-        tab.componentOptions?.propsData ||
-        {}) as TabProps;
+      const propsData = (tab.componentOptions?.initialPropsData
+        || tab.componentOptions?.propsData
+        || {}) as TabProps;
 
       let tabValue: string | number = index;
-      if (propsData.link !== false && propsData.to) {
+      if (propsData.link !== false && propsData.to)
         tabValue = propsData.to;
-      }
+
       const active = currentValue === tabValue;
 
       const newProps = {
@@ -79,52 +79,47 @@ const children = computed(() => {
     });
 });
 
-const updateValue = (newValue: string | number) => {
+function updateValue(newValue: string | number) {
   emit('input', newValue);
   set(internalValue, newValue);
-};
+}
 
 const route = useRoute();
 
-const isPathMatch = (
-  path: string,
-  {
-    exactPath,
-    exact,
-  }: {
-    exactPath?: boolean;
-    exact?: boolean;
-  },
-) => {
+function isPathMatch(path: string, {
+  exactPath,
+  exact,
+}: {
+  exactPath?: boolean;
+  exact?: boolean;
+}) {
   const currentRoute = route.fullPath;
 
-  if (exactPath) {
+  if (exactPath)
     return currentRoute === path;
-  }
+
   const routeWithoutQueryParams = new URL(path, window.location.origin)
     .pathname;
 
-  if (exact) {
+  if (exact)
     return currentRoute === routeWithoutQueryParams;
-  }
-  return currentRoute.startsWith(routeWithoutQueryParams);
-};
 
-const keepActiveTabVisible = () => {
+  return currentRoute.startsWith(routeWithoutQueryParams);
+}
+
+function keepActiveTabVisible() {
   nextTick(() => {
-    if (!get(showArrows)) {
+    if (!get(showArrows))
       return;
-    }
 
     const elem = get(wrapper);
     const barElem = get(bar);
     if (elem) {
-      const activeTab = (elem.querySelector('.active-tab') ??
-        elem.querySelector('.active-tab-link')) as HTMLElement;
+      const activeTab = (elem.querySelector('.active-tab')
+        ?? elem.querySelector('.active-tab-link')) as HTMLElement;
 
-      if (!activeTab || !barElem) {
+      if (!activeTab || !barElem)
         return;
-      }
 
       const childLeft = activeTab.offsetLeft - elem.offsetLeft;
       const childTop = activeTab.offsetTop - elem.offsetTop;
@@ -152,32 +147,31 @@ const keepActiveTabVisible = () => {
       });
     }
   });
-};
+}
 
-const applyNewValue = (onlyLink = false) => {
+function applyNewValue(onlyLink = false) {
   const enabledChildren = get(children).filter(
-    (child) => !(child.node.componentOptions?.propsData as TabProps).disabled,
+    child => !(child.node.componentOptions?.propsData as TabProps).disabled,
   );
   if (enabledChildren.length > 0) {
     let newValue: string | number = get(value) || 0;
     enabledChildren.forEach((child, index) => {
       const props = child.node.componentOptions?.propsData as TabProps;
-      if (!onlyLink && index === 0 && props.tabValue) {
+      if (!onlyLink && index === 0 && props.tabValue)
         newValue = props.tabValue;
-      }
-      if (props.link !== false && props.to && isPathMatch(props.to, props)) {
+
+      if (props.link !== false && props.to && isPathMatch(props.to, props))
         newValue = props.to;
-      }
     });
     updateValue(newValue);
   }
   keepActiveTabVisible();
-};
+}
 
 onMounted(() => {
-  if (get(value) !== undefined) {
+  if (get(value) !== undefined)
     return;
-  }
+
   applyNewValue();
 });
 
@@ -221,43 +215,40 @@ watchImmediate(vertical, (vertical) => {
   if (vertical) {
     triggerVertical();
     stopHorizontal();
-  } else {
+  }
+  else {
     triggerHorizontal();
     stopVertical();
   }
 });
 
 const prevArrowDisabled = computed(() => {
-  if (!get(vertical)) {
+  if (!get(vertical))
     return get(left);
-  }
 
   return get(top);
 });
 
 const nextArrowDisabled = computed(() => {
-  if (!get(vertical)) {
+  if (!get(vertical))
     return get(right);
-  }
 
   return get(bottom);
 });
 
-const onPrevSliderClick = () => {
-  if (!get(vertical)) {
+function onPrevSliderClick() {
+  if (!get(vertical))
     set(x, get(x) - get(width));
-  } else {
+  else
     set(y, get(y) - get(height));
-  }
-};
+}
 
-const onNextSliderClick = () => {
-  if (!get(vertical)) {
+function onNextSliderClick() {
+  if (!get(vertical))
     set(x, get(x) + get(width));
-  } else {
+  else
     set(y, get(y) + get(height));
-  }
-};
+}
 
 useResizeObserver(bar, () => {
   keepActiveTabVisible();

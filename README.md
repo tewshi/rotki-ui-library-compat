@@ -6,7 +6,7 @@ A Vue2 backport of the [component library](https://github.com/rotki/ui-library) 
 
 ### Installing the library
 
-You can start using the library after installing it from npm along with the roboto font: 
+You can start using the library after installing it from npm along with the roboto font:
 
 ```bash
 pnpm install -D --save-exact @rotki/ui-library-compat @fontsource/roboto
@@ -45,7 +45,9 @@ import { RuiButton } from '@rotki/ui-library-compat';
 
 <template>
   <div>
-    <RuiButton outlined>This is button</RuiButton>
+    <RuiButton outlined>
+      This is button
+    </RuiButton>
   </div>
 </template>
 ```
@@ -71,6 +73,7 @@ switchThemeScheme(ThemeMode.dark);
 ### Using the icons
 
 You need to specify which icons you want to enable, when installing the RuiPlugin.
+
 ```typescript
 import { Ri4kFill, Ri4kLine, RuiPlugin, createRui } from '@rotki/ui-library-compat';
 a
@@ -97,6 +100,7 @@ import { RuiIcon } from '@rotki/ui-library-compat';
 ```
 
 ### Use @rotki/ui-library-compat tailwindcss theme
+
 You can extend @rotki/ui-library-compat tailwind theme configuration by adding these to your tailwind config. It will provide you the classes for the colors, typography, and shadow.
 
 ```javascript
@@ -119,33 +123,40 @@ pnpm install --frozen-lockfile
 ```
 
 ### Compiles and minifies for production
+
 The following command when executed from the project root will build the `@rotki/ui-library-compat` bundle.
 This command will create the bundle for both Vue version >=3.4.3.
+
 ```
 pnpm run build:prod
 ```
 
 If you want to build for specific version, you can run:
+
 ```
 pnpm run build
 ```
 
 ### Lint check
+
 ```
 pnpm run lint
 ```
 
 ### Lints and fixes files
+
 ```
 pnpm run lint:fix
 ```
 
 ### Type check
+
 ```
 pnpm run typecheck
 ```
 
 ### Storybook
+
 In order to run the storybook, you can run:
 
 ```
@@ -153,6 +164,7 @@ pnpm run storybook
 ```
 
 ### Testing: Unit
+
 In order to test the components, you can run:
 
 ```
@@ -160,6 +172,7 @@ pnpm run test
 ```
 
 ### Testing: end-to-end
+
 In order to test the components in use in a vue 3 project, you can run:
 
 ```
@@ -174,6 +187,7 @@ pnpm run coverage:preview
 ```
 
 ### Locally testing the library
+
 After you build the bundle, in the `package.json` on your main project, you can add this to the dependencies:
 
 ```json
@@ -185,7 +199,9 @@ After you build the bundle, in the `package.json` on your main project, you can 
 When the dependency installed on the main project, it will run the `prepare` script.
 
 ### Generating the library icons
+
 We use remix-icons. You need to run this script to scrap the svgs data from remix-icons. (This script runs automatically on `prepare`. Run this in case the icons aren't generated properly)
+
 ```
 pnpm run generate:icons
 ```
@@ -193,4 +209,3 @@ pnpm run generate:icons
 ## License
 
 [AGPL-3.0](./LICENSE) License &copy; 2023- [Rotki Solutions GmbH](https://github.com/rotki)
-

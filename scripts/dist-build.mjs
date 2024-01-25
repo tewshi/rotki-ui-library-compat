@@ -6,11 +6,10 @@ import url from 'node:url';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const dist = path.resolve(__dirname, '..', 'dist');
-if (fs.existsSync(dist)) {
+if (fs.existsSync(dist))
   fs.rmSync(dist, { recursive: true });
-}
 
-const buildTypes = () => {
+function buildTypes() {
   const types = spawn('pnpm', ['build:types'], {
     stdio: [process.stdout, process.stderr],
   });
@@ -32,7 +31,7 @@ const buildTypes = () => {
       }
     });
   });
-};
+}
 
 const build = spawn('pnpm', ['build'], {
   stdio: [process.stdout, process.stderr],

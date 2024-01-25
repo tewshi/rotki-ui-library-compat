@@ -2,10 +2,11 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import RevealableTextField from '@/components/forms/revealable-text-field/RevealableTextField.vue';
 
-const createWrapper = (options?: any) =>
-  mount(RevealableTextField, { ...options, stubs: { RuiIcon: true } });
+function createWrapper(options?: any) {
+  return mount(RevealableTextField, { ...options, stubs: { RuiIcon: true } });
+}
 
-describe('Forms/RevealableTextField', () => {
+describe('forms/RevealableTextField', () => {
   it('renders properly', () => {
     const label = 'Password';
     const wrapper = createWrapper({

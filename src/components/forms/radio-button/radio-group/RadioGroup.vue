@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import VRender from '@/components/VRender';
 import FormTextDetail from '@/components/helpers/FormTextDetail.vue';
-import { type ContextColorsType } from '@/consts/colors';
+import type { ContextColorsType } from '@/consts/colors';
 import type { RadioProps } from '@/components/forms/radio-button/radio/Radio.vue';
 
 export interface Props {
@@ -49,15 +49,13 @@ const children = computed(() =>
     const propsData = (node.componentOptions?.propsData ?? {}) as RadioProps;
 
     // if group is disabled, disable child buttons
-    if (get(disabled)) {
+    if (get(disabled))
       propsData.disabled = true;
-    }
 
     const rootColor = get(color);
     // if given root color, use it
-    if (rootColor) {
+    if (rootColor)
       propsData.color = rootColor;
-    }
 
     return { node, props: propsData };
   }),
@@ -73,7 +71,10 @@ const css = useCssModule();
 
 <template>
   <div>
-    <div v-if="label" class="text-rui-text-secondary text-body-1">
+    <div
+      v-if="label"
+      class="text-rui-text-secondary text-body-1"
+    >
       {{ label }}
     </div>
     <div :class="[css.wrapper, { [css.wrapper__inline]: inline }]">

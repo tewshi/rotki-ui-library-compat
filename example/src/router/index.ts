@@ -20,7 +20,8 @@ const router = new VueRouter({
       }, 500);
 
       return { selector: to.hash };
-    } else if (savedPosition) {
+    }
+    else if (savedPosition) {
       return savedPosition;
     }
 

@@ -1,7 +1,7 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { default as FooterStepper, type Props } from './FooterStepper.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
-const render: StoryFn<Props> = (args) => ({
+const render: StoryFn<Props> = args => ({
   components: { FooterStepper },
   setup() {
     const value = computed({
@@ -13,18 +13,15 @@ const render: StoryFn<Props> = (args) => ({
       },
     });
 
-    return { value, args };
+    return { args, value };
   },
   template: `
     <FooterStepper v-model="value" v-bind="args" />`,
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/FooterStepper',
-  component: FooterStepper,
-  tags: ['autodocs'],
-  render,
   argTypes: {
+    arrowButtons: { control: 'boolean', table: { category: 'State' } },
     pages: { control: 'number', table: { category: 'State' } },
     value: {
       control: 'number',
@@ -35,76 +32,79 @@ const meta: Meta<Props> = {
       options: ['numeric', 'bullet', 'progress', 'pill'],
       table: { category: 'State' },
     },
-    arrowButtons: { control: 'boolean', table: { category: 'State' } },
   },
+  component: FooterStepper,
   parameters: {
     docs: {
       controls: { exclude: ['update:modelValue'] },
     },
   },
+  render,
+  tags: ['autodocs'],
+  title: 'Components/FooterStepper',
 };
 
 type Story = StoryObj<Props>;
 
 export const Default: Story = {
   args: {
+    arrowButtons: false,
     pages: 5,
     value: 1,
-    arrowButtons: false,
     variant: 'numeric',
   },
 };
 
 export const Bullet: Story = {
   args: {
+    arrowButtons: false,
     pages: 5,
     value: 1,
-    arrowButtons: false,
     variant: 'bullet',
   },
 };
 
 export const Progress: Story = {
   args: {
+    arrowButtons: false,
     pages: 5,
     value: 1,
-    arrowButtons: false,
     variant: 'progress',
   },
 };
 
 export const Pills: Story = {
   args: {
+    arrowButtons: false,
     pages: 5,
     value: 1,
-    arrowButtons: false,
     variant: 'pill',
   },
 };
 
 export const ArrowButtons: Story = {
   args: {
+    arrowButtons: true,
     pages: 5,
     value: 1,
-    arrowButtons: true,
     variant: 'numeric',
   },
 };
 
 export const BulletWithArrows: Story = {
   args: {
+    arrowButtons: true,
     pages: 5,
     value: 1,
-    arrowButtons: true,
     variant: 'bullet',
   },
 };
 
 export const ProgressWithArrows: Story = {
   args: {
+    arrowButtons: true,
     pages: 5,
     value: 1,
-    arrowButtons: true,
     variant: 'progress',
   },
 };

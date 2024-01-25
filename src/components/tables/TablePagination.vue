@@ -35,7 +35,7 @@ const limits = computed(() => get(value).limits ?? get(tableDefaults.limits));
 
 const currentLimit = computed({
   get: () => get(value).limit,
-  set: (v) =>
+  set: v =>
     emit('input', {
       ...get(value),
       limit: Number(v),
@@ -45,9 +45,9 @@ const currentLimit = computed({
 
 const pages = computed(() => {
   const { limit, total } = get(value);
-  if (!total) {
+  if (!total)
     return 0;
-  }
+
   return Math.ceil(total / limit);
 });
 
@@ -62,44 +62,44 @@ const indicatorText = computed(() => {
 const hasPrev = computed(() => get(value).page > 1);
 const hasNext = computed(() => get(pages) > get(value).page);
 
-const goToPage = (page: number) => {
+function goToPage(page: number) {
   emit('input', {
     ...get(value),
     page,
   });
-};
+}
 
-const onNavigate = (delta: number) => {
+function onNavigate(delta: number) {
   goToPage(get(value).page + delta);
-};
+}
 
-const onPrev = () => {
-  if (!get(hasPrev)) {
+function onPrev() {
+  if (!get(hasPrev))
     return;
-  }
+
   onNavigate(-1);
-};
+}
 
-const onNext = () => {
-  if (!get(hasNext)) {
+function onNext() {
+  if (!get(hasNext))
     return;
-  }
+
   onNavigate(1);
-};
+}
 
-const onFirst = () => {
-  if (!get(hasPrev)) {
+function onFirst() {
+  if (!get(hasPrev))
     return;
-  }
+
   goToPage(1);
-};
+}
 
-const onLast = () => {
-  if (!get(hasNext)) {
+function onLast() {
+  if (!get(hasNext))
     return;
-  }
+
   goToPage(get(pages));
-};
+}
 </script>
 
 <template>

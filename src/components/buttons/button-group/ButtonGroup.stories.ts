@@ -1,14 +1,14 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
 import { contextColors } from '@/consts/colors';
 import { default as ButtonGroup, type Props } from './ButtonGroup.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
-const render: StoryFn<Props> = (args) => ({
-  components: { ButtonGroup, Button, Icon },
+const render: StoryFn<Props> = args => ({
+  components: { Button, ButtonGroup, Icon },
   setup() {
     const count = ref(0);
-    return { count, args };
+    return { args, count };
   },
   template: `
     <div v-if="'value' in args">
@@ -42,21 +42,21 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Button/ButtonGroup',
-  component: ButtonGroup,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    vertical: { control: 'boolean' },
-    color: { control: 'select', options: contextColors },
     activeColor: { control: 'select', options: contextColors },
+    color: { control: 'select', options: contextColors },
+    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
     variant: {
       control: 'select',
       options: ['default', 'outlined', 'text'],
       table: { category: 'Shape' },
     },
-    size: { control: 'select', options: ['medium', 'sm', 'lg'] },
+    vertical: { control: 'boolean' },
   },
+  component: ButtonGroup,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Button/ButtonGroup',
 };
 
 type Story = StoryObj<Props>;
@@ -91,24 +91,24 @@ export const Text: Story = {
 
 export const DefaultToggle: Story = {
   args: {
-    value: 0,
     color: 'primary',
+    value: 0,
   },
 };
 
 export const ToggleRequired: Story = {
   args: {
+    color: 'primary',
     required: true,
     value: 0,
-    color: 'primary',
   },
 };
 
 export const VerticalToggle: Story = {
   args: {
-    vertical: true,
-    value: 0,
     color: 'primary',
+    value: 0,
+    vertical: true,
   },
 };
 
@@ -121,49 +121,49 @@ export const Toggle: Story = {
 
 export const OutlinedToggle: Story = {
   args: {
-    variant: 'outlined',
-    value: 0,
     color: 'primary',
+    value: 0,
+    variant: 'outlined',
   },
 };
 
 export const TextToggle: Story = {
   args: {
-    variant: 'text',
-    value: 0,
     color: 'primary',
+    value: 0,
+    variant: 'text',
   },
 };
 
 export const ActiveColorToggle: Story = {
   args: {
-    variant: 'text',
-    value: 0,
-    color: 'primary',
     activeColor: 'warning',
+    color: 'primary',
+    value: 0,
+    variant: 'text',
   },
 };
 
 export const DefaultToggleMultiple: Story = {
   args: {
-    value: [0],
     color: 'primary',
+    value: [0],
   },
 };
 
 export const ToggleMultipleRequired: Story = {
   args: {
+    color: 'primary',
     required: true,
     value: [0],
-    color: 'primary',
   },
 };
 
 export const VerticalToggleMultiple: Story = {
   args: {
-    vertical: true,
-    value: [0],
     color: 'primary',
+    value: [0],
+    vertical: true,
   },
 };
 
@@ -176,26 +176,26 @@ export const ToggleMultiple: Story = {
 
 export const OutlinedToggleMultiple: Story = {
   args: {
-    variant: 'outlined',
-    value: [0],
     color: 'primary',
+    value: [0],
+    variant: 'outlined',
   },
 };
 
 export const TextToggleMultiple: Story = {
   args: {
-    variant: 'text',
-    value: [0],
     color: 'primary',
+    value: [0],
+    variant: 'text',
   },
 };
 
 export const ActiveColorMultiple: Story = {
   args: {
-    variant: 'text',
-    value: [0],
-    color: 'primary',
     activeColor: 'warning',
+    color: 'primary',
+    value: [0],
+    variant: 'text',
   },
 };
 

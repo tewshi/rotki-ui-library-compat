@@ -1,4 +1,3 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import { contextColors } from '@/consts/colors';
 import Icon from '@/components/icons/Icon.vue';
 import Card from '@/components/cards/Card.vue';
@@ -6,13 +5,14 @@ import Tab from '@/components/tabs/tab/Tab.vue';
 import TabItems from '@/components/tabs/tab-items/TabItems.vue';
 import TabItem from '@/components/tabs/tab-item/TabItem.vue';
 import Tabs, { type Props as TabsProps } from './Tabs.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 type Props = TabsProps & {
   class?: string;
 };
 
-const render: StoryFn<Props> = (args) => ({
-  components: { Tabs, Tab, TabItems, TabItem, Card, Icon },
+const render: StoryFn<Props> = args => ({
+  components: { Card, Icon, Tab, TabItem, TabItems, Tabs },
   setup() {
     const modelValue = computed({
       get() {
@@ -69,23 +69,23 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Tabs',
-  component: Tabs,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    value: { control: 'text' },
     align: { control: 'select', options: ['start', 'center', 'end'] },
-    grow: { control: 'boolean', table: { category: 'State' } },
-    vertical: { control: 'boolean', table: { category: 'State' } },
-    disabled: { control: 'boolean', table: { category: 'State' } },
+    class: { control: 'string' },
     color: {
       control: 'select',
       options: contextColors,
       table: { category: 'State' },
     },
-    class: { control: 'string' },
+    disabled: { control: 'boolean', table: { category: 'State' } },
+    grow: { control: 'boolean', table: { category: 'State' } },
+    value: { control: 'text' },
+    vertical: { control: 'boolean', table: { category: 'State' } },
   },
+  component: Tabs,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Tabs',
 };
 
 type Story = StoryObj<Props>;
@@ -127,8 +127,8 @@ export const DefaultWithArrow: Story = {
 
 export const VerticalWithArrow: Story = {
   args: {
-    vertical: true,
     class: 'w-[200px] h-[300px]',
+    vertical: true,
   },
 };
 

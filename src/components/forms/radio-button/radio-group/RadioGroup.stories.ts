@@ -1,9 +1,9 @@
-import { type Meta, type StoryFn, type StoryObj } from '@storybook/vue';
 import Radio from '@/components/forms/radio-button/radio/Radio.vue';
 import { type Props, default as RadioGroup } from './RadioGroup.vue';
+import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
-const render: StoryFn<Props> = (args) => ({
-  components: { RadioGroup, Radio },
+const render: StoryFn<Props> = args => ({
+  components: { Radio, RadioGroup },
   setup() {
     const modelValue = computed({
       get() {
@@ -25,17 +25,17 @@ const render: StoryFn<Props> = (args) => ({
 });
 
 const meta: Meta<Props> = {
-  title: 'Components/Forms/Radio/RadioGroup',
-  component: RadioGroup,
-  tags: ['autodocs'],
-  render,
   argTypes: {
-    value: { control: 'text' },
-    inline: { control: 'boolean' },
-    hint: { control: 'text' },
     errorMessages: { control: 'array', defaultValue: [] },
     hideDetails: { control: 'boolean' },
+    hint: { control: 'text' },
+    inline: { control: 'boolean' },
+    value: { control: 'text' },
   },
+  component: RadioGroup,
+  render,
+  tags: ['autodocs'],
+  title: 'Components/Forms/Radio/RadioGroup',
 };
 
 type Story = StoryObj<Props>;
@@ -64,8 +64,8 @@ export const WithHint: Story = {
 
 export const HideDetails: Story = {
   args: {
-    hint: 'Hint (should be invisible)',
     hideDetails: true,
+    hint: 'Hint (should be invisible)',
   },
 };
 

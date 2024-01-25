@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import TextArea from '@/components/forms/text-area/TextArea.vue';
 
-const createWrapper = (options?: any) =>
-  mount(TextArea, { ...options, stubs: { RuiIcon: true } });
+function createWrapper(options?: any) {
+  return mount(TextArea, { ...options, stubs: { RuiIcon: true } });
+}
 
-describe('Forms/TextArea', () => {
+describe('forms/TextArea', () => {
   it('renders properly', () => {
     const label = 'Text Area Label';
     const wrapper = createWrapper({
@@ -131,8 +132,8 @@ describe('Forms/TextArea', () => {
   it('passes hideDetails', async () => {
     const wrapper = createWrapper({
       propsData: {
-        hint: 'This hint should not be rendered',
         hideDetails: true,
+        hint: 'This hint should not be rendered',
       },
     });
     expect(wrapper.find('.details > div').exists()).toBeFalsy();
