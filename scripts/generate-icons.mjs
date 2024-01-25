@@ -1,12 +1,15 @@
-const path = require('node:path');
-const { readdir, readFile, writeFile, lstat } = require('node:fs/promises');
-const fs = require('fs-extra');
-const { pascalCase } = require('scule');
-const { XMLParser } = require('fast-xml-parser');
+import path from 'node:path';
+import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
+import url from 'node:url';
+import fs from 'fs-extra';
+import { pascalCase } from 'scule';
+import { XMLParser } from 'fast-xml-parser';
 
 const PREFIX = 'ri-';
 const TARGET = 'src/icons/';
 const CHUNK_SIZE = 500;
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 function resolveRoot(...dir) {
   return path.resolve(__dirname, '..', ...dir);

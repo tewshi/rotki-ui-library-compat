@@ -64,12 +64,12 @@
     }
   },
   "scripts": {
-    "build:prod": "node scripts/dist-build.cjs",
+    "build:prod": "node scripts/dist-build.mjs",
     "build": "pnpm run generate-icons && vite build",
     "build:storybook": "STORYBOOK=true storybook build",
     "build:tailwind": "tailwindcss -o dist/style.css --minify",
     "build:types": "vue-tsc -p tsconfig.build.json",
-    "generate-icons": "node scripts/generate-icons.cjs",
+    "generate-icons": "node scripts/generate-icons.mjs",
     "resolve:alias": "tsc-alias -p tsconfig.build.json",
     "dev": "vite",
     "lint": "eslint .",
@@ -84,7 +84,7 @@
     "coverage": "vitest run --coverage",
     "coverage:preview": "npx vite preview --open --outDir tests/coverage",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky install && node scripts/prepare.cjs",
+    "prepare": "husky install && node scripts/prepare.mjs",
     "release": "bumpp -r --no-push"
   },
   "peerDependencies": {
@@ -157,6 +157,6 @@
     "pnpm": ">=8 <9"
   },
   "lint-staged": {
-    "*.{js,cjs,ts,vue,yml,json,md}": "eslint"
+    "*.{js,mjs,ts,vue,yml,json,md}": "eslint"
   }
 }

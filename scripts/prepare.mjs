@@ -1,4 +1,5 @@
-const { spawn } = require('node:child_process');
+import { spawn } from 'node:child_process';
+import process from 'node:process';
 
 const generateIcons = spawn('pnpm', ['generate-icons'], {
   stdio: [process.stdout, process.stderr],

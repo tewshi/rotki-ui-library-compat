@@ -1,7 +1,10 @@
-const { spawn } = require('node:child_process');
-const fs = require('node:fs');
-const path = require('node:path');
+import { spawn } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
+import url from 'node:url';
 
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 const dist = path.resolve(__dirname, '..', 'dist');
 if (fs.existsSync(dist)) {
   fs.rmSync(dist, { recursive: true });

@@ -1,3 +1,4 @@
+import process from 'node:process';
 import { type Config } from 'tailwindcss';
 import typographyClasses from './src/consts/typography';
 import themePlugin from './src/theme';
