@@ -5,13 +5,18 @@
     "emitDeclarationOnly": true,
     "outDir": "dist"
   },
+  "include": [
+    "src",
+    "auto-imports.d.ts"
+  ],
   "exclude": [
     "src/**/*.stories.ts",
     "src/stories",
     "src/**/*.spec.ts",
     "example",
     ".storybook",
-    "dist"
+    "dist",
+    "**/*.config.ts"
   ],
   "tsc-alias": {
     "resolveFullPaths": true
