@@ -74,24 +74,28 @@ const labelWithQuote = computed(() => {
   return `'  ${get(label)}  '`;
 });
 
-const wrapper = ref<HTMLDivElement>();
-const innerWrapper = ref<HTMLDivElement>();
+const prepend = ref<HTMLDivElement>();
+const append = ref<HTMLDivElement>();
 
 const internalValue = computed({
   get: () => get(value),
   set: (val: string) => emit('input', val),
 });
 
-const { left: wrapperLeft, right: wrapperRight } = useElementBounding(wrapper);
-const { left: innerWrapperLeft, right: innerWrapperRight }
-  = useElementBounding(innerWrapper);
+const prependWidth = ref('0px');
+const appendWidth = ref('0px');
 
-const prependWidth = computed(
-  () => `${get(innerWrapperLeft) - get(wrapperLeft)}px`,
-);
-const appendWidth = computed(
-  () => `${get(wrapperRight) - get(innerWrapperRight)}px`,
-);
+useResizeObserver(prepend, (entries) => {
+  const [entry] = entries;
+  const { width, left } = entry.contentRect;
+  set(prependWidth, `${width + left}px`);
+});
+
+useResizeObserver(append, (entries) => {
+  const [entry] = entries;
+  const { width, right } = entry.contentRect;
+  set(appendWidth, `${width + right}px`);
+});
 
 const { hasError, hasSuccess, hasMessages } = useFormTextDetail(
   errorMessages,
@@ -130,7 +134,6 @@ const showClearIcon = logicAnd(
 <template>
   <div v-bind="getRootAttrs(attrs)">
     <div
-      ref="wrapper"
       :class="[
         css.wrapper,
         css[color],
@@ -147,6 +150,7 @@ const showClearIcon = logicAnd(
     >
       <div
         v-if="slots.prepend || prependIcon"
+        ref="prepend"
         class="flex items-center gap-1 shrink-0"
         :class="css.prepend"
       >
@@ -161,10 +165,7 @@ const showClearIcon = logicAnd(
           <Icon :name="prependIcon" />
         </div>
       </div>
-      <div
-        ref="innerWrapper"
-        class="flex flex-1 overflow-hidden"
-      >
+      <div class="flex flex-1 overflow-hidden">
         <input
           ref="input"
           v-model="internalValue"
@@ -190,6 +191,7 @@ const showClearIcon = logicAnd(
       </div>
       <div
         v-if="slots.append || appendIcon || showClearIcon"
+        ref="append"
         class="flex items-center gap-1 shrink-0"
         :class="css.append"
       >
@@ -338,13 +340,13 @@ const showClearIcon = logicAnd(
 
   .prepend {
     &:not(:empty) {
-      @apply mr-2;
+      @apply pr-2;
     }
   }
 
   .append {
     &:not(:empty) {
-      @apply ml-2;
+      @apply pl-2;
     }
   }
 
@@ -420,13 +422,13 @@ const showClearIcon = logicAnd(
 
     .prepend {
       &:not(:empty) {
-        @apply ml-3 mr-0;
+        @apply pl-3 pr-0;
       }
     }
 
     .append {
       &:not(:empty) {
-        @apply mr-3 ml-0;
+        @apply pr-3 pl-0;
       }
     }
 
