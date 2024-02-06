@@ -111,6 +111,10 @@ import {
   default as RuiSkeletonLoader,
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
+import {
+  default as RuiSwitch,
+  type Props as SwitchProps,
+} from '@/components/forms/switch/RuiSwitch.vue';
 import type {
   TableColumn as DataTableColumn,
   SortColumn as DataTableSortColumn,
@@ -147,6 +151,7 @@ export {
   RuiSkeletonLoader,
   RuiTextArea,
   RuiTableRowExpander,
+  RuiSwitch,
   ProgressProps,
   ChipProps,
   TextFieldProps,
@@ -179,4 +184,5 @@ export {
   TextAreaProps,
   ExpandButtonProps,
   DataTableSortData,
+  SwitchProps,
 };

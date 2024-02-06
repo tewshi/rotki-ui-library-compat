@@ -84,7 +84,6 @@ const RuiPlugin = createRui({
 Vue.use(RuiPlugin);
 
 new Vue({
-  // @ts-expect-error
   pinia,
   router,
   setup() {

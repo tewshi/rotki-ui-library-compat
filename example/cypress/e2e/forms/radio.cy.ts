@@ -63,7 +63,7 @@ describe('forms/Radio', () => {
           .parentsUntil('div[class*=wrapper]')
           .parent()
           .find('.details')
-          .should('contain.text', `Selected value: ${value.toString()}`);
+          .should('contain.text', `Selected value: ${value?.toString()}`);
       });
 
     cy.get('@thirdRadio').should('not.be.checked');
@@ -79,7 +79,7 @@ describe('forms/Radio', () => {
           .parentsUntil('div[class*=wrapper]')
           .parent()
           .find('.details')
-          .should('contain.text', `Selected value: ${value.toString()}`);
+          .should('contain.text', `Selected value: ${value?.toString()}`);
       });
   });
 });

@@ -47,6 +47,11 @@ const router = new VueRouter({
       component: () => import('@/views/CheckboxView.vue'),
     },
     {
+      path: '/switches',
+      name: 'switches',
+      component: () => import('@/views/SwitchView.vue'),
+    },
+    {
       path: '/radios',
       name: 'radios',
       component: () => import('@/views/RadioView.vue'),
