@@ -315,6 +315,21 @@ describe('dataTable', () => {
     expect(wrapper.find('thead[data-id=head-clone]').exists()).toBeFalsy();
   });
 
+  it('reset page number when search value is updated', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        cols: columns,
+        pagination: { limit: 10, page: 5, total: 50 },
+        rowAttr: 'id',
+        rows: data,
+        search: '',
+      },
+    });
+
+    await wrapper.setProps({ search: 'new search' });
+    expect(wrapper.emitted('update:pagination')![0][0].page).toBe(1);
+  });
+
   describe('global settings', () => {
     it('should follow global settings', async () => {
       const itemsPerPage = ref(25);

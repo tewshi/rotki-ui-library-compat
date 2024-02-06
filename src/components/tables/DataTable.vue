@@ -807,9 +807,10 @@ function setInternalTotal(groupedItems: TableRow[]) {
  * on changing search query, need to reset pagination page to 1
  */
 watch(search, () => {
-  const pagination = get(paginationData);
-  if (pagination)
-    pagination.page = 1;
+  set(paginationData, {
+    ...get(paginationData),
+    page: 1,
+  });
 });
 
 watch(grouped, setInternalTotal);
