@@ -31,7 +31,7 @@ export { StepperState };
 export interface RuiOptions {
   theme?: InitThemeOptions;
   defaults?: {
-    table?: TableOptions;
+    table?: Partial<TableOptions>;
   };
 }
 
