@@ -209,6 +209,62 @@ describe('dataTable', () => {
     ).toBeTruthy();
   });
 
+  it('selection toggles correctly', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        cols: columns,
+        rowAttr: 'id',
+        rows: data,
+        value: [],
+      },
+    });
+
+    wrapper.vm.$on('input', (e: string[]) => wrapper.setProps({ value: e }));
+
+    expect(wrapper.props().value).toHaveLength(0);
+
+    expect(
+      wrapper
+        .find('thead tr [data-cy=table-toggle-check-all] input')
+        .exists(),
+    ).toBeTruthy();
+
+    const checkAll = wrapper.find('thead tr th').findComponent(RuiCheckbox);
+
+    expect(checkAll.exists()).toBeTruthy();
+
+    checkAll.vm.$emit('input', true);
+
+    await nextTick();
+
+    expect(wrapper.props().value).toHaveLength(10);
+
+    expect(
+      wrapper
+        .find('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .findAll('tr [data-cy*=table-toggle-check-] span[class*=checkbox][class*=checked]'),
+    ).toHaveLength(11);
+
+    checkAll.vm.$emit('input', false);
+
+    await nextTick();
+
+    expect(wrapper.props().value).toHaveLength(0);
+
+    const checkFirst = wrapper.find('tbody tr:first-child').findComponent(RuiCheckbox);
+
+    checkFirst.vm.$emit('input', true);
+
+    await nextTick();
+
+    expect(wrapper.props().value).toHaveLength(1);
+  });
+
   it('single expand toggles correctly', async () => {
     const wrapper = createWrapper({
       propsData: {
@@ -475,5 +531,68 @@ describe('dataTable', () => {
 
       expect(get(itemsPerPage)).toBe(10);
     });
+  });
+
+  it('pagination range works as expected', async () => {
+    const wrapper = createWrapper({
+      propsData: {
+        'cols': columns,
+        'onUpdate:pagination': (e: any) => wrapper.setProps({ pagination: e }),
+        'rowAttr': 'id',
+        'rows': data,
+      },
+    });
+
+    await nextTick();
+
+    await wrapper.setProps({ pagination: { limit: 10, page: 1, total: data.length } });
+
+    const paginator = wrapper.findComponent(TablePagination);
+    expect(paginator.exists()).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=limit]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=ranges]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      paginator
+        .find('div[data-cy=table-pagination] div[class*=navigation]')
+        .exists(),
+    ).toBeTruthy();
+
+    const navButtons = paginator.findAllComponents(RuiButton);
+    expect(navButtons.length).toBe(4);
+
+    expect(navButtons.filter(b => b.attributes('disabled') === 'disabled')).toHaveLength(2);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
+
+    const simpleSelects = paginator.findAllComponents(RuiSimpleSelect);
+    const limits = simpleSelects.at(0);
+    const ranges = simpleSelects.at(1);
+    expect(limits.exists()).toBeTruthy();
+    expect(ranges.exists()).toBeTruthy();
+
+    limits.vm.$emit('input', 5);
+
+    await nextTick();
+
+    expect(limits.props().value).toBe(5);
+
+    ranges.vm.$emit('input', '6-10');
+
+    await nextTick();
+
+    expect(ranges.props().value).toBe('6-10');
+
+    expect(navButtons.filter(b => b.attributes('disabled') === 'disabled')).toHaveLength(0);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
   });
 });
