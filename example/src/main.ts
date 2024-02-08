@@ -37,13 +37,13 @@ import {
 import Vue from 'vue';
 import App from '@/App.vue';
 import router from '@/router';
-import { useCounterStore } from '@/stores/counter';
+import { useDefaultsStore } from '@/stores/defaults';
 
 Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
 setActivePinia(pinia);
 
-const { itemsPerPage } = storeToRefs(useCounterStore());
+const { itemsPerPage, stickyOffset } = storeToRefs(useDefaultsStore());
 
 const RuiPlugin = createRui({
   theme: {
@@ -76,6 +76,7 @@ const RuiPlugin = createRui({
   defaults: {
     table: {
       itemsPerPage,
+      stickyOffset,
       globalItemsPerPage: false,
       limits: [5, 10, 15, 25, 50, 100, 200],
     },

@@ -175,7 +175,7 @@ const props = withDefaults(defineProps<Props>(), {
   expanded: undefined,
   singleExpand: false,
   stickyHeader: false,
-  stickyOffset: 0,
+  stickyOffset: undefined,
   globalItemsPerPage: undefined,
   group: undefined,
   collapsed: undefined,
@@ -208,11 +208,13 @@ const {
   sortModifiers,
   expanded,
   singleExpand,
-  stickyOffset,
   stickyHeader,
   group,
   collapsed,
 } = toRefs(props);
+const tableDefaults = useTable();
+
+const stickyHeaderOffset = computed(() => props.stickyOffset !== undefined ? props.stickyOffset : get(tableDefaults.stickyOffset));
 
 function isRow<T extends object>(item: GroupedTableRow<T>): item is T {
   return !('__header__' in item);
@@ -229,10 +231,9 @@ function isHeaderSlot(slotName: string): slotName is `header.${string}` {
 const css = useCssModule();
 const slots = useSlots();
 const { stick, table, tableScroller } = useStickyTableHeader(
-  stickyOffset,
   stickyHeader,
+  get(stickyHeaderOffset),
 );
-const tableDefaults = useTable();
 
 const headerSlots = computed(() => Object.keys(slots).filter(isHeaderSlot));
 
@@ -796,8 +797,27 @@ function onSelect(checked: boolean, value: string) {
   }
 }
 
+function scrollToTop() {
+  const { top } = useElementBounding(table);
+
+  const wrapper = document.body;
+  const tableEl = get(table);
+
+  if (!(tableEl && wrapper))
+    return;
+
+  const tableTop = get(top);
+  setTimeout(() => {
+    const newScrollTop = tableTop + wrapper.scrollTop - (get(stickyHeaderOffset) ?? 0);
+
+    if (wrapper.scrollTop > newScrollTop)
+      wrapper.scrollTop = newScrollTop;
+  }, 10);
+}
+
 function onPaginate() {
   emit('update:expanded', []);
+  scrollToTop();
 }
 
 function setInternalTotal(groupedItems: TableRow[]) {

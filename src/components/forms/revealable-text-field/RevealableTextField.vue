@@ -67,23 +67,25 @@ const slots = useSlots();
       <slot name="prepend" />
     </template>
     <template #append>
-      <RuiButton
-        :disabled="disabled"
-        tabindex="-1"
-        variant="text"
-        type="button"
-        icon
-        class="!p-2"
-        @click="hidden = !hidden"
-      >
-        <RuiIcon
-          class="text-black/[.54] dark:text-white/[.56]"
-          size="20"
-          :name="hidden ? 'eye-off-line' : 'eye-line'"
-        />
-      </RuiButton>
+      <div class="flex items-center">
+        <RuiButton
+          :disabled="disabled"
+          tabindex="-1"
+          variant="text"
+          type="button"
+          icon
+          class="!p-2"
+          @click="hidden = !hidden"
+        >
+          <RuiIcon
+            class="text-black/[.54] dark:text-white/[.56]"
+            size="20"
+            :name="hidden ? 'eye-off-line' : 'eye-line'"
+          />
+        </RuiButton>
 
-      <slot name="append" />
+        <slot name="append" />
+      </div>
     </template>
   </RuiTextField>
 </template>

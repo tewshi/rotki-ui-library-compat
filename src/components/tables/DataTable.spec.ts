@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { mount } from '@vue/test-utils';
 import DataTable from '@/components/tables/DataTable.vue';
 import TablePagination from '@/components/tables/TablePagination.vue';
-import { RuiSimpleSelect } from '~/src';
+import { RuiButton, RuiCheckbox, RuiSimpleSelect } from '~/src';
 import type { TableColumn } from '@/components/tables/TableHead.vue';
 
 function createWrapper(options?: any) {
@@ -56,7 +56,7 @@ describe('dataTable', () => {
     },
   ];
 
-  it('renders properly', async () => {
+  it('renders properly', () => {
     const wrapper = createWrapper({
       propsData: {
         cols: columns,
@@ -389,6 +389,7 @@ describe('dataTable', () => {
   describe('global settings', () => {
     it('should follow global settings', async () => {
       const itemsPerPage = ref(25);
+      const stickyOffset = ref(64);
       const wrapperComponent = {
         template:
           '<div><DataTable :rows=\'[]\' row-attr=\'id\'/><DataTable :rows=\'[]\' row-attr=\'id\'/></div>',
@@ -403,6 +404,7 @@ describe('dataTable', () => {
             globalItemsPerPage: true,
             itemsPerPage,
             limits: [5, 10, 15, 25, 50, 100, 200],
+            stickyOffset,
           }),
         },
       });
