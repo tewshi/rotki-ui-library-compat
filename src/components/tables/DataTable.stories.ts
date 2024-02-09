@@ -10,6 +10,15 @@ import DataTable, { type Props } from './DataTable.vue';
 import type { TableColumn } from './TableHead.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
+interface User {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+  role: string;
+  date: string;
+}
+
 const render: StoryFn<Props> = args => ({
   components: { Button, Card, DataTable, Icon, TextField },
   provide: {
@@ -148,7 +157,7 @@ const render: StoryFn<Props> = args => ({
     </div>`,
 });
 
-const data = [
+const data: User[] = [
   {
     date: '10.09.2023',
     email: 'Lefteris@example.com',

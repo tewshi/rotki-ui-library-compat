@@ -5,6 +5,13 @@ import TablePagination from '@/components/tables/TablePagination.vue';
 import { RuiButton, RuiCheckbox, RuiSimpleSelect } from '~/src';
 import type { TableColumn } from '@/components/tables/TableHead.vue';
 
+interface User {
+  id: number;
+  name: string;
+  title: string;
+  email: string;
+}
+
 function createWrapper(options?: any) {
   return mount(DataTable, {
     ...options,
@@ -19,7 +26,7 @@ function createWrapper(options?: any) {
 }
 
 describe('dataTable', () => {
-  const data = [
+  const data: User[] = [
     ...[...new Array(50)].map((_, index) => ({
       email: `lindsay.walton${index}@example.com`,
       id: index + 1,
@@ -141,6 +148,24 @@ describe('dataTable', () => {
     expect(
       wrapper
         .find('tbody tr:nth-child(2) div[data-cy=expanded-content]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=limit]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=ranges]')
+        .exists(),
+    ).toBeTruthy();
+
+    expect(
+      wrapper
+        .find('div[data-cy=table-pagination] div[class*=navigation]')
         .exists(),
     ).toBeTruthy();
   });

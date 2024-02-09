@@ -38,7 +38,7 @@ export interface Props {
   /**
    * model for selected rows, add a v-model to support row selection
    */
-  value?: string[];
+  value?: TableRow[TableRowKey][];
   /**
    * model for internal searching
    */
@@ -148,6 +148,7 @@ export interface Props {
    */
   group?: TableRowKey | TableRowKey[];
   collapsed?: TableRow[];
+  disabledRows?: TableRow[];
 }
 
 defineOptions({
@@ -179,7 +180,7 @@ const props = withDefaults(defineProps<Props>(), {
   globalItemsPerPage: undefined,
   group: undefined,
   collapsed: undefined,
-  customGroupBy: undefined,
+  disabledRows: undefined,
 });
 
 const emit = defineEmits<{
@@ -211,6 +212,7 @@ const {
   stickyHeader,
   group,
   collapsed,
+  disabledRows,
 } = toRefs(props);
 const tableDefaults = useTable();
 
@@ -235,7 +237,11 @@ const { stick, table, tableScroller } = useStickyTableHeader(
   get(stickyHeaderOffset),
 );
 
-const headerSlots = computed(() => Object.keys(slots).filter(isHeaderSlot));
+const expandable = computed(() => get(expanded) && slots['expanded-item']);
+
+const headerSlots = computed<`header.${string}`[]>(() =>
+  Object.keys(slots).filter(isHeaderSlot),
+);
 
 const globalItemsPerPageSettings = computed(() => {
   if (props.globalItemsPerPage !== undefined)
@@ -244,18 +250,36 @@ const globalItemsPerPageSettings = computed(() => {
   return get(tableDefaults.globalItemsPerPage);
 });
 
+const getKeys = <T extends object>(t: T) => Object.keys(t) as TableRowKey[];
+
+const groupKeys: ComputedRef<TableRowKey[]> = computed(() => {
+  const groupBy = props.group;
+
+  if (!groupBy) {
+    // no grouping
+    return [];
+  }
+
+  if (!Array.isArray(groupBy)) {
+    // currently only supports a single grouping
+    // only the first item in the array is used
+    return [groupBy];
+  }
+
+  return groupBy;
+});
+
+const groupKey = computed(() => get(groupKeys).join(':'));
+
+const isGrouped = computed(() => !!get(groupKey));
+
 /**
  * Prepare the columns from props or generate using first item in the list
  */
 const columns = computed<TableColumn[]>(() => {
   const data
     = get(cols)
-    ?? Object.keys(get(rows)[0] ?? {}).map(key => ({
-      key,
-      [get(columnAttr)]: key,
-      sortable: false,
-      class: '',
-    }));
+    ?? getKeys(get(rows)[0] ?? {}).map(key => ({ key, [get(columnAttr)]: key }));
 
   if (get(expandable)) {
     return [
@@ -300,26 +324,6 @@ watchImmediate(collapsed, (value) => {
   set(collapsedRows, value ?? []);
 });
 
-const expandable = computed(() => get(expanded) && slots['expanded-item']);
-
-/**
- * Keeps the global items per page in sync with the internal state.
- */
-watch(internalPaginationState, (pagination) => {
-  if (pagination?.limit && get(globalItemsPerPageSettings))
-    set(tableDefaults.itemsPerPage, pagination.limit);
-});
-
-watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
-  if (!get(globalItemsPerPageSettings))
-    return;
-
-  set(paginationData, {
-    ...get(paginationData),
-    limit: itemsPerPage,
-  });
-});
-
 /**
  * Pagination is different for search
  * since search is only used for internal filtering
@@ -361,6 +365,7 @@ const sortData = computed({
     return get(sort);
   },
   set(value) {
+    onToggleAll(false);
     emit('update:sort', value);
     emit('update:options', {
       sort: value,
@@ -374,7 +379,7 @@ const sortData = computed({
  * for easily checking if a column is sorted instead of looping through the array
  */
 const sortedMap = computed(() => {
-  const mapped: Record<TableRowKey, SortColumn> = {};
+  const mapped: Partial<Record<TableRowKey, SortColumn>> = {};
   const sortBy = get(sortData);
   if (!sortBy)
     return mapped;
@@ -395,34 +400,6 @@ const sortedMap = computed(() => {
 });
 
 /**
- * list if ids of the visible table rows used for check-all and uncheck-all
- */
-const visibleIdentifiers = computed(() => {
-  const selectBy = get(rowAttr);
-
-  if (!selectBy)
-    return [];
-
-  return get(filtered)
-    .filter(isRow)
-    .map(row => row[selectBy]);
-});
-
-/**
- * Flag to know when all rows are selected for the current screen
- */
-const isAllSelected = computed(() => {
-  const selectedRows = get(selectedData);
-  if (!selectedRows)
-    return false;
-
-  return (
-    selectedRows.length > 0
-    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
-  );
-});
-
-/**
  * rows filtered based on search query if it exists
  */
 const searchData: ComputedRef<TableRow[]> = computed(() => {
@@ -431,7 +408,7 @@ const searchData: ComputedRef<TableRow[]> = computed(() => {
     return get(rows);
 
   return get(rows).filter(row =>
-    Object.keys(row).some(key =>
+    getKeys(row).some(key =>
       `${row[key]}`.toLocaleLowerCase().includes(query),
     ),
   );
@@ -481,31 +458,10 @@ const sorted: ComputedRef<TableRow[]> = computed(() => {
   return data;
 });
 
-const groupKeys = computed(() => {
-  const groupBy = get(group);
-
-  if (!groupBy) {
-    // no grouping
-    return [];
-  }
-
-  if (!Array.isArray(groupBy)) {
-    // currently only supports a single grouping
-    // only the first item in the array is used
-    return [groupBy];
-  }
-
-  return groupBy;
-});
-
-const groupKey = computed(() => get(groupKeys).join(':'));
-
-const isGrouped = computed(() => !!get(groupKey));
-
 /**
  * comprises search, sorted paginated, and grouped data
  */
-const mappedGroups: ComputedRef<Record<string, GroupedTableRow[]>> = computed(() => {
+const mappedGroups: ComputedRef<Record<string, GroupedTableRow<TableRow>[]>> = computed(() => {
   if (!get(isGrouped)) {
     // no grouping
     return {};
@@ -539,7 +495,7 @@ const mappedGroups: ComputedRef<Record<string, GroupedTableRow[]>> = computed(()
 /**
  * comprises search, sorted paginated, and grouped data
  */
-const grouped: ComputedRef<TableRow[]> = computed(() => {
+const grouped: ComputedRef<GroupedTableRow<TableRow>[]> = computed(() => {
   const result = get(sorted);
   const groupByKey = get(groupKey);
 
@@ -548,15 +504,13 @@ const grouped: ComputedRef<TableRow[]> = computed(() => {
     return result;
   }
 
-  return Object.values(get(mappedGroups))
-    .flatMap(grouped => grouped)
-    .filter(row => !isHiddenRow(row));
+  return Object.values(get(mappedGroups)).flatMap(grouped => grouped);
 });
 
 /**
  * comprises search, sorted and paginated data
  */
-const filtered: ComputedRef<GroupedTableRow[]> = computed(() => {
+const filtered: ComputedRef<GroupedTableRow<TableRow>[]> = computed(() => {
   const result = get(grouped);
 
   const paginated = get(paginationData);
@@ -564,10 +518,52 @@ const filtered: ComputedRef<GroupedTableRow[]> = computed(() => {
   if (paginated && !get(paginationModifiers)?.external) {
     const start = (paginated.page - 1) * limit;
     const end = start + limit;
-    return result.slice(start, end);
+    const preGroups = result.slice(0, start + 1).filter(item => !isRow(item));
+    const postGroups = result.slice(start + 1, end + preGroups.length).filter(item => !isRow(item));
+    const data = result.slice(start + preGroups.length, end + preGroups.length + postGroups.length);
+    const nearestGroup = preGroups.at(-1);
+    if (data.length > 0) {
+      // if our first item is not a group, push in the nearest group
+      if (isRow(data[0]) && nearestGroup)
+        data.unshift(nearestGroup);
+      const lastItem = data.at(-1);
+      // if our last item is a group, remove it
+      if (lastItem && !isRow(lastItem))
+        data.pop();
+    }
+
+    return data.filter(row => !isHiddenRow(row));
   }
 
-  return result;
+  return result.filter(row => !isHiddenRow(row));
+});
+
+/**
+ * list if ids of the visible table rows used for check-all and uncheck-all
+ */
+const visibleIdentifiers = computed(() => {
+  const selectBy = get(rowAttr);
+
+  if (!selectBy)
+    return [];
+
+  return get(filtered)
+    .filter(isRow)
+    .map(row => row[selectBy]);
+});
+
+/**
+ * Flag to know when all rows are selected for the current screen
+ */
+const isAllSelected = computed(() => {
+  const selectedRows = get(selectedData);
+  if (!selectedRows)
+    return false;
+
+  return (
+    selectedRows.length > 0
+    && get(visibleIdentifiers).every(id => selectedRows.includes(id))
+  );
 });
 
 const indeterminate = computed(() => {
@@ -599,7 +595,7 @@ function getSortIndex(key: TableRowKey) {
   return sortBy.findIndex(sort => sort.column === key) ?? -1;
 }
 
-function isSelected(identifier: string) {
+function isSelected(identifier: TableRow[TableRowKey]) {
   const selection = get(selectedData);
   if (!selection)
     return false;
@@ -607,7 +603,15 @@ function isSelected(identifier: string) {
   return selection.includes(identifier);
 }
 
-function isExpanded(identifier: string) {
+function isDisabledRow(rowKey: TableRow[TableRowKey]) {
+  const identifier = get(rowAttr);
+  if (!identifier)
+    return false;
+
+  return get(disabledRows)?.some(disabledRow => rowKey === disabledRow[identifier]);
+}
+
+function isExpanded(identifier: TableRow[TableRowKey]) {
   const expandedRows = get(expanded);
   if (!expandedRows?.length)
     return false;
@@ -634,16 +638,8 @@ function onToggleExpand(row: TableRow) {
   );
 }
 
-function getRowGroup(row: TableRow) {
-  const group = get(groupKeys);
-  const result: Record<keyof TableRow, any> = {};
-  if (group.length === 0)
-    return result;
-
-  return group.reduce<Record<keyof TableRow, any>>(
-    (acc, key) => ({ ...acc, [key]: row[key] }),
-    result,
-  );
+function getRowGroup(row: TableRow): Partial<TableRow> {
+  return get(groupKeys).reduce((acc, key) => ({ ...acc, [key]: row[key.toString()] }), {});
 }
 
 function getGroupRows(groupVal: string) {
@@ -653,27 +649,32 @@ function getGroupRows(groupVal: string) {
   return get(mappedGroups)[groupVal].filter(isRow);
 }
 
-function compareGroupsFn(a: TableRow, b: TableRow) {
+function compareGroupsFn(a: TableRow, b: Partial<TableRow>) {
   const group = get(groupKeys);
   if (group.length === 0)
     return false;
 
-  return group.every(key => a[key] === b[key]);
+  return group.every(key => a[key] === b[key.toString()]);
 }
 
-function isExpandedGroup(value: any) {
+function isExpandedGroup(value: Partial<TableRow>) {
   return get(collapsedRows).every(row => !compareGroupsFn(row, value));
 }
 
-function isHiddenRow(row: GroupedTableRow) {
+function isHiddenRow(row: GroupedTableRow<TableRow>) {
   const identifier = get(rowAttr);
   return (
     get(isGrouped)
-    && get(collapsedRows).some(value => isRow(row) && row[identifier] === value[identifier])
+    && get(collapsedRows).some(
+      value => isRow(row) && row[identifier] === value[identifier],
+    )
   );
 }
 
-function onToggleExpandGroup(group: any, value: string) {
+function onToggleExpandGroup(group: Partial<TableRow>, value: string) {
+  if (!value)
+    return;
+
   const collapsed = get(collapsedRows);
 
   const groupExpanded = isExpandedGroup(group);
@@ -761,17 +762,13 @@ function onToggleAll(checked: boolean) {
   if (checked) {
     set(
       selectedData,
-      Array.from(
-        new Set([...(get(selectedData) ?? []), ...get(visibleIdentifiers)]),
-      ),
+      get(visibleIdentifiers).filter(rowKey => isSelected(rowKey) || !isDisabledRow(rowKey)),
     );
   }
   else {
     set(
       selectedData,
-      get(selectedData)?.filter(
-        identifier => !get(visibleIdentifiers).includes(identifier),
-      ),
+      get(visibleIdentifiers)?.filter(rowKey => isSelected(rowKey) && isDisabledRow(rowKey)),
     );
   }
 }
@@ -818,12 +815,35 @@ function scrollToTop() {
 function onPaginate() {
   emit('update:expanded', []);
   scrollToTop();
+  onToggleAll(false);
 }
 
-function setInternalTotal(groupedItems: TableRow[]) {
+function setInternalTotal(items: GroupedTableRow<TableRow>[]) {
   if (!get(paginationModifiers)?.external)
-    set(itemsLength, groupedItems.length);
+    set(itemsLength, items.filter(isRow).length);
 }
+
+function cellValue(row: TableRow, key: TableColumn['key']) {
+  return row[key];
+}
+
+/**
+ * Keeps the global items per page in sync with the internal state.
+ */
+watch(internalPaginationState, (pagination) => {
+  if (pagination?.limit && get(globalItemsPerPageSettings))
+    set(tableDefaults.itemsPerPage, pagination.limit);
+});
+
+watch(tableDefaults.itemsPerPage, (itemsPerPage) => {
+  if (!get(globalItemsPerPageSettings))
+    return;
+
+  set(paginationData, {
+    ...get(paginationData),
+    limit: itemsPerPage,
+  });
+});
 
 /**
  * on changing search query, need to reset pagination page to 1
@@ -833,12 +853,13 @@ watch(search, () => {
     ...get(paginationData),
     page: 1,
   });
+  onToggleAll(false);
 });
 
-watch(grouped, setInternalTotal);
+watch(sorted, setInternalTotal);
 
 onMounted(() => {
-  setInternalTotal(get(grouped));
+  setInternalTotal(get(sorted));
 
   if (!get(globalItemsPerPageSettings))
     return;
@@ -997,7 +1018,7 @@ onMounted(() => {
                 </td>
               </slot>
             </tr>
-            <template v-else>
+            <template v-else-if="isRow(row)">
               <tr
                 :key="`row-${index}`"
                 :class="[
@@ -1014,6 +1035,7 @@ onMounted(() => {
                   <Checkbox
                     :data-cy="`table-toggle-check-${index}`"
                     :value="isSelected(row[rowAttr])"
+                    :disabled="isDisabledRow(row[rowAttr])"
                     color="primary"
                     hide-details
                     @input="onSelect($event, row[rowAttr])"
@@ -1051,7 +1073,7 @@ onMounted(() => {
                     :name="`item.${column.key.toString()}`"
                     :row="row"
                   >
-                    {{ row[column.key] }}
+                    {{ cellValue(row, column.key) }}
                   </slot>
                 </td>
               </tr>
