@@ -53,27 +53,9 @@ const pages = computed(() => {
   return Math.ceil(total / limit);
 });
 
-const ranges = computed(() => {
-  const segments = [];
-
-  for (let i = 1; i <= get(pages); i++)
-    segments.push(pageRangeText(i));
-
-  return segments;
-});
-
 const indicatorText = computed(() => {
-  const { total } = get(value);
-  return `${!total ? '0 ' : ''}of ${formatInteger(total)}`;
-});
-
-const currentRange = computed({
-  get: () => pageRangeText(get(value).page),
-  set: val =>
-    emit('input', {
-      ...get(value),
-      page: get(ranges).indexOf(val) + 1,
-    }),
+  const { total, page } = get(value);
+  return `${!total ? '0' : pageRangeText(page)} of ${formatInteger(total)}`;
 });
 
 const hasPrev = computed(() => get(value).page > 1);
@@ -138,14 +120,6 @@ function onLast() {
       />
     </div>
     <div :class="css.ranges">
-      <span :class="css.ranges__text">Items #</span>
-      <SimpleSelect
-        v-if="ranges.length > 0"
-        v-model="currentRange"
-        :options="ranges"
-        :disabled="loading"
-        name="ranges"
-      />
       <span :class="css.indicator">
         {{ indicatorText }}
       </span>
