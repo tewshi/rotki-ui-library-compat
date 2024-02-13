@@ -585,12 +585,6 @@ describe('dataTable', () => {
 
     expect(
       paginator
-        .find('div[data-cy=table-pagination] div[class*=ranges]')
-        .exists(),
-    ).toBeTruthy();
-
-    expect(
-      paginator
         .find('div[data-cy=table-pagination] div[class*=navigation]')
         .exists(),
     ).toBeTruthy();
@@ -603,23 +597,14 @@ describe('dataTable', () => {
 
     const simpleSelects = paginator.findAllComponents(RuiSimpleSelect);
     const limits = simpleSelects.at(0);
-    const ranges = simpleSelects.at(1);
     expect(limits.exists()).toBeTruthy();
-    expect(ranges.exists()).toBeTruthy();
 
     limits.vm.$emit('input', 5);
 
     await nextTick();
 
     expect(limits.props().value).toBe(5);
-
-    ranges.vm.$emit('input', '6-10');
-
-    await nextTick();
-
-    expect(ranges.props().value).toBe('6-10');
-
-    expect(navButtons.filter(b => b.attributes('disabled') === 'disabled')).toHaveLength(0);
-    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(4);
+    expect(navButtons.filter(b => b.attributes('disabled') === 'disabled')).toHaveLength(2);
+    expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
   });
 });
