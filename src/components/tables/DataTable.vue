@@ -1032,6 +1032,7 @@ onMounted(() => {
                     :data-cy="`table-toggle-check-${index}`"
                     :value="isSelected(row[rowAttr])"
                     :disabled="isDisabledRow(row[rowAttr])"
+                    :size="dense ? 'sm' : undefined"
                     color="primary"
                     hide-details
                     @input="onSelect($event, row[rowAttr])"

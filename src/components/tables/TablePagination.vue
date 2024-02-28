@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Button from '@/components/buttons/button/Button.vue';
 import Icon from '@/components/icons/Icon.vue';
-import SimpleSelect from '@/components/forms/select/SimpleSelect.vue';
+import RuiMenuSelect from '@/components/forms/select/RuiMenuSelect.vue';
 
 export interface TablePaginationData {
   page: number;
@@ -33,14 +33,16 @@ const css = useCssModule();
 
 const tableDefaults = useTable();
 
-const limits = computed(() => get(value).limits ?? get(tableDefaults.limits));
+const limits = computed(
+  () => (get(value).limits ?? get(tableDefaults.limits)).map(limit => ({ limit })),
+);
 
 const currentLimit = computed({
-  get: () => get(value).limit,
-  set: v =>
+  get: () => ({ limit: get(value).limit }),
+  set: ({ limit }) =>
     emit('input', {
       ...get(value),
-      limit: Number(v),
+      limit: Number(limit),
       page: 1,
     }),
 });
@@ -53,9 +55,27 @@ const pages = computed(() => {
   return Math.ceil(total / limit);
 });
 
+const ranges = computed(() => {
+  const segments = [];
+
+  for (let i = 1; i <= get(pages); i++)
+    segments.push(pageRangeText(i));
+
+  return segments.map(page => ({ page }));
+});
+
 const indicatorText = computed(() => {
-  const { total, page } = get(value);
-  return `${!total ? '0' : pageRangeText(page)} of ${formatInteger(total)}`;
+  const { total } = get(value);
+  return `${!total ? '0 ' : ''}of ${formatInteger(total)}`;
+});
+
+const currentRange = computed({
+  get: () => ({ page: pageRangeText(get(value).page) }),
+  set: ({ page }) =>
+    emit('input', {
+      ...get(value),
+      page: get(ranges).findIndex(range => range.page === page) + 1,
+    }),
 });
 
 const hasPrev = computed(() => get(value).page > 1);
@@ -112,14 +132,28 @@ function onLast() {
   <div :class="css.wrapper">
     <div :class="css.limit">
       <span :class="css.limit__text">Rows per page:</span>
-      <SimpleSelect
+      <RuiMenuSelect
         v-model="currentLimit"
         :options="limits"
         :disabled="loading || disablePerPage"
+        :dense="dense"
         name="limit"
+        key-attr="limit"
+        text-attr="limit"
       />
     </div>
     <div :class="css.ranges">
+      <span :class="css.ranges__text">Items #</span>
+      <RuiMenuSelect
+        v-if="ranges.length > 0"
+        v-model="currentRange"
+        :options="ranges"
+        :disabled="loading"
+        :dense="dense"
+        name="ranges"
+        key-attr="page"
+        text-attr="page"
+      />
       <span :class="css.indicator">
         {{ indicatorText }}
       </span>

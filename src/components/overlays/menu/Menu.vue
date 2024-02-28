@@ -2,7 +2,7 @@
 import { type PopperOptions, usePopper } from '@/composables/popper';
 import RuiTeleport from '@/components/overlays/Teleport';
 
-export interface Props {
+export interface MenuProps {
   value?: boolean;
   openOnHover?: boolean;
   disabled?: boolean;
@@ -17,7 +17,7 @@ defineOptions({
   name: 'RuiMenu',
 });
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<MenuProps>(), {
   value: false,
   openOnHover: false,
   disabled: false,
@@ -118,6 +118,7 @@ const on = computed(() => {
         name="activator"
         :on="on"
         :open="open"
+        :disabled="disabled"
       />
     </div>
     <RuiTeleport v-if="!disabled">
@@ -131,7 +132,7 @@ const on = computed(() => {
         ]"
         role="menu"
       >
-        <TransitionGroup
+        <Transition
           enter-class="opacity-0 translate-y-1"
           enter-active-class="ease-out duration-200"
           enter-to-class="opacity-100 translate-y-0"
@@ -149,7 +150,7 @@ const on = computed(() => {
           >
             <slot />
           </div>
-        </TransitionGroup>
+        </Transition>
       </div>
     </RuiTeleport>
   </div>
@@ -157,7 +158,7 @@ const on = computed(() => {
 
 <style lang="scss" module>
 .wrapper {
-  @apply relative inline-flex;
+  @apply relative inline-flex max-w-full;
 }
 
 .menu {
