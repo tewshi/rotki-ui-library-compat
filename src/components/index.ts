@@ -61,7 +61,7 @@ import {
   default as RuiBadge,
 } from '@/components/overlays/badge/Badge.vue';
 import {
-  type Props as MenuProps,
+  type MenuProps,
   default as RuiMenu,
 } from '@/components/overlays/menu/Menu.vue';
 import {
@@ -116,6 +116,10 @@ import {
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
 import {
+  type Props as MenuSelectProps,
+  default as RuiMenuSelect,
+} from '@/components/forms/select/RuiMenuSelect.vue';
+import {
   default as RuiSwitch,
   type Props as SwitchProps,
 } from '@/components/forms/switch/RuiSwitch.vue';
@@ -157,6 +161,7 @@ export {
   RuiTextArea,
   RuiTableRowExpander,
   RuiSwitch,
+  RuiMenuSelect,
   ProgressProps,
   ChipProps,
   TextFieldProps,
@@ -191,4 +196,5 @@ export {
   ExpandButtonProps,
   DataTableSortData,
   SwitchProps,
+  MenuSelectProps,
 };

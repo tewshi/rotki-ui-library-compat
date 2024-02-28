@@ -35,6 +35,7 @@ export interface Props {
   selectable?: boolean;
   disableCheckAll?: boolean;
   noData?: boolean;
+  dense?: boolean;
   colspan?: number;
   columns: TableColumn[];
   capitalizeHeaders?: boolean;
@@ -52,6 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
   selectable: false,
   disableCheckAll: false,
   noData: false,
+  dense: false,
   colspan: 0,
   columns: undefined,
   capitalizeHeaders: false,
@@ -94,6 +96,7 @@ function getSortIndex(key: TableRowKey) {
       {
         [css.sticky__header]: stickyHeader,
         [css.stick__top]: stick,
+        [css.dense]: dense,
       },
     ]"
   >
@@ -109,6 +112,7 @@ function getSortIndex(key: TableRowKey) {
           :disabled="disableCheckAll"
           :indeterminate="indeterminate"
           :value="isAllSelected"
+          :size="dense ? 'sm' : undefined"
           color="primary"
           data-cy="table-toggle-check-all"
           hide-details
@@ -140,6 +144,7 @@ function getSortIndex(key: TableRowKey) {
             v-if="column.sortable"
             :value="getSortIndex(column.key) >= 0"
             :text="`${getSortIndex(column.key) + 1}`"
+            :offset-y="dense ? 8 : 0"
             color="secondary"
             size="sm"
           >
@@ -225,6 +230,14 @@ function getSortIndex(key: TableRowKey) {
         th {
           @apply bg-white border-b border-b-black/[0.12];
         }
+      }
+    }
+  }
+
+  &.dense {
+    .tr {
+      .th {
+        @apply py-[0.38rem];
       }
     }
   }
