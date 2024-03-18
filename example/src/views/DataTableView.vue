@@ -362,14 +362,16 @@ const expandableTables = ref<
     table: {
       rowAttr: 'id',
       rows: fixedRows,
-      cols: fixedColumns,
+      cols: [
+        { key: 'expand' },
+        ...fixedColumns,
+      ],
       outlined: true,
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       value: [],
       expanded: [],
       singleExpand: true,
-      expandButtonPosition: 'start',
       group: ['username'],
     },
   },

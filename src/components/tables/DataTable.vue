@@ -129,7 +129,6 @@ export interface Props {
    * make expansion work like accordion
    */
   singleExpand?: boolean;
-  expandButtonPosition?: 'start' | 'end';
   /**
    * make table head stick to top on scroll
    */
@@ -177,7 +176,6 @@ const props = withDefaults(defineProps<Props>(), {
   striped: false,
   expanded: undefined,
   singleExpand: false,
-  expandButtonPosition: 'end',
   stickyHeader: false,
   stickyOffset: undefined,
   globalItemsPerPage: undefined,
@@ -213,7 +211,6 @@ const {
   sortModifiers,
   expanded,
   singleExpand,
-  expandButtonPosition,
   stickyHeader,
   group,
   groupExpandButtonPosition,
@@ -289,19 +286,6 @@ const columns = computed<TableColumn[]>(() => {
 
   const hasExpandColumn = data.some(row => row.key === 'expand');
   if (get(expandable) && !hasExpandColumn) {
-    if (get(expandButtonPosition) === 'start') {
-      return [
-        {
-          key: 'expand',
-          sortable: false,
-          class: 'w-16',
-          cellClass: '!py-0 w-16',
-          align: 'start',
-        },
-        ...data,
-      ];
-    }
-
     return [
       ...data,
       {
