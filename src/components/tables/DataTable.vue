@@ -150,6 +150,7 @@ export interface Props {
   groupExpandButtonPosition?: 'start' | 'end';
   collapsed?: TableRow[];
   disabledRows?: TableRow[];
+  scroller?: HTMLElement;
 }
 
 defineOptions({
@@ -182,6 +183,7 @@ const props = withDefaults(defineProps<Props>(), {
   group: undefined,
   groupExpandButtonPosition: 'start',
   collapsed: undefined,
+  scroller: undefined,
   disabledRows: undefined,
 });
 
@@ -216,6 +218,7 @@ const {
   groupExpandButtonPosition,
   collapsed,
   disabledRows,
+  scroller,
 } = toRefs(props);
 const tableDefaults = useTable();
 
@@ -866,8 +869,9 @@ function onCheckboxClick(event: any, value: string, index: number) {
 
 function scrollToTop() {
   const { top } = useElementBounding(table);
+  const { top: scrollerTop } = useElementBounding(scroller);
 
-  const wrapper = document.body;
+  const wrapper = get(scroller) ?? document.body;
   const tableEl = get(table);
 
   if (!(tableEl && wrapper))
@@ -875,7 +879,13 @@ function scrollToTop() {
 
   const tableTop = get(top);
   setTimeout(() => {
-    const newScrollTop = tableTop + wrapper.scrollTop - (get(stickyHeaderOffset) ?? 0);
+    let newScrollTop = tableTop + wrapper.scrollTop - 2;
+
+    if (get(scroller)) {
+      newScrollTop -= get(scrollerTop) - tableEl.scrollTop;
+      wrapper.style.scrollBehavior = 'smooth';
+    }
+    else { newScrollTop -= (get(stickyHeaderOffset) ?? 0); }
 
     if (wrapper.scrollTop > newScrollTop)
       wrapper.scrollTop = newScrollTop;
