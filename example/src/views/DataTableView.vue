@@ -622,6 +622,10 @@ const apiDatatables = ref<{ title: string; table: DataTableProps }[]>([
   },
 ]);
 
+const containerScroll = ref(null);
+
+const containedTable = { ...get(emptyTables)[4].table };
+
 const users = computed<Record<string, any>[]>(() =>
   JSON.parse(get(_users) ?? '[]').map(normalize),
 );
@@ -1002,6 +1006,35 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             </template>
             <template #group.header.content="{ groupValue }">
               custom group content: {{ groupValue }}
+            </template>
+          </RuiDataTable>
+        </div>
+        <div
+          ref="containerScroll"
+          class="max-h-[300px] overflow-y-auto mt-10"
+        >
+          <RuiDataTable
+            v-bind="objectOmit(containedTable, ['value', 'pagination', 'sort', 'stickyHeader'])"
+            v-model="containedTable.value"
+            :pagination.sync="containedTable.pagination"
+            :sort.sync="containedTable.sort"
+            data-cy="table-scroll-parent"
+            :group.sync="containedTable.group"
+            :collapsed.sync="containedTable.collapsed"
+            :scroller="containerScroll"
+            :scroller-offset="0"
+          >
+            <template #item.action>
+              <RuiButton
+                icon
+                variant="text"
+                size="sm"
+              >
+                <RuiIcon
+                  name="more-fill"
+                  color="primary"
+                />
+              </RuiButton>
             </template>
           </RuiDataTable>
         </div>
