@@ -60,6 +60,8 @@ const value = computed({
   set: value => emit('input', value),
 });
 
+const valueKey = computed(() => props.value ? props.value[props.keyAttr] : undefined);
+
 const menuWidth = computed(() => {
   const widths = { min: 0, max: 0 };
   const maxWidth = 30;
@@ -156,6 +158,11 @@ watch(isOpen, updateOpen);
           </span>
         </label>
       </slot>
+      <input
+        class="hidden"
+        type="hidden"
+        :value="valueKey"
+      />
     </template>
     <div
       v-bind="objectOmit(containerProps, ['onScroll'])"
@@ -173,7 +180,12 @@ watch(isOpen, updateOpen);
           variant="list"
           @input="value = option"
         >
-          {{ getText(option) }}
+          <slot
+            name="item.text"
+            v-bind="{ disabled, value }"
+          >
+            {{ getText(option) }}
+          </slot>
         </RuiButton>
       </div>
     </div>

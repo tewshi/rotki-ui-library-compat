@@ -58,10 +58,10 @@ const pages = computed(() => {
 const ranges = computed(() => {
   const segments = [];
 
-  for (let i = 1; i <= get(pages); i++)
-    segments.push(pageRangeText(i));
+  for (let page = 1; page <= get(pages); page++)
+    segments.push({ page, text: pageRangeText(page) });
 
-  return segments.map(page => ({ page }));
+  return segments;
 });
 
 const indicatorText = computed(() => {
@@ -70,11 +70,11 @@ const indicatorText = computed(() => {
 });
 
 const currentRange = computed({
-  get: () => ({ page: pageRangeText(get(value).page) }),
+  get: () => ({ page: get(value).page, text: pageRangeText(get(value).page) }),
   set: ({ page }) =>
     emit('input', {
       ...get(value),
-      page: get(ranges).findIndex(range => range.page === page) + 1,
+      page,
     }),
 });
 
@@ -141,12 +141,6 @@ function onLast() {
         key-attr="limit"
         text-attr="limit"
       />
-      <input
-        name="limit"
-        class="hidden"
-        type="hidden"
-        :value="value.limit"
-      />
     </div>
     <div :class="css.ranges">
       <span :class="css.ranges__text">Items #</span>
@@ -158,17 +152,11 @@ function onLast() {
         :dense="dense"
         name="ranges"
         key-attr="page"
-        text-attr="page"
+        text-attr="text"
       />
       <span :class="css.indicator">
         {{ indicatorText }}
       </span>
-      <input
-        name="page"
-        class="hidden"
-        type="hidden"
-        :value="value.page"
-      />
     </div>
     <div :class="css.navigation">
       <Button
