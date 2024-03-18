@@ -129,6 +129,7 @@ export interface Props {
    * make expansion work like accordion
    */
   singleExpand?: boolean;
+  expandButtonPosition?: 'start' | 'end';
   /**
    * make table head stick to top on scroll
    */
@@ -147,6 +148,7 @@ export interface Props {
    * @example v-model:group="['name', 'country']"
    */
   group?: TableRowKey | TableRowKey[];
+  groupExpandButtonPosition?: 'start' | 'end';
   collapsed?: TableRow[];
   disabledRows?: TableRow[];
 }
@@ -175,10 +177,12 @@ const props = withDefaults(defineProps<Props>(), {
   striped: false,
   expanded: undefined,
   singleExpand: false,
+  expandButtonPosition: 'end',
   stickyHeader: false,
   stickyOffset: undefined,
   globalItemsPerPage: undefined,
   group: undefined,
+  groupExpandButtonPosition: 'start',
   collapsed: undefined,
   disabledRows: undefined,
 });
@@ -209,8 +213,10 @@ const {
   sortModifiers,
   expanded,
   singleExpand,
+  expandButtonPosition,
   stickyHeader,
   group,
+  groupExpandButtonPosition,
   collapsed,
   disabledRows,
 } = toRefs(props);
@@ -281,7 +287,21 @@ const columns = computed<TableColumn[]>(() => {
     = get(cols)
     ?? getKeys(get(rows)[0] ?? {}).map(key => ({ key, [get(columnAttr)]: key }));
 
-  if (get(expandable)) {
+  const hasExpandColumn = data.some(row => row.key === 'expand');
+  if (get(expandable) && !hasExpandColumn) {
+    if (get(expandButtonPosition) === 'start') {
+      return [
+        {
+          key: 'expand',
+          sortable: false,
+          class: 'w-16',
+          cellClass: '!py-0 w-16',
+          align: 'start',
+        },
+        ...data,
+      ];
+    }
+
     return [
       ...data,
       {
@@ -1040,6 +1060,7 @@ onMounted(() => {
                 >
                   <div class="flex items-center gap-2">
                     <ExpandButton
+                      v-if="groupExpandButtonPosition === 'start'"
                       :expanded="isExpandedGroup(row.group)"
                       @click="onToggleExpandGroup(row.group, row.identifier)"
                     />
@@ -1082,6 +1103,12 @@ onMounted(() => {
                       </template>
                       Ungroup
                     </Tooltip>
+
+                    <ExpandButton
+                      v-if="groupExpandButtonPosition === 'end'"
+                      :expanded="isExpandedGroup(row.group)"
+                      @click="onToggleExpandGroup(row.group, row.identifier)"
+                    />
                   </div>
                 </td>
               </slot>

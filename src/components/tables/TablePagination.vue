@@ -141,6 +141,12 @@ function onLast() {
         key-attr="limit"
         text-attr="limit"
       />
+      <input
+        name="limit"
+        class="hidden"
+        type="hidden"
+        :value="value.limit"
+      />
     </div>
     <div :class="css.ranges">
       <span :class="css.ranges__text">Items #</span>
@@ -157,6 +163,12 @@ function onLast() {
       <span :class="css.indicator">
         {{ indicatorText }}
       </span>
+      <input
+        name="page"
+        class="hidden"
+        type="hidden"
+        :value="value.page"
+      />
     </div>
     <div :class="css.navigation">
       <Button

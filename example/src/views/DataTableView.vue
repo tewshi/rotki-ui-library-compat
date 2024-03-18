@@ -304,6 +304,24 @@ const emptyTables = ref<
       collapsed: [],
     },
   },
+  {
+    title: 'Selection with repositioned group expand button',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      value: [9, 5],
+      disabledRows: fixedRows.slice(0, 3),
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      group: ['username'],
+      collapsed: [],
+      expanded: [],
+      groupExpandButtonPosition: 'end',
+    },
+  },
 ]);
 
 const expandableTables = ref<
@@ -340,6 +358,22 @@ const expandableTables = ref<
     },
   },
   {
+    title: 'Expandable with icon on left',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: fixedColumns,
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      value: [],
+      expanded: [],
+      singleExpand: true,
+      expandButtonPosition: 'start',
+      group: ['username'],
+    },
+  },
+  {
     title: 'Custom Expandable control',
     customToggle: true,
     table: {
@@ -351,6 +385,28 @@ const expandableTables = ref<
       pagination: { limit: 5, page: 1, total: 5 },
       expanded: [],
       stickyHeader: true,
+    },
+  },
+  {
+    title: 'Selection with defined expand button',
+    table: {
+      rowAttr: 'id',
+      rows: fixedRows,
+      cols: [
+        ...fixedColumns.slice(0, 4),
+        { key: 'expand' },
+        ...fixedColumns.slice(4),
+      ],
+      value: [9, 5],
+      disabledRows: fixedRows.slice(0, 3),
+      outlined: true,
+      sort: [{ column: 'name', direction: 'asc' }],
+      pagination: { limit: 5, page: 1, total: 5 },
+      stickyHeader: true,
+      group: ['username'],
+      collapsed: [],
+      expanded: [],
+      groupExpandButtonPosition: 'end',
     },
   },
 ]);
