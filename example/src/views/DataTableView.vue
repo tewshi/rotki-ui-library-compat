@@ -305,7 +305,7 @@ const emptyTables = ref<
     },
   },
   {
-    title: 'Selection with repositioned group expand button',
+    title: 'Single page Selection with repositioned group expand button',
     table: {
       rowAttr: 'id',
       rows: fixedRows,
@@ -316,6 +316,7 @@ const emptyTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
+      singlePageSelect: true,
       group: ['username'],
       collapsed: [],
       expanded: [],
