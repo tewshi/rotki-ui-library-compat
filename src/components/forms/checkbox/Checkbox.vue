@@ -41,7 +41,9 @@ const emit = defineEmits<{
   (e: 'update:indeterminate', indeterminate: boolean): void;
 }>();
 
-const { size, value, errorMessages, successMessages } = toRefs(props);
+const { size, value, errorMessages, successMessages, indeterminate } = toRefs(props);
+
+const el = ref<HTMLInputElement | null>(null);
 
 function input(target: EventTarget | null) {
   if (!target)
@@ -72,6 +74,12 @@ const { hasError, hasSuccess } = useFormTextDetail(
   errorMessages,
   successMessages,
 );
+
+watch(value, (val) => {
+  const input = get(el);
+  if (input && input.checked !== val)
+    input.checked = val;
+});
 </script>
 
 <template>
@@ -90,7 +98,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
       "
     >
       <input
-        :checked="value"
+        ref="el"
         :class="css.input"
         :disabled="disabled"
         type="checkbox"

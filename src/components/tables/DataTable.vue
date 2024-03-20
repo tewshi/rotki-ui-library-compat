@@ -139,6 +139,7 @@ export interface Props {
    * When true, changing the items per page setting in one table will affect other tables.
    */
   globalItemsPerPage?: boolean;
+  singlePageSelect?: boolean;
   /**
    * model for grouping column/columns data
    * single column grouping
@@ -185,6 +186,7 @@ const props = withDefaults(defineProps<Props>(), {
   collapsed: undefined,
   scroller: undefined,
   disabledRows: undefined,
+  singlePageSelect: false,
 });
 
 const emit = defineEmits<{
@@ -219,6 +221,7 @@ const {
   collapsed,
   disabledRows,
   scroller,
+  singlePageSelect,
 } = toRefs(props);
 const tableDefaults = useTable();
 
@@ -378,7 +381,9 @@ const sortData = computed({
     return get(sort);
   },
   set(value) {
-    onToggleAll(false);
+    if (get(singlePageSelect))
+      onToggleAll(false);
+
     resetCheckboxShiftState();
     emit('update:sort', value);
     emit('update:options', {
@@ -618,7 +623,7 @@ function isDisabledRow(rowKey: TableRow[TableRowKey]) {
   if (!identifier)
     return false;
 
-  return get(disabledRows)?.some(disabledRow => rowKey === disabledRow[identifier]);
+  return !!get(disabledRows)?.some(disabledRow => rowKey === disabledRow[identifier]);
 }
 
 function isExpanded(identifier: TableRow[TableRowKey]) {
@@ -764,22 +769,47 @@ function onSort({
   }
 }
 
+function isSelectable(rowKey: TableRow[TableRowKey]): boolean {
+  return isSelected(rowKey) || !isDisabledRow(rowKey);
+}
+
+function mustSelect(rowKey: TableRow[TableRowKey]): boolean {
+  return isSelected(rowKey) && isDisabledRow(rowKey);
+}
+
 /**
  * toggles selected rows
  * @param {boolean} checked checkbox state
  */
 function onToggleAll(checked: boolean) {
-  if (checked) {
-    set(
-      selectedData,
-      get(visibleIdentifiers).filter(rowKey => isSelected(rowKey) || !isDisabledRow(rowKey)),
-    );
+  const singlePageOnly = get(singlePageSelect);
+  const selectedRows = get(selectedData) ?? [];
+
+  if (singlePageOnly) {
+    if (checked)
+      set(selectedData, get(visibleIdentifiers).filter(isSelectable));
+
+    else
+      set(selectedData, get(visibleIdentifiers).filter(mustSelect));
   }
   else {
-    set(
-      selectedData,
-      get(visibleIdentifiers)?.filter(rowKey => isSelected(rowKey) && isDisabledRow(rowKey)),
-    );
+    if (checked) {
+      set(
+        selectedData,
+        Array.from(new Set(
+          [
+            ...selectedRows,
+            ...get(visibleIdentifiers).filter(isSelectable),
+          ],
+        )),
+      );
+    }
+    else {
+      set(
+        selectedData,
+        selectedRows.filter(rowKey => !get(visibleIdentifiers).includes(rowKey) || get(visibleIdentifiers).filter(mustSelect).includes(rowKey)),
+      );
+    }
   }
 }
 
@@ -895,7 +925,9 @@ function scrollToTop() {
 function onPaginate() {
   emit('update:expanded', []);
   scrollToTop();
-  onToggleAll(false);
+  if (get(singlePageSelect))
+    onToggleAll(false);
+
   resetCheckboxShiftState();
 }
 
