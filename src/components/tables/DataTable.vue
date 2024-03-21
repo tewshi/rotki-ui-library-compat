@@ -139,7 +139,7 @@ export interface Props {
    * When true, changing the items per page setting in one table will affect other tables.
    */
   globalItemsPerPage?: boolean;
-  singlePageSelect?: boolean;
+  multiPageSelect?: boolean;
   /**
    * model for grouping column/columns data
    * single column grouping
@@ -186,7 +186,7 @@ const props = withDefaults(defineProps<Props>(), {
   collapsed: undefined,
   scroller: undefined,
   disabledRows: undefined,
-  singlePageSelect: false,
+  multiPageSelect: false,
 });
 
 const emit = defineEmits<{
@@ -221,7 +221,7 @@ const {
   collapsed,
   disabledRows,
   scroller,
-  singlePageSelect,
+  multiPageSelect,
 } = toRefs(props);
 const tableDefaults = useTable();
 
@@ -381,7 +381,7 @@ const sortData = computed({
     return get(sort);
   },
   set(value) {
-    if (get(singlePageSelect))
+    if (!get(multiPageSelect))
       onToggleAll(false);
 
     resetCheckboxShiftState();
@@ -782,7 +782,7 @@ function mustSelect(rowKey: TableRow[TableRowKey]): boolean {
  * @param {boolean} checked checkbox state
  */
 function onToggleAll(checked: boolean) {
-  const singlePageOnly = get(singlePageSelect);
+  const singlePageOnly = !get(multiPageSelect);
   const selectedRows = get(selectedData) ?? [];
 
   if (singlePageOnly) {
@@ -925,7 +925,7 @@ function scrollToTop() {
 function onPaginate() {
   emit('update:expanded', []);
   scrollToTop();
-  if (get(singlePageSelect))
+  if (!get(multiPageSelect))
     onToggleAll(false);
 
   resetCheckboxShiftState();
