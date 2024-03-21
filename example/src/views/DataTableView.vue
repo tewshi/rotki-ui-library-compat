@@ -809,7 +809,7 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             :group.sync="table.group"
             :collapsed.sync="table.collapsed"
           >
-            <template #header.address.city>
+            <template #header.text.address.city>
               city custom header
             </template>
             <template #item.action>
