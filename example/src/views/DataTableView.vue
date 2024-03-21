@@ -289,7 +289,7 @@ const emptyTables = ref<
     },
   },
   {
-    title: 'Selection with disabled rows',
+    title: 'multi page Selection with disabled rows',
     table: {
       rowAttr: 'id',
       rows: fixedRows,
@@ -300,6 +300,7 @@ const emptyTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
+      multiPageSelect: true,
       group: ['username'],
       collapsed: [],
     },
@@ -316,7 +317,6 @@ const emptyTables = ref<
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 5 },
       stickyHeader: true,
-      singlePageSelect: true,
       group: ['username'],
       collapsed: [],
       expanded: [],
