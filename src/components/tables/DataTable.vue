@@ -1062,7 +1062,7 @@ onMounted(() => {
         </TableHead>
         <tbody :class="[css.tbody, { [css['tbody--striped']]: striped }]">
           <slot
-            v-if="slots['body.prepend'] && !(loading && noData)"
+            v-if="slots['body.prepend']"
             :colspan="colspan"
             name="body.prepend"
           />
