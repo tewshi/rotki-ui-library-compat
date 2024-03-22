@@ -268,6 +268,7 @@ const emptyTables = ref<
       cols: fixedColumns,
       loading: true,
       outlined: true,
+      stickyHeader: true,
       rounded: 'lg',
       sort: [{ column: 'name', direction: 'asc' }],
       pagination: { limit: 5, page: 1, total: 0 },
@@ -809,6 +810,26 @@ function toggleRow(row: any, expanded: any[] | undefined) {
             :group.sync="table.group"
             :collapsed.sync="table.collapsed"
           >
+            <template #body.prepend="{ colspan }">
+              <tr>
+                <td
+                  :colspan="colspan"
+                  class="p-3"
+                >
+                  body prepend content
+                </td>
+              </tr>
+            </template>
+            <template #body.append="{ colspan }">
+              <tr>
+                <td
+                  :colspan="colspan"
+                  class="p-3"
+                >
+                  body append content
+                </td>
+              </tr>
+            </template>
             <template #header.text.address.city>
               city custom header
             </template>
