@@ -206,8 +206,8 @@ function getSortIndex(key: TableRowKey) {
       </th>
     </tr>
     <tr
-      v-if="loading"
-      :class="[css.thead__loader, { [css.thead__loader_linear]: !noData }]"
+      v-if="loading && !noData"
+      :class="[css.thead__loader, css.thead__loader_linear]"
     >
       <th
         :class="css.progress"
@@ -216,7 +216,6 @@ function getSortIndex(key: TableRowKey) {
       >
         <div :class="css.progress__wrapper">
           <Progress
-            :circular="noData"
             color="primary"
             variant="indeterminate"
           />
