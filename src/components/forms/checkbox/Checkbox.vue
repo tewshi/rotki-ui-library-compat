@@ -45,16 +45,14 @@ const { size, value, errorMessages, successMessages, indeterminate } = toRefs(pr
 
 const el = ref<HTMLInputElement | null>(null);
 
-function input(target: EventTarget | null) {
-  if (!target)
-    return;
-
-  const { checked } = target as HTMLInputElement;
-  if (checked)
-    emit('update:indeterminate', false);
-
-  emit('input', checked);
-}
+const modelValue = computed({
+  get: () => get(value),
+  set: (checked: boolean) => {
+    if (checked)
+      emit('update:indeterminate', false);
+    emit('input', checked);
+  },
+});
 
 const iconSize: ComputedRef<number> = computed(() => {
   const sizeVal = get(size);
@@ -75,10 +73,15 @@ const { hasError, hasSuccess } = useFormTextDetail(
   successMessages,
 );
 
-watch(value, (val) => {
+watch(indeterminate, (val) => {
   const input = get(el);
-  if (input && input.checked !== val)
-    input.checked = val;
+  if (input) {
+    input.checked = !val;
+    if (val)
+      input.value = 'off';
+    else
+      input.value = 'on';
+  }
 });
 </script>
 
@@ -99,11 +102,11 @@ watch(value, (val) => {
     >
       <input
         ref="el"
+        v-model="modelValue"
         :class="css.input"
         :disabled="disabled"
         type="checkbox"
         v-bind="getNonRootAttrs(attrs)"
-        @input="input($event.target)"
         v-on="
           // eslint-disable-next-line vue/no-deprecated-dollar-listeners-api
           objectOmit($listeners, ['input', 'click'])
