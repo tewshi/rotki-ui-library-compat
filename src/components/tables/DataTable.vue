@@ -826,11 +826,10 @@ function resetCheckboxShiftState() {
  * toggles a single row
  * @param {boolean} checked checkbox state
  * @param {string} value the id of the selected row
- * @param {number} index the index of the selected row
  * @param {boolean} userAction whether the select triggered by user manually
  *
  */
-function onSelect(checked: boolean, value: string, index: number, userAction = false) {
+function onSelect(checked: boolean, value: string, userAction = false) {
   if (get(shiftClicked) && userAction)
     return;
 
@@ -875,7 +874,7 @@ function onCheckboxClick(event: any, value: string, index: number) {
           const valueToApply = isSelected(lastSelectedData[id]);
 
           if (lastIndex === index) {
-            onSelect(!valueToApply, value, index);
+            onSelect(!valueToApply, value);
           }
           else {
             const from = Math.min(lastIndex, index);
@@ -884,7 +883,7 @@ function onCheckboxClick(event: any, value: string, index: number) {
             for (let i = from; i <= to; i++) {
               const currSelectedData = tableData[i];
               if (isRow(currSelectedData) && !isDisabledRow(currSelectedData[id]))
-                onSelect(valueToApply, currSelectedData[id], i);
+                onSelect(valueToApply, currSelectedData[id]);
             }
           }
 
@@ -896,6 +895,13 @@ function onCheckboxClick(event: any, value: string, index: number) {
 
     else { set(lastSelectedIndex, index); }
   }
+}
+
+function deselectRemovedRows() {
+  get(selectedData)?.forEach((key: TableRow[TableRowKey]) => {
+    if (isSelected(key) && !get(visibleIdentifiers).includes(key))
+      onSelect(false, key, true);
+  });
 }
 
 function scrollToTop() {
@@ -971,7 +977,11 @@ watch(search, () => {
   resetCheckboxShiftState();
 });
 
-watch(sorted, setInternalTotal);
+watch(sorted, (items) => {
+  if (!get(multiPageSelect))
+    deselectRemovedRows();
+  setInternalTotal(items);
+});
 
 onMounted(() => {
   setInternalTotal(get(sorted));
@@ -1159,7 +1169,7 @@ onMounted(() => {
                     color="primary"
                     class="select-none"
                     hide-details
-                    @input="onSelect($event, row[rowAttr], index, true)"
+                    @input="onSelect($event, row[rowAttr], true)"
                     @click="onCheckboxClick($event, row[rowAttr], index)"
                   />
                 </td>
