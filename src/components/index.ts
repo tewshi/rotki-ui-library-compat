@@ -116,10 +116,6 @@ import {
   type Props as SkeletonLoaderProps,
 } from '@/components/loaders/Skeleton.vue';
 import {
-  default as RuiSelect,
-  type Props as SelectProps,
-} from '@/components/forms/select/RuiSelect.vue';
-import {
   type Props as MenuSelectProps,
   default as RuiMenuSelect,
 } from '@/components/forms/select/RuiMenuSelect.vue';
@@ -181,7 +177,6 @@ export {
   RuiMenuSelect,
   RuiAccordions,
   RuiAccordion,
-  RuiSelect,
   ProgressProps,
   ChipProps,
   TextFieldProps,
@@ -220,5 +215,4 @@ export {
   MenuSelectProps,
   AccordionsProps,
   AccordionProps,
-  SelectProps,
 };

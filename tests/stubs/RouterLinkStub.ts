@@ -18,7 +18,7 @@ const defaultRoute = {
 
 // TODO: Borrow typings from vue-router-next
 export const RouterLinkStub = defineComponent({
-  // @ts-expect-error
+  // @ts-expect-error the typings throw a false error
   name: 'RouterLinkStub',
 
   props: {
@@ -42,7 +42,7 @@ export const RouterLinkStub = defineComponent({
       isExactActive: computed(() => false),
       navigate: async () => {},
     });
-    // @ts-expect-error
+    // @ts-expect-error the typings throw a false error
     return this.custom ? children : h('a', undefined, children);
   },
 });

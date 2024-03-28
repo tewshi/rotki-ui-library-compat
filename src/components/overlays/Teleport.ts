@@ -15,7 +15,7 @@ export default defineComponent({
     const getTeleportContainer = () => {
       const proxy = getCurrentInstance()?.proxy;
       assert(proxy);
-      return proxy.$teleport;
+      return proxy?.$teleport;
     };
 
     onUpdated(() => {

@@ -52,7 +52,7 @@ const children = computed(() => {
   return tabs
     .filter(tab => !!tab.tag)
     .map((tab, index) => {
-      // @ts-expect-error
+      // @ts-expect-error the typings throw a false error
       // The componentOptions.propsData is messed when combined with props from the parent.
       // So use `initialPropsData`, the original `propsData` that haven't touched by the code below.
       const propsData = (tab.componentOptions?.initialPropsData

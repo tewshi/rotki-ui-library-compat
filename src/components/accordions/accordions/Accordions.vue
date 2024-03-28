@@ -31,7 +31,7 @@ const children = computed(() => {
   const multipleVal = get(multiple);
 
   return accordions.map((accordion, index) => {
-    // @ts-expect-error
+    // @ts-expect-error the typings throw a false error
     // The componentOptions.propsData is messed when combined with props from the parent.
     // So use `initialPropsData`, the original `propsData` that haven't touched by the code below.
     const propsData = (accordion.componentOptions?.initialPropsData

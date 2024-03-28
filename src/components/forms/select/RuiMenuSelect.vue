@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { objectOmit } from '@vueuse/shared';
 import RuiButton from '@/components/buttons/button/Button.vue';
 import RuiIcon from '@/components/icons/Icon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
@@ -96,6 +95,11 @@ const {
 });
 
 const float = computed(() => (get(isOpen) || !!get(value)) && props.floatLabel);
+
+const virtualContainerProps = computed(() => ({
+  style: containerProps.style as any,
+  ref: containerProps.ref as any,
+}));
 </script>
 
 <template>
@@ -199,7 +203,7 @@ const float = computed(() => (get(isOpen) || !!get(value)) && props.floatLabel);
       <div
         :class="[css.menu, menuClass]"
         :style="{ width: fullWidth ? `${width / 16}rem` : menuWidth }"
-        v-bind="objectOmit(containerProps, ['onScroll'])"
+        v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
       >
         <div v-bind="wrapperProps">
