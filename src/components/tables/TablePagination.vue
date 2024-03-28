@@ -90,7 +90,7 @@ function goToPage(page: number) {
 
 function pageRangeText(page: number) {
   const { limit, total } = get(value);
-  return `${formatInteger((page - 1) * limit + 1)}-${formatInteger(
+  return `${formatInteger((page - 1) * limit + 1)} - ${formatInteger(
     Math.min(page * limit, total),
   )}`;
 }
@@ -137,6 +137,7 @@ function onLast() {
         :options="limits"
         :disabled="loading || disablePerPage"
         :dense="dense"
+        label-class="!text-xs"
         name="limit"
         key-attr="limit"
         text-attr="limit"
@@ -150,6 +151,7 @@ function onLast() {
         :options="ranges"
         :disabled="loading"
         :dense="dense"
+        label-class="!text-xs"
         name="ranges"
         key-attr="page"
         text-attr="text"
@@ -220,7 +222,7 @@ function onLast() {
   }
 
   .indicator {
-    @apply text-rui-text text-caption;
+    @apply text-rui-text text-caption whitespace-nowrap;
   }
 
   .navigation {

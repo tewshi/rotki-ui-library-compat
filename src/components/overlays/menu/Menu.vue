@@ -1,16 +1,24 @@
 <script setup lang="ts">
+import RuiFormTextDetail from '@/components/helpers/FormTextDetail.vue';
 import { type PopperOptions, usePopper } from '@/composables/popper';
 import RuiTeleport from '@/components/overlays/Teleport';
 
 export interface MenuProps {
   value?: boolean;
   openOnHover?: boolean;
+  fullWidth?: boolean;
   disabled?: boolean;
   openDelay?: number;
   closeDelay?: number;
   popper?: PopperOptions;
+  wrapperClass?: string;
   menuClass?: string;
   closeOnContentClick?: boolean;
+  hint?: string;
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  hideDetails?: boolean;
+  dense?: boolean;
 }
 
 defineOptions({
@@ -21,11 +29,16 @@ const props = withDefaults(defineProps<MenuProps>(), {
   value: false,
   openOnHover: false,
   disabled: false,
+  fullWidth: false,
   openDelay: 0,
   closeDelay: 0,
   popper: () => ({}),
+  wrapperClass: '',
   menuClass: '',
   closeOnContentClick: false,
+  hint: undefined,
+  errorMessages: () => [],
+  successMessages: () => [],
 });
 
 const emit = defineEmits<{
@@ -34,7 +47,7 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const { value, closeDelay, openDelay, popper, disabled, closeOnContentClick, openOnHover } = toRefs(props);
+const { value, closeDelay, openDelay, popper, disabled, closeOnContentClick, openOnHover, errorMessages, successMessages } = toRefs(props);
 
 const {
   reference: activator,
@@ -46,6 +59,8 @@ const {
   onPopperLeave,
   updatePopper,
 } = usePopper(popper, disabled, openDelay, closeDelay);
+
+const { width } = useElementSize(activator);
 
 const click: Ref<boolean> = ref(false);
 
@@ -105,20 +120,23 @@ const on = computed(() => {
     click: checkClick,
   };
 });
+
+const { hasError, hasSuccess } = useFormTextDetail(
+  errorMessages,
+  successMessages,
+);
 </script>
 
 <template>
   <div>
     <div
       ref="activator"
-      :class="css.wrapper"
+      :class="[css.wrapper, wrapperClass, { 'w-full': fullWidth }]"
       :data-menu-disabled="disabled"
     >
       <slot
         name="activator"
-        :on="on"
-        :open="open"
-        :disabled="disabled"
+        v-bind="{ on, open, disabled, hasError, hasSuccess }"
       />
     </div>
     <RuiTeleport v-if="!disabled">
@@ -148,11 +166,19 @@ const on = computed(() => {
             :class="css.base"
             role="menu-content"
           >
-            <slot />
+            <slot v-bind="{ width }" />
           </div>
         </Transition>
       </div>
     </RuiTeleport>
+    <RuiFormTextDetail
+      v-if="!hideDetails"
+      class="pt-1"
+      :class="[dense ? 'px-2' : 'px-4']"
+      :error-messages="errorMessages"
+      :success-messages="successMessages"
+      :hint="hint"
+    />
   </div>
 </template>
 

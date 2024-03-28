@@ -284,6 +284,10 @@ const slots = useSlots();
     &.sm {
       @apply px-3 py-1;
     }
+
+    .label {
+      @apply w-full;
+    }
   }
 
   &.icon {
