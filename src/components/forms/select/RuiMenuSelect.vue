@@ -29,7 +29,7 @@ export interface Props {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
-  hideDetails?: boolean;
+  showDetails?: boolean;
 }
 
 defineOptions({
@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
   dense: false,
   floatLabel: false,
   clearable: false,
-  hideDetails: false,
+  showDetails: false,
   label: 'Select',
   menuOptions: () => ({
     popper: { placement: 'bottom-start' },
@@ -106,7 +106,7 @@ const virtualContainerProps = computed(() => ({
   <RuiMenu
     v-model="isOpen"
     :class="css.wrapper"
-    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth }"
+    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails }"
   >
     <template #activator="{ on, open, hasError, hasSuccess }">
       <slot
@@ -259,18 +259,22 @@ const virtualContainerProps = computed(() => ({
     }
 
     &.disabled {
-      @apply bg-black/[.12] text-rui-text-disabled active:text-rui-text-disabled cursor-default;
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default;
     }
 
     &.outlined {
       @apply border border-rui-text-disabled;
 
       &.disabled {
-        @apply border-dashed;
+        @apply border-dotted;
       }
 
       &.with-success {
         @apply border-rui-success #{!important};
+
+        .label {
+          @apply text-rui-success #{!important};
+        }
 
         ~ .fieldset {
           @apply border-rui-success #{!important};
@@ -279,6 +283,10 @@ const virtualContainerProps = computed(() => ({
 
       &.with-error {
         @apply border-rui-error #{!important};
+
+        .label {
+          @apply text-rui-error #{!important};
+        }
 
         ~ .fieldset {
           @apply border-rui-error #{!important};
@@ -359,10 +367,6 @@ const virtualContainerProps = computed(() => ({
   .wrapper {
     .activator {
       @apply bg-transparent hover:bg-white/10 text-rui-text;
-
-      &.disabled {
-        @apply bg-white/10;
-      }
 
       &.outlined {
         @apply border border-rui-text hover:bg-white/[0.02];

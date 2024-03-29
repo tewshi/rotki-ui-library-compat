@@ -220,6 +220,7 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
     dense: true,
     errorMessages: ['This is required'],
     hint: 'lorem ipsum dolor',
+    showDetails: true,
     options,
   },
   {
@@ -228,6 +229,7 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
     keyAttr: 'id',
     textAttr: 'label',
     successMessages: ['lgtm!'],
+    showDetails: true,
     value: undefined,
     options,
   },

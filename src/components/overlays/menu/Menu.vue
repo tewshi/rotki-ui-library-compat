@@ -17,7 +17,7 @@ export interface MenuProps {
   hint?: string;
   errorMessages?: string | string[];
   successMessages?: string | string[];
-  hideDetails?: boolean;
+  showDetails?: boolean;
   dense?: boolean;
 }
 
@@ -172,7 +172,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
       </div>
     </RuiTeleport>
     <RuiFormTextDetail
-      v-if="!hideDetails"
+      v-if="showDetails"
       class="pt-1"
       :class="[dense ? 'px-2' : 'px-4']"
       :error-messages="errorMessages"

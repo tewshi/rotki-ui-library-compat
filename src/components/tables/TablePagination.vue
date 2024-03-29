@@ -136,11 +136,11 @@ function onLast() {
         v-model="currentLimit"
         :options="limits"
         :disabled="loading || disablePerPage"
-        :dense="dense"
         label-class="!text-xs"
         name="limit"
         key-attr="limit"
         text-attr="limit"
+        dense
       />
     </div>
     <div :class="css.ranges">
@@ -150,11 +150,11 @@ function onLast() {
         v-model="currentRange"
         :options="ranges"
         :disabled="loading"
-        :dense="dense"
         label-class="!text-xs"
         name="ranges"
         key-attr="page"
         text-attr="text"
+        dense
       />
       <span :class="css.indicator">
         {{ indicatorText }}
