@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { objectOmit } from '@vueuse/shared';
 import RuiButton from '@/components/buttons/button/Button.vue';
-import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
 import RuiIcon from '@/components/icons/Icon.vue';
+import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
+import { useDropdownMenu } from '@/composables/dropdown-menu';
 
 export type T = any;
 
@@ -15,11 +15,21 @@ export interface Props {
   value?: T | null;
   disabled?: boolean;
   dense?: boolean;
-  outlined?: boolean;
+  fullWidth?: boolean;
+  floatLabel?: boolean;
+  clearable?: boolean;
   label?: string;
   menuOptions?: MenuProps;
   labelClass?: string;
   menuClass?: string;
+  optionClass?: string;
+  prependWidth?: number; // in rem
+  appendWidth?: number; // in rem
+  variant?: 'default' | 'filled' | 'outlined';
+  hint?: string;
+  errorMessages?: string | string[];
+  successMessages?: string | string[];
+  showDetails?: boolean;
 }
 
 defineOptions({
@@ -29,12 +39,20 @@ defineOptions({
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   dense: false,
-  outlined: false,
+  floatLabel: false,
+  clearable: false,
+  showDetails: false,
   label: 'Select',
   menuOptions: () => ({
     popper: { placement: 'bottom-start' },
     closeOnContentClick: true,
   }),
+  prependWidth: 0,
+  appendWidth: 0,
+  variant: 'default',
+  hint: undefined,
+  errorMessages: () => [],
+  successMessages: () => [],
 });
 
 const emit = defineEmits<{
@@ -43,190 +61,299 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const { list, containerProps, wrapperProps, scrollTo } = useVirtualList<T>(
-  toRef(props, 'options'),
-  {
-    itemHeight: props.dense ? 30 : 48,
-    overscan: 1,
-  },
-);
-
-const renderedData: ComputedRef<T[]> = useArrayMap(list, ({ data }) => data);
-
-const isOpen = ref(false);
+const { options, dense } = toRefs(props);
 
 const value = computed({
   get: () => props.value,
-  set: value => emit('input', value),
+  set: selected => emit('input', selected),
 });
 
-const valueKey = computed(() => props.value ? props.value[props.keyAttr] : undefined);
+const labelWithQuote = computed(() => {
+  if (!props.label)
+    return '"\\200B"';
 
-const menuWidth = computed(() => {
-  const widths = { min: 0, max: 0 };
-  const maxWidth = 30;
-  const paddingX = 1.5;
-  const fontMultiplier = props.dense ? 12 : 13;
-
-  props.options.forEach((option) => {
-    const length = getText(option)?.toString()?.length ?? 0;
-    if (widths.min === 0 && widths.max === 0) {
-      widths.min = length;
-      widths.max = length;
-    }
-    else if (length < widths.min) {
-      widths.min = length;
-    }
-    else if (length > widths.max) {
-      widths.max = length;
-    }
-  });
-
-  const difference = widths.max - widths.min;
-
-  function computeValue(width: number) {
-    return `${Math.min((width * fontMultiplier) / 16 + paddingX, maxWidth)}rem`;
-  }
-
-  if (difference <= 5)
-    return computeValue(widths.max);
-
-  return computeValue(widths.min + difference / 2);
+  return `'  ${props.label}  '`;
 });
 
-function getText(item: T): T[K] {
-  return item[props.textAttr];
-}
+const {
+  containerProps,
+  wrapperProps,
+  renderedData,
+  isOpen,
+  valueKey,
+  menuWidth,
+  getText,
+  getIdentifier,
+  isActiveItem,
+} = useDropdownMenu<T, K>({
+  itemHeight: props.dense ? 30 : 48,
+  keyAttr: props.keyAttr,
+  textAttr: props.textAttr,
+  options,
+  dense,
+  value,
+});
 
-function getIdentifier(item: T): T[K] {
-  return item[props.keyAttr];
-}
+const float = computed(() => (get(isOpen) || !!get(value)) && props.floatLabel);
 
-function isActiveItem(item: T): boolean {
-  if (!props.value)
-    return false;
-
-  return item[props.keyAttr] === props.value[props.keyAttr];
-}
-
-function updateOpen(open: boolean) {
-  const value = props.value;
-  if (open && value) {
-    nextTick(() => {
-      scrollTo(get(props.options).findIndex(isActiveItem));
-    });
-  }
-}
-
-watch(isOpen, updateOpen);
+const virtualContainerProps = computed(() => ({
+  style: containerProps.style as any,
+  ref: containerProps.ref as any,
+}));
 </script>
 
 <template>
   <RuiMenu
     v-model="isOpen"
     :class="css.wrapper"
-    v-bind="menuOptions"
+    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails }"
   >
-    <template #activator="{ on, open }">
+    <template #activator="{ on, open, hasError, hasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, outlined, on, open }"
+        v-bind="{ disabled, value, variant, on, open, hasError, hasSuccess }"
       >
-        <label
+        <div
+          :aria-disabled="disabled"
           :class="[
             css.activator,
             labelClass,
             {
               [css.disabled]: disabled,
-              [css.outlined]: outlined,
+              [css.outlined]: variant === 'outlined',
               [css.dense]: dense,
+              [css.float]: float,
+              [css['with-error']]: hasError,
+              [css['with-success']]: hasSuccess && !hasError,
+              'w-full': fullWidth,
             },
           ]"
-          :aria-disabled="disabled"
+          data-id="activator"
           v-on="disabled ? {} : on"
         >
-          <span :class="css.label">
-            {{ value ? getText(value) : label }}
+          <span
+            v-if="floatLabel || !value"
+            :class="[
+              css.label,
+              {
+                'absolute right-4': floatLabel,
+                'pr-2': !value && !open && floatLabel,
+                'left-4': floatLabel && !dense,
+                'left-2': floatLabel && dense,
+              },
+            ]"
+          >
+            <slot
+              name="activator.label"
+              v-bind="{ value }"
+            >
+              {{ label }}
+            </slot>
+          </span>
+          <span
+            v-if="value"
+            :class="css.value"
+          >
+            <slot
+              name="activator.prepend"
+              v-bind="{ value }"
+            />
+            <slot
+              name="activator.text"
+              v-bind="{ value }"
+            >
+              {{ getText(value) }}
+            </slot>
+          </span>
+
+          <span
+            v-if="clearable && value && !disabled"
+            :class="css.clear"
+            @click.stop.prevent="emit('input', null)"
+          >
+            <RuiIcon
+              color="error"
+              name="close-line"
+              size="18"
+            />
           </span>
 
           <span :class="css.icon__wrapper">
             <RuiIcon
               :class="[css.icon, { 'rotate-180': open }]"
+              :size="dense ? 24 : 32"
               name="arrow-drop-down-fill"
-              size="24"
             />
           </span>
-        </label>
+        </div>
+        <fieldset
+          v-if="floatLabel"
+          :class="css.fieldset"
+        >
+          <legend :class="{ 'px-2': float }" />
+        </fieldset>
       </slot>
       <input
+        :value="valueKey"
         class="hidden"
         type="hidden"
-        :value="valueKey"
       />
     </template>
-    <div
-      v-bind="objectOmit(containerProps, ['onScroll'])"
-      :class="[css.menu, menuClass]"
-      :style="{ width: menuWidth }"
-      @scroll="containerProps.onScroll"
-    >
-      <div v-bind="wrapperProps">
-        <RuiButton
-          v-for="(option, i) in renderedData"
-          :key="i"
-          :value="getIdentifier(option)"
-          :active="isActiveItem(option)"
-          :size="dense ? 'sm' : undefined"
-          variant="list"
-          @input="value = option"
-        >
-          <slot
-            name="item.text"
-            v-bind="{ disabled, value }"
+    <template #default="{ width }">
+      <div
+        :class="[css.menu, menuClass]"
+        :style="{ width: fullWidth ? `${width / 16}rem` : menuWidth }"
+        v-bind="virtualContainerProps"
+        @scroll="containerProps.onScroll"
+      >
+        <div v-bind="wrapperProps">
+          <RuiButton
+            v-for="(option, i) in renderedData"
+            :key="i"
+            :active="isActiveItem(option)"
+            :size="dense ? 'sm' : undefined"
+            :value="getIdentifier(option)"
+            variant="list"
+            @input="value = option"
           >
-            {{ getText(option) }}
-          </slot>
-        </RuiButton>
+            <template #prepend>
+              <slot
+                name="item.prepend"
+                v-bind="{ disabled, option, active: isActiveItem(option) }"
+              />
+            </template>
+            <slot
+              name="item.text"
+              v-bind="{ disabled, option, active: isActiveItem(option) }"
+            >
+              {{ getText(option) }}
+            </slot>
+            <template #append>
+              <slot
+                name="item.append"
+                v-bind="{ disabled, option, active: isActiveItem(option) }"
+              />
+            </template>
+          </RuiButton>
+        </div>
       </div>
-    </div>
+    </template>
   </RuiMenu>
 </template>
 
-<style module lang="scss">
+<style lang="scss" module>
 .wrapper {
-  @apply max-w-full;
+  @apply max-w-full w-full;
 
   .activator {
-    @apply relative inline-flex items-center overflow-hidden;
-    @apply outline-none focus:outline-none cursor-pointer h-9 pl-4 py-2 pr-8 rounded;
-    @apply m-0 bg-white hover:bg-gray-50 transition text-caption;
+    @apply relative inline-flex items-center max-w-full;
+    @apply outline-none focus:outline-none cursor-pointer min-h-12 pl-4 py-2 pr-8 rounded;
+    @apply m-0 bg-white hover:bg-gray-50 transition text-body-1;
 
     &.dense {
-      @apply h-7 pl-2 py-1;
+      @apply pl-2 py-1 min-h-8 text-sm;
+
+      ~ .fieldset {
+        @apply px-1;
+      }
     }
 
     &.disabled {
-      @apply bg-black/[.12] text-rui-text-disabled active:text-rui-text-disabled cursor-default;
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default;
     }
 
     &.outlined {
       @apply border border-rui-text-disabled;
 
       &.disabled {
-        @apply border-transparent;
+        @apply border-dotted;
+      }
+
+      &.with-success {
+        @apply border-rui-success #{!important};
+
+        .label {
+          @apply text-rui-success #{!important};
+        }
+
+        ~ .fieldset {
+          @apply border-rui-success #{!important};
+        }
+      }
+
+      &.with-error {
+        @apply border-rui-error #{!important};
+
+        .label {
+          @apply text-rui-error #{!important};
+        }
+
+        ~ .fieldset {
+          @apply border-rui-error #{!important};
+        }
       }
     }
 
-    .label {
-      @apply block truncate;
+    .label,
+    .value {
+      @apply block truncate transition-all duration-75;
+    }
+
+    .clear {
+      @apply ml-auto shrink-0;
     }
 
     .icon {
-      @apply text-rui-text-disabled transition;
+      @apply text-rui-text transition;
 
       &__wrapper {
         @apply flex items-center justify-end;
         @apply absolute right-1 top-px bottom-0;
+      }
+    }
+
+    &.float {
+      &.outlined {
+        @apply border-t-transparent;
+
+        &.with-success {
+          @apply border-t-transparent #{!important};
+        }
+
+        &.with-error {
+          @apply border-t-transparent #{!important};
+        }
+      }
+
+      .label {
+        @apply -translate-y-2 top-0 text-xs;
+      }
+
+      ~ .fieldset {
+        @apply border border-rui-text;
+
+        legend {
+          &:after {
+            content: v-bind(labelWithQuote);
+          }
+        }
+      }
+    }
+  }
+
+  .fieldset {
+    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 -mt-2;
+
+    legend {
+      @apply opacity-0 text-xs max-w-full truncate;
+
+      &:before {
+        content: ' ';
+      }
+
+      &:after {
+        @apply truncate max-w-full leading-[0];
+        content: '\200B';
       }
     }
   }
@@ -239,14 +366,20 @@ watch(isOpen, updateOpen);
 :global(.dark) {
   .wrapper {
     .activator {
-      @apply bg-transparent hover:bg-white/10 text-rui-text-disabled;
-
-      &.disabled {
-        @apply bg-white/10;
-      }
+      @apply bg-transparent hover:bg-white/10 text-rui-text;
 
       &.outlined {
-        @apply border border-rui-text-disabled;
+        @apply border border-rui-text hover:bg-white/[0.02];
+      }
+
+      &.float {
+        &.outlined {
+          @apply border-t-transparent;
+        }
+
+        ~ .fieldset {
+          @apply border-white;
+        }
       }
     }
   }

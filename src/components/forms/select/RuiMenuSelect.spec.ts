@@ -34,8 +34,8 @@ describe('menu select', () => {
       },
     });
 
-    expect(wrapper.get('label').classes()).toMatch(/_activator_/);
-    expect(wrapper.find('label span[class*=label]').exists()).toBeTruthy();
+    expect(wrapper.get('div[data-id="activator"]').classes()).toMatch(/_activator_/);
+    expect(wrapper.find('div[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });
 
@@ -49,7 +49,7 @@ describe('menu select', () => {
         value: options[4],
       },
     });
-    expect(wrapper.find('label[aria-disabled]').exists()).toBeTruthy();
-    expect(wrapper.find('label[aria-disabled]').text()).toMatch('Spain');
+    expect(wrapper.find('div[aria-disabled]').exists()).toBeTruthy();
+    expect(wrapper.find('div[aria-disabled]').text()).toMatch('Spain');
   });
 });

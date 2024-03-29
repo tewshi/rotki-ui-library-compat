@@ -153,7 +153,7 @@ const menuSelect = ref<MenuSelectProps[]>([
   },
   {
     disabled: false,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
@@ -161,7 +161,7 @@ const menuSelect = ref<MenuSelectProps[]>([
   },
   {
     disabled: true,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
@@ -186,7 +186,7 @@ const menuSelect = ref<MenuSelectProps[]>([
   {
     dense: true,
     disabled: false,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
@@ -195,7 +195,7 @@ const menuSelect = ref<MenuSelectProps[]>([
   {
     dense: true,
     disabled: true,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
@@ -209,36 +209,46 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
+    label: 'Menu with very long name to test and see truncate behaviour',
+    hint: 'lorem ipsum dolor',
     options,
   },
   {
-    disabled: true,
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
+    dense: true,
+    errorMessages: ['This is required'],
+    hint: 'lorem ipsum dolor',
+    showDetails: true,
     options,
   },
   {
     disabled: false,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
+    successMessages: ['lgtm!'],
+    showDetails: true,
     value: undefined,
     options,
   },
   {
     disabled: true,
-    outlined: true,
+    variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     value: undefined,
     options,
   },
 ]);
+
+const test = ref(null);
 </script>
 
 <template>
   <div>
+    <slot ref="test" />
     <h2
       class="text-h4 mb-6"
       data-cy="menus"
@@ -249,7 +259,7 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
       <div
         v-for="(menu, i) in menus"
         :key="i"
-        class="p-4"
+        class="py-4"
       >
         <RuiMenu
           v-bind="objectOmit(menu, ['buttonColor'])"
@@ -280,7 +290,7 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
       <div
         v-for="(menu, i) in menuSelect"
         :key="i"
-        class="p-4"
+        class="py-4"
       >
         <RuiMenuSelect
           v-model="menu.value"
@@ -293,35 +303,95 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
       class="text-h6 mt-6"
       data-cy="select-menus-custom"
     >
-      Select Menus: custom activator
+      Select Menus: custom activator content
     </h4>
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectCustom"
         :key="i"
-        class="p-4"
+        class="py-4"
       >
         <RuiMenuSelect
           v-model="menu.value"
           v-bind="objectOmit(menu, ['value'])"
           :data-cy="`select-menu-custom-${i}`"
+          wrappe-classr="w-full"
         >
-          <template #activator="{ on, disabled, open }">
+          <template #activator="{ on, disabled, open, value }">
             <RuiButton
+              class="!rounded-md border"
               data-cy="activator"
+              variant="list"
               :disabled="disabled"
               v-on="on"
             >
-              Menu
+              {{ value ? value.label : 'Choose option' }}
               <template #append>
                 <RuiIcon
                   class="transition"
                   :class="[{ 'rotate-180': open }]"
                   name="arrow-drop-down-fill"
-                  size="24"
+                  size="32"
                 />
               </template>
             </RuiButton>
+          </template>
+        </RuiMenuSelect>
+      </div>
+    </div>
+    <h4
+      class="text-h6 mt-6"
+      data-cy="select-menus-custom-inner"
+    >
+      Select Menus: custom activator inner content
+    </h4>
+    <div class="grid gap-6 grid-cols-4">
+      <div
+        v-for="(menu, i) in menuSelectCustom"
+        :key="i"
+        class="py-4"
+      >
+        <RuiMenuSelect
+          v-model="menu.value"
+          v-bind="objectOmit(menu, ['value'])"
+          :data-cy="`select-menu-custom-inner-${i}`"
+          full-width
+          float-label
+          clearable
+          variant="outlined"
+        >
+          <template #activator.text="{ value }">
+            {{ value.id }} | {{ value.label }}
+          </template>
+        </RuiMenuSelect>
+      </div>
+    </div>
+    <h4
+      class="text-h6 mt-6"
+      data-cy="select-menus-custom-options"
+    >
+      Select Menus: custom options
+    </h4>
+    <div class="grid gap-6 grid-cols-4">
+      <div
+        v-for="(menu, i) in menuSelectCustom"
+        :key="i"
+        class="py-4"
+      >
+        <RuiMenuSelect
+          v-model="menu.value"
+          v-bind="objectOmit(menu, ['value'])"
+          :append-width="1.5"
+          :data-cy="`select-menu-custom-options-${i}`"
+          full-width
+        >
+          <template #item.append="{ active }">
+            <RuiIcon
+              v-if="active"
+              class="transition"
+              name="check-line"
+              size="24"
+            />
           </template>
         </RuiMenuSelect>
       </div>

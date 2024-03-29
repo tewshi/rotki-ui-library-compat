@@ -48,8 +48,12 @@ const meta: Meta<Props> = {
     dense: { control: 'boolean' },
     disabled: { control: 'boolean' },
     options: { control: 'array', defaultValue: [] },
-    outlined: { control: 'boolean' },
     value: { control: 'string' },
+    variant: {
+      control: 'select',
+      defaultValue: 'default',
+      options: ['default', 'outlined', 'filled'],
+    },
   },
   component: RuiMenuSelect as any,
   parameters: {
@@ -84,9 +88,9 @@ export const DefaultDisabled: Story = {
 export const Outlined: Story = {
   args: {
     keyAttr: 'id',
-    outlined: true,
     textAttr: 'label',
     value: null,
+    variant: 'outlined',
   },
 };
 
@@ -94,9 +98,9 @@ export const OutlinedDisabled: Story = {
   args: {
     disabled: true,
     keyAttr: 'id',
-    outlined: true,
     textAttr: 'label',
     value: null,
+    variant: 'outlined',
   },
 };
 
@@ -105,9 +109,9 @@ export const OutlinedDense: Story = {
     dense: false,
     disabled: true,
     keyAttr: 'id',
-    outlined: true,
     textAttr: 'label',
     value: null,
+    variant: 'outlined',
   },
 };
 
@@ -116,9 +120,9 @@ export const OutlinedDisabledDense: Story = {
     dense: true,
     disabled: true,
     keyAttr: 'id',
-    outlined: true,
     textAttr: 'label',
     value: null,
+    variant: 'outlined',
   },
 };
 
