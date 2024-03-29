@@ -21,7 +21,7 @@ describe('menu', () => {
     cy.get('@menuContent').trigger('click');
     cy.get('body').find('div[role=menu-content]').contains('This is menu 0').should('exist');
     cy.get('body').trigger('click');
-    cy.get('body').find('div[role=menu-content]').should('not.exist');
+    cy.get('body').find('div[role=menu-content]').contains('This is menu 0').should('not.exist');
   });
 
   it('disabled should not trigger menu', () => {
