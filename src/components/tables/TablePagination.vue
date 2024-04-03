@@ -38,8 +38,8 @@ const limits = computed(
 );
 
 const currentLimit = computed({
-  get: () => ({ limit: get(value).limit }),
-  set: ({ limit }) =>
+  get: () => get(value).limit,
+  set: limit =>
     emit('input', {
       ...get(value),
       limit: Number(limit),
@@ -70,8 +70,8 @@ const indicatorText = computed(() => {
 });
 
 const currentRange = computed({
-  get: () => ({ page: get(value).page, text: pageRangeText(get(value).page) }),
-  set: ({ page }) =>
+  get: () => get(value).page,
+  set: page =>
     emit('input', {
       ...get(value),
       page,

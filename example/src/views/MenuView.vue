@@ -270,13 +270,10 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
     options: primitiveOptions,
   },
 ]);
-
-const test = ref(null);
 </script>
 
 <template>
   <div>
-    <slot ref="test" />
     <h2
       class="text-h4 mb-6"
       data-cy="menus"

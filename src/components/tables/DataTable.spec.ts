@@ -445,7 +445,7 @@ describe('dataTable', () => {
       );
 
       const select = paginate.at(0).findComponent(RuiMenuSelect);
-      select.vm.$emit('input', { limit: 10 });
+      select.vm.$emit('input', 10);
 
       await nextTick();
 
@@ -493,8 +493,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate.at(0).findComponent(RuiMenuSelect);
       const localSelect = paginate.at(1).findComponent(RuiMenuSelect);
-      globalSelect.vm.$emit('input', { limit: 10 });
-      localSelect.vm.$emit('input', { limit: 25 });
+      globalSelect.vm.$emit('input', 10);
+      localSelect.vm.$emit('input', 25);
 
       await nextTick();
 
@@ -542,8 +542,8 @@ describe('dataTable', () => {
 
       const globalSelect = paginate.at(0).findComponent(RuiMenuSelect);
       const localSelect = paginate.at(1).findComponent(RuiMenuSelect);
-      globalSelect.vm.$emit('input', { limit: 25 });
-      localSelect.vm.$emit('input', { limit: 10 });
+      globalSelect.vm.$emit('input', 25);
+      localSelect.vm.$emit('input', 10);
 
       await nextTick();
 
@@ -557,7 +557,7 @@ describe('dataTable', () => {
     });
   });
 
-  it('pagination range works as expected', async () => {
+  it('pagination limit and range works as expected', async () => {
     const wrapper = createWrapper({
       propsData: {
         'cols': columns,
@@ -594,14 +594,38 @@ describe('dataTable', () => {
 
     const simpleSelects = paginator.findAllComponents(RuiMenuSelect);
     const limits = simpleSelects.at(0);
+    const range = simpleSelects.at(1);
     expect(limits.exists()).toBeTruthy();
+    expect(range.exists()).toBeTruthy();
 
-    limits.vm.$emit('input', { limit: 5 });
+    limits.vm.$emit('input', 5);
 
     await nextTick();
 
-    expect(limits.props().value).toStrictEqual({ limit: 5 });
+    expect(limits.props().value).toStrictEqual(5);
+    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('5');
+    expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '5');
     expect(navButtons.filter(b => b.attributes('disabled') === 'disabled')).toHaveLength(2);
     expect(navButtons.filter(b => b.attributes('disabled') === undefined)).toHaveLength(2);
+
+    range.vm.$emit('input', 2);
+
+    await nextTick();
+
+    expect(range.props().value).toStrictEqual(2);
+    expect(range.find('[data-id="activator"] span').text()).toStrictEqual('6 - 10');
+    expect(range.find('input[type=hidden]').element).toHaveProperty('value', '2');
+
+    limits.vm.$emit('input', 10);
+
+    await nextTick();
+
+    expect(limits.props().value).toStrictEqual(10);
+    expect(limits.find('[data-id="activator"] span').text()).toStrictEqual('10');
+    expect(limits.find('input[type=hidden]').element).toHaveProperty('value', '10');
+
+    expect(range.props().value).toStrictEqual(1);
+    expect(range.find('[data-id="activator"] span').text()).toStrictEqual('1 - 10');
+    expect(range.find('input[type=hidden]').element).toHaveProperty('value', '1');
   });
 });
