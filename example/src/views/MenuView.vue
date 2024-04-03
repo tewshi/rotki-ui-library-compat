@@ -225,12 +225,14 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
   },
   {
     disabled: false,
+    label: 'primitive return',
     variant: 'outlined',
     keyAttr: 'id',
     textAttr: 'label',
     successMessages: ['lgtm!'],
     showDetails: true,
     value: undefined,
+    returnPrimitive: true,
     options,
   },
   {
@@ -240,6 +242,33 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
     textAttr: 'label',
     value: undefined,
     options,
+  },
+]);
+
+const primitiveOptions: string[] = ['Lorem', 'Ipsum', 'Dolor', 'Sit amet', 'Consecteur'];
+
+const menuSelectPrimitive = ref<MenuSelectProps[]>([
+  {
+    disabled: false,
+    value: undefined,
+    options: primitiveOptions,
+  },
+  {
+    value: undefined,
+    dense: true,
+    options: primitiveOptions,
+  },
+  {
+    disabled: false,
+    variant: 'outlined',
+    value: undefined,
+    options: primitiveOptions,
+  },
+  {
+    disabled: true,
+    variant: 'outlined',
+    value: undefined,
+    options: primitiveOptions,
   },
 ]);
 
@@ -375,6 +404,36 @@ const test = ref(null);
     <div class="grid gap-6 grid-cols-4">
       <div
         v-for="(menu, i) in menuSelectCustom"
+        :key="i"
+        class="py-4"
+      >
+        <RuiMenuSelect
+          v-model="menu.value"
+          v-bind="objectOmit(menu, ['value'])"
+          :append-width="1.5"
+          :data-cy="`select-menu-custom-options-${i}`"
+          full-width
+        >
+          <template #item.append="{ active }">
+            <RuiIcon
+              v-if="active"
+              class="transition"
+              name="check-line"
+              size="24"
+            />
+          </template>
+        </RuiMenuSelect>
+      </div>
+    </div>
+    <h4
+      class="text-h6 mt-6"
+      data-cy="select-menus-custom-options"
+    >
+      Select Menus: primitive values
+    </h4>
+    <div class="grid gap-6 grid-cols-4">
+      <div
+        v-for="(menu, i) in menuSelectPrimitive"
         :key="i"
         class="py-4"
       >
