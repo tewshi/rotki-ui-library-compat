@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/Button.vue';
 import RuiIcon from '@/components/icons/Icon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
@@ -10,8 +11,8 @@ export type K = keyof T;
 
 export interface Props {
   options: T[];
-  keyAttr: K;
-  textAttr: K;
+  keyAttr?: K;
+  textAttr?: K;
   value?: T | null;
   disabled?: boolean;
   dense?: boolean;
@@ -30,6 +31,7 @@ export interface Props {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   showDetails?: boolean;
+  returnPrimitive?: boolean;
 }
 
 defineOptions({
@@ -42,6 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
   floatLabel: false,
   clearable: false,
   showDetails: false,
+  returnPrimitive: false,
   label: 'Select',
   menuOptions: () => ({
     popper: { placement: 'bottom-start' },
@@ -51,6 +54,8 @@ const props = withDefaults(defineProps<Props>(), {
   appendWidth: 0,
   variant: 'default',
   hint: undefined,
+  keyAttr: undefined,
+  textAttr: undefined,
   errorMessages: () => [],
   successMessages: () => [],
 });
@@ -61,11 +66,36 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const { options, dense } = toRefs(props);
+const { dense, returnPrimitive } = toRefs(props);
+
+const isPrimitiveOptions = computed(() => !(props.options[0] instanceof Object));
+
+const isPrimitive = logicOr(returnPrimitive, isPrimitiveOptions);
+
+const keyProp = computed(() => props.keyAttr ?? 'key');
+const textProp = computed(() => props.textAttr ?? 'label');
+
+const mappedOptions = computed(() => {
+  if (!get(isPrimitiveOptions))
+    return props.options;
+
+  return props.options.map(option => ({
+    [get(keyProp)]: option,
+    [get(textProp)]: option,
+  }));
+});
 
 const value = computed({
-  get: () => props.value,
-  set: selected => emit('input', selected),
+  get: () => {
+    if (get(isPrimitive))
+      return get(mappedOptions).find(option => option[get(keyProp)] === props.value);
+    return props.value;
+  },
+  set: (selected) => {
+    if (get(isPrimitive) && selected)
+      return emit('input', selected[get(keyProp)]);
+    return emit('input', selected);
+  },
 });
 
 const labelWithQuote = computed(() => {
@@ -87,9 +117,9 @@ const {
   isActiveItem,
 } = useDropdownMenu<T, K>({
   itemHeight: props.dense ? 30 : 48,
-  keyAttr: props.keyAttr,
-  textAttr: props.textAttr,
-  options,
+  keyAttr: get(keyProp),
+  textAttr: get(textProp),
+  options: mappedOptions,
   dense,
   value,
 });
@@ -123,6 +153,8 @@ const virtualContainerProps = computed(() => ({
               [css.outlined]: variant === 'outlined',
               [css.dense]: dense,
               [css.float]: float,
+              [css.opened]: open,
+              [css['with-value']]: !!value,
               [css['with-error']]: hasError,
               [css['with-success']]: hasSuccess && !hasError,
               'w-full': fullWidth,
@@ -259,11 +291,16 @@ const virtualContainerProps = computed(() => ({
     }
 
     &.disabled {
-      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default;
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default bg-gray-50;
     }
 
     &.outlined {
-      @apply border border-rui-text-disabled;
+      @apply border border-black/[0.23] hover:border-black;
+
+      &.with-value,
+      &.opened {
+        @apply border-rui-primary;
+      }
 
       &.disabled {
         @apply border-dotted;
@@ -330,7 +367,7 @@ const virtualContainerProps = computed(() => ({
       }
 
       ~ .fieldset {
-        @apply border border-rui-text;
+        @apply border border-rui-primary;
 
         legend {
           &:after {
@@ -366,19 +403,28 @@ const virtualContainerProps = computed(() => ({
 :global(.dark) {
   .wrapper {
     .activator {
-      @apply bg-transparent hover:bg-white/10 text-rui-text;
+      @apply bg-transparent text-rui-text;
+
+      &:not(.outlined) {
+        @apply hover:bg-white/10;
+      }
+
+      &.disabled {
+        @apply bg-white/10;
+      }
 
       &.outlined {
-        @apply border border-rui-text hover:bg-white/[0.02];
+        @apply border border-white/[0.23] hover:border-white;
+
+        &.with-value,
+        &.opened {
+          @apply border-rui-primary;
+        }
       }
 
       &.float {
         &.outlined {
           @apply border-t-transparent;
-        }
-
-        ~ .fieldset {
-          @apply border-white;
         }
       }
     }
