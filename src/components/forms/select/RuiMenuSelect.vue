@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { logicOr } from '@vueuse/math';
 import RuiButton from '@/components/buttons/button/Button.vue';
 import RuiIcon from '@/components/icons/Icon.vue';
 import RuiMenu, { type MenuProps } from '@/components/overlays/menu/Menu.vue';
@@ -31,7 +30,6 @@ export interface Props {
   errorMessages?: string | string[];
   successMessages?: string | string[];
   showDetails?: boolean;
-  returnPrimitive?: boolean;
 }
 
 defineOptions({
@@ -66,11 +64,9 @@ const emit = defineEmits<{
 
 const css = useCssModule();
 
-const { dense, returnPrimitive } = toRefs(props);
+const { dense } = toRefs(props);
 
 const isPrimitiveOptions = computed(() => !(props.options[0] instanceof Object));
-
-const isPrimitive = logicOr(returnPrimitive, isPrimitiveOptions);
 
 const keyProp = computed(() => props.keyAttr ?? 'key');
 const textProp = computed(() => props.textAttr ?? 'label');
@@ -87,14 +83,13 @@ const mappedOptions = computed(() => {
 
 const value = computed({
   get: () => {
-    if (get(isPrimitive))
+    if (props.keyAttr)
       return get(mappedOptions).find(option => option[get(keyProp)] === props.value);
     return props.value;
   },
   set: (selected) => {
-    if (get(isPrimitive) && selected)
-      return emit('input', selected[get(keyProp)]);
-    return emit('input', selected);
+    const selection = props.keyAttr ? selected[get(keyProp)] : selected;
+    return emit('input', selection);
   },
 });
 

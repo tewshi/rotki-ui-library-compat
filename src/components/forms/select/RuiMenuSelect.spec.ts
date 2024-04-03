@@ -46,7 +46,7 @@ describe('menu select', () => {
         keyAttr: 'id',
         options,
         textAttr: 'label',
-        value: options[4],
+        value: options[4].id,
       },
     });
     expect(wrapper.find('div[aria-disabled]').exists()).toBeTruthy();

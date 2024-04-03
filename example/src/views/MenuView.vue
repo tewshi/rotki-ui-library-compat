@@ -232,7 +232,6 @@ const menuSelectCustom = ref<MenuSelectProps[]>([
     successMessages: ['lgtm!'],
     showDetails: true,
     value: undefined,
-    returnPrimitive: true,
     options,
   },
   {
