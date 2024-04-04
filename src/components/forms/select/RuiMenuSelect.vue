@@ -25,6 +25,7 @@ export interface Props {
   optionClass?: string;
   prependWidth?: number; // in rem
   appendWidth?: number; // in rem
+  itemHeight?: number; // in px
   variant?: 'default' | 'filled' | 'outlined';
   hint?: string;
   errorMessages?: string | string[];
@@ -111,7 +112,7 @@ const {
   getIdentifier,
   isActiveItem,
 } = useDropdownMenu<T, K>({
-  itemHeight: props.dense ? 30 : 48,
+  itemHeight: props.itemHeight ?? props.dense ? 30 : 48,
   keyAttr: get(keyProp),
   textAttr: get(textProp),
   options: mappedOptions,
@@ -179,7 +180,7 @@ const virtualContainerProps = computed(() => ({
           </span>
           <span
             v-if="value"
-            :class="css.value"
+            :class="[css.value, { 'w-full': fullWidth }]"
           >
             <slot
               name="activator.prepend"
@@ -275,7 +276,7 @@ const virtualContainerProps = computed(() => ({
   .activator {
     @apply relative inline-flex items-center max-w-full;
     @apply outline-none focus:outline-none cursor-pointer min-h-12 pl-4 py-2 pr-8 rounded;
-    @apply m-0 bg-white hover:bg-gray-50 transition text-body-1;
+    @apply m-0 bg-white hover:bg-gray-50/10 transition text-body-1;
 
     &.dense {
       @apply pl-2 py-1 min-h-8 text-sm;
@@ -292,13 +293,12 @@ const virtualContainerProps = computed(() => ({
     &.outlined {
       @apply border border-black/[0.23] hover:border-black;
 
-      &.with-value,
       &.opened {
-        @apply border-rui-primary;
+        @apply border-rui-primary border-2;
       }
 
       &.disabled {
-        @apply border-dotted;
+        @apply border-dotted border-black/[0.23];
       }
 
       &.with-success {
@@ -361,8 +361,14 @@ const virtualContainerProps = computed(() => ({
         @apply -translate-y-2 top-0 text-xs;
       }
 
+      &.opened {
+        ~ .fieldset {
+          @apply border-rui-primary border-2;
+        }
+      }
+
       ~ .fieldset {
-        @apply border border-rui-primary;
+        @apply border border-black/[0.23];
 
         legend {
           &:after {
@@ -374,7 +380,7 @@ const virtualContainerProps = computed(() => ({
   }
 
   .fieldset {
-    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 -mt-2;
+    @apply absolute w-full min-w-0 h-[calc(100%+0.5rem)] top-0 left-0 rounded pointer-events-none px-2 transition-all -mt-2;
 
     legend {
       @apply opacity-0 text-xs max-w-full truncate;
@@ -409,9 +415,8 @@ const virtualContainerProps = computed(() => ({
       }
 
       &.outlined {
-        @apply border border-white/[0.23] hover:border-white;
+        @apply border-white/[0.23] hover:border-white;
 
-        &.with-value,
         &.opened {
           @apply border-rui-primary;
         }
