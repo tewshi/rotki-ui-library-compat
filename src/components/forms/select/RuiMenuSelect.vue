@@ -70,6 +70,9 @@ const css = useCssModule();
 
 const { dense } = toRefs(props);
 
+const activator = ref();
+const { focused } = useFocus(activator);
+
 const isPrimitiveOptions = computed(() => !(props.options[0] instanceof Object));
 
 const keyProp = computed(() => props.keyAttr ?? 'key');
@@ -129,6 +132,11 @@ const virtualContainerProps = computed(() => ({
   style: containerProps.style as any,
   ref: containerProps.ref as any,
 }));
+
+function setValue(val: T) {
+  set(value, val);
+  set(focused, true);
+}
 </script>
 
 <template>
@@ -143,6 +151,7 @@ const virtualContainerProps = computed(() => ({
         v-bind="{ disabled, value, variant, readOnly, on, open, hasError, hasSuccess }"
       >
         <div
+          ref="activator"
           :aria-disabled="disabled"
           :class="[
             css.activator,
@@ -246,7 +255,7 @@ const virtualContainerProps = computed(() => ({
             :size="dense ? 'sm' : undefined"
             :value="getIdentifier(option)"
             variant="list"
-            @input="value = option"
+            @input="setValue(option)"
           >
             <template #prepend>
               <slot
