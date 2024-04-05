@@ -370,7 +370,7 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
     >
       Select Menus: custom activator inner content
     </h4>
-    <div class="grid gap-6 grid-cols-4">
+    <div class="grid gap-6 grid-cols-2">
       <div
         v-for="(menu, i) in menuSelectCustom"
         :key="i"
@@ -380,13 +380,20 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
           v-model="menu.value"
           v-bind="objectOmit(menu, ['value'])"
           :data-cy="`select-menu-custom-inner-${i}`"
+          :item-height="80"
           full-width
           float-label
           clearable
+          label-class="h-20"
           variant="outlined"
         >
           <template #activator.text="{ value }">
             {{ value.id }} | {{ value.label }}
+          </template>
+          <template #item.text="{ option }">
+            <span class="my-4 block">
+              {{ option.label }}
+            </span>
           </template>
         </RuiMenuSelect>
       </div>
@@ -439,6 +446,36 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
           :append-width="1.5"
           :data-cy="`select-menu-custom-options-${i}`"
           full-width
+        >
+          <template #item.append="{ active }">
+            <RuiIcon
+              v-if="active"
+              class="transition"
+              name="check-line"
+              size="24"
+            />
+          </template>
+        </RuiMenuSelect>
+      </div>
+    </div><h4
+      class="text-h6 mt-6"
+      data-cy="select-menus-custom-options"
+    >
+      Select Menus: readonly
+    </h4>
+    <div class="grid gap-6 grid-cols-4">
+      <div
+        v-for="(menu, i) in menuSelectPrimitive"
+        :key="i"
+        class="py-4"
+      >
+        <RuiMenuSelect
+          v-model="menu.value"
+          v-bind="objectOmit(menu, ['value'])"
+          :append-width="1.5"
+          :data-cy="`select-menu-custom-options-${i}`"
+          full-width
+          read-only
         >
           <template #item.append="{ active }">
             <RuiIcon
