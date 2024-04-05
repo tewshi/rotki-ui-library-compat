@@ -14,6 +14,7 @@ export interface Props {
   textAttr?: K;
   value?: T | null;
   disabled?: boolean;
+  readOnly?: boolean;
   dense?: boolean;
   fullWidth?: boolean;
   floatLabel?: boolean;
@@ -39,6 +40,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
+  readOnly: false,
   dense: false,
   floatLabel: false,
   clearable: false,
@@ -55,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   hint: undefined,
   keyAttr: undefined,
   textAttr: undefined,
+  itemHeight: undefined,
   errorMessages: () => [],
   successMessages: () => [],
 });
@@ -112,7 +115,7 @@ const {
   getIdentifier,
   isActiveItem,
 } = useDropdownMenu<T, K>({
-  itemHeight: props.itemHeight ?? props.dense ? 30 : 48,
+  itemHeight: props.itemHeight ?? (props.dense ? 30 : 48),
   keyAttr: get(keyProp),
   textAttr: get(textProp),
   options: mappedOptions,
@@ -131,13 +134,13 @@ const virtualContainerProps = computed(() => ({
 <template>
   <RuiMenu
     v-model="isOpen"
-    :class="css.wrapper"
+    :class="[css.wrapper, { 'w-full': fullWidth }]"
     v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails }"
   >
     <template #activator="{ on, open, hasError, hasSuccess }">
       <slot
         name="activator"
-        v-bind="{ disabled, value, variant, on, open, hasError, hasSuccess }"
+        v-bind="{ disabled, value, variant, readOnly, on, open, hasError, hasSuccess }"
       >
         <div
           :aria-disabled="disabled"
@@ -146,9 +149,11 @@ const virtualContainerProps = computed(() => ({
             labelClass,
             {
               [css.disabled]: disabled,
+              [css.readonly]: readOnly,
               [css.outlined]: variant === 'outlined',
               [css.dense]: dense,
               [css.float]: float,
+              [css['float-label']]: floatLabel,
               [css.opened]: open,
               [css['with-value']]: !!value,
               [css['with-error']]: hasError,
@@ -157,17 +162,16 @@ const virtualContainerProps = computed(() => ({
             },
           ]"
           data-id="activator"
-          v-on="disabled ? {} : on"
+          tabindex="0"
+          v-on="disabled || readOnly ? {} : on"
         >
           <span
             v-if="floatLabel || !value"
             :class="[
               css.label,
               {
-                'absolute right-4': floatLabel,
+                'absolute': floatLabel,
                 'pr-2': !value && !open && floatLabel,
-                'left-4': floatLabel && !dense,
-                'left-2': floatLabel && dense,
               },
             ]"
           >
@@ -271,15 +275,19 @@ const virtualContainerProps = computed(() => ({
 
 <style lang="scss" module>
 .wrapper {
-  @apply max-w-full w-full;
+  @apply max-w-full inline-flex flex-col;
 
   .activator {
     @apply relative inline-flex items-center max-w-full;
-    @apply outline-none focus:outline-none cursor-pointer min-h-12 pl-4 py-2 pr-8 rounded;
-    @apply m-0 bg-white hover:bg-gray-50/10 transition text-body-1;
+    @apply outline-none focus:outline-none cursor-pointer min-h-14 pl-4 py-2 pr-8 rounded;
+    @apply m-0 bg-white transition-all text-body-1 hover:border-black;
+
+    &:not(.outlined) {
+      @apply hover:bg-gray-100 focus-within:bg-gray-100;
+    }
 
     &.dense {
-      @apply pl-2 py-1 min-h-8 text-sm;
+      @apply pl-2 py-1 min-h-10 text-sm;
 
       ~ .fieldset {
         @apply px-1;
@@ -290,10 +298,15 @@ const virtualContainerProps = computed(() => ({
       @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default bg-gray-50;
     }
 
+    &.readonly {
+      @apply opacity-80 pointer-events-none cursor-default bg-gray-50;
+    }
+
     &.outlined {
       @apply border border-black/[0.23] hover:border-black;
 
-      &.opened {
+      &.opened,
+      &:focus {
         @apply border-rui-primary border-2;
       }
 
@@ -344,9 +357,21 @@ const virtualContainerProps = computed(() => ({
       }
     }
 
+    &.float-label {
+      .label {
+        max-width: calc(100% - 3rem);
+      }
+
+      &.dense {
+        .label {
+          max-width: calc(100% - 2.5rem);
+        }
+      }
+    }
+
     &.float {
       &.outlined {
-        @apply border-t-transparent;
+        @apply border-t-transparent #{!important};
 
         &.with-success {
           @apply border-t-transparent #{!important};
@@ -359,9 +384,25 @@ const virtualContainerProps = computed(() => ({
 
       .label {
         @apply -translate-y-2 top-0 text-xs;
+        max-width: calc(100% - 3rem);
       }
 
-      &.opened {
+      &.dense {
+        .label {
+          max-width: calc(100% - 2.5rem);
+        }
+      }
+
+      &.with-value:hover {
+        ~ .fieldset {
+          @apply border-black;
+        }
+      }
+
+      &.opened,
+      &.opened.with-value,
+      &:focus,
+      &:focus.with-value {
         ~ .fieldset {
           @apply border-rui-primary border-2;
         }
@@ -407,17 +448,22 @@ const virtualContainerProps = computed(() => ({
       @apply bg-transparent text-rui-text;
 
       &:not(.outlined) {
-        @apply hover:bg-white/10;
+        @apply hover:bg-white/10 focus-within:bg-white/10;
       }
 
       &.disabled {
         @apply bg-white/10;
       }
 
+      &.readonly {
+        @apply bg-white/10;
+      }
+
       &.outlined {
         @apply border-white/[0.23] hover:border-white;
 
-        &.opened {
+        &.opened,
+        &:focus {
           @apply border-rui-primary;
         }
       }
@@ -425,6 +471,25 @@ const virtualContainerProps = computed(() => ({
       &.float {
         &.outlined {
           @apply border-t-transparent;
+        }
+
+        &.with-value:hover {
+          ~ .fieldset {
+            @apply border-white;
+          }
+        }
+
+        &.opened,
+        &.opened.with-value,
+        &:focus,
+        &:focus.with-value {
+          ~ .fieldset {
+            @apply border-rui-primary border-2;
+          }
+        }
+
+        ~ .fieldset {
+          @apply border border-white/[0.23];
         }
       }
     }

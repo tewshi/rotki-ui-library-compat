@@ -19,7 +19,7 @@ export function useDropdownMenu<T, K extends keyof T>({
   itemHeight = 48,
   keyAttr,
   options,
-  overscan = 1,
+  overscan = 5,
   prependWidth,
   textAttr,
   value,
@@ -40,7 +40,9 @@ export function useDropdownMenu<T, K extends keyof T>({
 
   const valueKey = computed(() => {
     const selected = get(value);
-    return selected ? selected[keyAttr] : undefined;
+    if (!keyAttr || !selected)
+      return selected;
+    return selected[keyAttr];
   });
 
   const menuWidth = computed(() => {
