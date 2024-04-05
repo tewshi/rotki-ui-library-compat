@@ -34,7 +34,9 @@ describe('menu select', () => {
       },
     });
 
-    expect(wrapper.get('div[data-id="activator"]').classes()).toMatch(/_activator_/);
+    expect(wrapper.get('div[data-id="activator"]').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/_activator_/)]),
+    );
     expect(wrapper.find('div[data-id="activator"] span[class*=label]').exists()).toBeTruthy();
     expect(wrapper.find('span > svg').exists()).toBeTruthy();
   });

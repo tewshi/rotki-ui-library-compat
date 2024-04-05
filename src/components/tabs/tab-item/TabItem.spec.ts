@@ -30,19 +30,25 @@ describe('tabs/TabItem', () => {
     });
 
     expect(wrapper.find('div>div').exists()).toBeTruthy();
-    expect(wrapper.find('div>div').classes()).not.toMatch(/hidden/);
+    expect(wrapper.find('div>div').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/hidden/)]),
+    );
 
     await wrapper.setProps({
       eager: true,
     });
     expect(wrapper.find('div>div').exists()).toBeTruthy();
-    expect(wrapper.find('div>div').classes()).not.toMatch(/hidden/);
+    expect(wrapper.find('div>div').classes()).not.toEqual(
+      expect.arrayContaining([expect.stringMatching(/hidden/)]),
+    );
 
     await wrapper.setProps({
       active: false,
     });
 
     expect(wrapper.find('div>div').exists()).toBeTruthy();
-    expect(wrapper.find('div>div').classes()).toMatch(/hidden/);
+    expect(wrapper.find('div>div').classes()).toEqual(
+      expect.arrayContaining([expect.stringMatching(/hidden/)]),
+    );
   });
 });
