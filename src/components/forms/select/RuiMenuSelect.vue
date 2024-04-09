@@ -70,6 +70,7 @@ const css = useCssModule();
 
 const { dense } = toRefs(props);
 
+const menuRef = ref();
 const activator = ref();
 const { focused } = useFocus(activator);
 
@@ -124,6 +125,7 @@ const {
   options: mappedOptions,
   dense,
   value,
+  menuRef,
 });
 
 const float = computed(() => (get(isOpen) || !!get(value)) && props.floatLabel);
@@ -247,7 +249,10 @@ function setValue(val: T) {
         v-bind="virtualContainerProps"
         @scroll="containerProps.onScroll"
       >
-        <div v-bind="wrapperProps">
+        <div
+          v-bind="wrapperProps"
+          ref="menuRef"
+        >
           <RuiButton
             v-for="(option, i) in renderedData"
             :key="i"
