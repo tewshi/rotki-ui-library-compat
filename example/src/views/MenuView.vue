@@ -290,10 +290,11 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
           v-bind="objectOmit(menu, ['buttonColor'])"
           :data-cy="`menu-${i}`"
         >
-          <template #activator="{ on }">
+          <template #activator="{ on, disabled }">
             <RuiButton
               data-cy="activator"
               :color="menu.buttonColor"
+              :disabled="disabled"
               v-on="on"
             >
               {{ menu.buttonText }}
@@ -380,18 +381,21 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
           v-model="menu.value"
           v-bind="objectOmit(menu, ['value'])"
           :data-cy="`select-menu-custom-inner-${i}`"
-          :item-height="80"
+          :item-height="menu.dense ? undefined : 80"
           full-width
           float-label
           clearable
-          label-class="h-20"
+          :label-class="menu.dense ? undefined : 'h-20'"
           variant="outlined"
         >
           <template #activator.text="{ value }">
             {{ value.id }} | {{ value.label }}
           </template>
           <template #item.text="{ option }">
-            <span class="my-4 block">
+            <span
+              class="block"
+              :class="{ 'my-4': !menu.dense }"
+            >
               {{ option.label }}
             </span>
           </template>
