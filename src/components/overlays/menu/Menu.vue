@@ -93,19 +93,15 @@ watch(open, (open) => {
   emit('input', open);
 });
 
-const onClickOutsideIgnored = computed(() => {
-  if (!get(closeOnContentClick))
-    return get(menu);
-
-  return undefined;
-});
-
-onClickOutside(activator, () => {
+onClickOutside(menu, () => {
   if (get(open))
     onLeave();
-}, { ignore: [onClickOutsideIgnored] });
+}, { ignore: [activator] });
 
 const on = computed(() => {
+  if (get(disabled))
+    return {};
+
   const openOnHoverVal = get(openOnHover);
   const clickVal = get(click);
   return {
@@ -128,7 +124,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
 </script>
 
 <template>
-  <div>
+  <div @keyup.esc.exact="onLeave()">
     <div
       ref="activator"
       :class="[css.wrapper, wrapperClass, { 'w-full': fullWidth }]"
@@ -149,6 +145,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           css[`menu__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="menu"
+        @click.stop.prevent="closeOnContentClick ? onLeave() : undefined"
       >
         <Transition
           enter-class="opacity-0 translate-y-1"
