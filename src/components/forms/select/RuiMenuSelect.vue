@@ -145,15 +145,16 @@ function setValue(val: T) {
   <RuiMenu
     v-model="isOpen"
     :class="[css.wrapper, { 'w-full': fullWidth }]"
-    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails }"
+    v-bind="{ ...menuOptions, errorMessages, successMessages, hint, dense, fullWidth, showDetails, disabled }"
   >
     <template #activator="{ on, open, hasError, hasSuccess }">
       <slot
         name="activator"
         v-bind="{ disabled, value, variant, readOnly, on, open, hasError, hasSuccess }"
       >
-        <div
+        <button
           ref="activator"
+          :disabled="disabled"
           :aria-disabled="disabled"
           :class="[
             css.activator,
@@ -173,8 +174,7 @@ function setValue(val: T) {
             },
           ]"
           data-id="activator"
-          tabindex="0"
-          v-on="disabled || readOnly ? {} : on"
+          v-on="readOnly ? {} : on"
         >
           <span
             v-if="floatLabel || !value"
@@ -228,9 +228,9 @@ function setValue(val: T) {
               name="arrow-drop-down-fill"
             />
           </span>
-        </div>
+        </button>
         <fieldset
-          v-if="floatLabel"
+          v-if="floatLabel || variant === 'outlined'"
           :class="css.fieldset"
         >
           <legend :class="{ 'px-2': float }" />
@@ -294,7 +294,7 @@ function setValue(val: T) {
   .activator {
     @apply relative inline-flex items-center max-w-full;
     @apply outline-none focus:outline-none cursor-pointer min-h-14 pl-4 py-2 pr-8 rounded;
-    @apply m-0 bg-white transition-all text-body-1 hover:border-black;
+    @apply m-0 bg-white transition-all text-body-1 text-left hover:border-black;
 
     &:not(.outlined) {
       @apply hover:bg-gray-100 focus-within:bg-gray-100;
@@ -309,7 +309,7 @@ function setValue(val: T) {
     }
 
     &.disabled {
-      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default bg-gray-50;
+      @apply opacity-65 text-rui-text-disabled active:text-rui-text-disabled cursor-default pointer-events-none bg-gray-50;
     }
 
     &.readonly {
@@ -321,7 +321,12 @@ function setValue(val: T) {
 
       &.opened,
       &:focus {
-        @apply border-rui-primary border-2;
+        @apply border-rui-primary;
+
+        ~ .fieldset {
+          @apply border-rui-primary #{!important};
+          @apply border-2 #{!important};
+        }
       }
 
       &.disabled {
@@ -413,15 +418,6 @@ function setValue(val: T) {
         }
       }
 
-      &.opened,
-      &.opened.with-value,
-      &:focus,
-      &:focus.with-value {
-        ~ .fieldset {
-          @apply border-rui-primary border-2;
-        }
-      }
-
       ~ .fieldset {
         @apply border border-black/[0.23];
 
@@ -429,6 +425,16 @@ function setValue(val: T) {
           &:after {
             content: v-bind(labelWithQuote);
           }
+        }
+      }
+
+      &.opened,
+      &.opened.with-value,
+      &:focus,
+      &:focus.with-value {
+        ~ .fieldset {
+          @apply border-rui-primary;
+          @apply border-2 #{!important};
         }
       }
     }
@@ -475,30 +481,12 @@ function setValue(val: T) {
 
       &.outlined {
         @apply border-white/[0.23] hover:border-white;
-
-        &.opened,
-        &:focus {
-          @apply border-rui-primary;
-        }
       }
 
       &.float {
-        &.outlined {
-          @apply border-t-transparent;
-        }
-
         &.with-value:hover {
           ~ .fieldset {
             @apply border-white;
-          }
-        }
-
-        &.opened,
-        &.opened.with-value,
-        &:focus,
-        &:focus.with-value {
-          ~ .fieldset {
-            @apply border-rui-primary border-2;
           }
         }
 
