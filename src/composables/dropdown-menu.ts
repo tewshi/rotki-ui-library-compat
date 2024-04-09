@@ -1,10 +1,10 @@
 import type { Ref } from 'vue';
-import type { MaybeElement } from '@vueuse/core';
 
 export interface DropdownOptions<T, K> {
   options: Ref<T[]>;
   dense?: Ref<boolean>;
   value: Ref<T | null | undefined>;
+  menuRef: Ref<HTMLElement | null>;
   keyAttr: K;
   textAttr: K;
   appendWidth?: number;
@@ -18,15 +18,14 @@ export function useDropdownMenu<T, K extends keyof T>({
   dense,
   itemHeight = 48,
   keyAttr,
+  menuRef,
   options,
   overscan = 5,
   prependWidth,
   textAttr,
   value,
 }: DropdownOptions<T, K>) {
-  const reference: Ref<MaybeElement | null> = ref(null);
-
-  const { containerProps, list, scrollTo, wrapperProps } = useVirtualList<T>(
+  const { containerProps, list, wrapperProps } = useVirtualList<T>(
     options,
     {
       itemHeight,
@@ -99,14 +98,16 @@ export function useDropdownMenu<T, K extends keyof T>({
   }
 
   function updateOpen(open: boolean) {
-    if (open && get(value)) {
-      nextTick(() => {
-        scrollTo(get(options).findIndex(isActiveItem));
-      });
-    }
+    nextTick(() => {
+      const container = get(menuRef)?.parentElement;
+      if (open && get(value) && container) {
+        const index = get(options).findIndex(isActiveItem);
+        container.scrollTop = index * itemHeight;
+      }
+    });
   }
 
-  watch(isOpen, updateOpen);
+  watchDebounced(isOpen, updateOpen, { debounce: 100 });
 
   return {
     containerProps,
@@ -115,9 +116,7 @@ export function useDropdownMenu<T, K extends keyof T>({
     isActiveItem,
     isOpen,
     menuWidth,
-    reference,
     renderedData,
-    scrollTo,
     toggle,
     valueKey,
     wrapperProps,
