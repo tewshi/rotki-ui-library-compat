@@ -463,7 +463,7 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
       </div>
     </div><h4
       class="text-h6 mt-6"
-      data-cy="select-menus-custom-options"
+      data-cy="select-menus-readonly"
     >
       Select Menus: readonly
     </h4>
@@ -477,7 +477,7 @@ const menuSelectPrimitive = ref<MenuSelectProps[]>([
           v-model="menu.value"
           v-bind="objectOmit(menu, ['value'])"
           :append-width="1.5"
-          :data-cy="`select-menu-custom-options-${i}`"
+          :data-cy="`select-menu-readonly-${i}`"
           full-width
           read-only
         >
