@@ -145,7 +145,7 @@ const { hasError, hasSuccess } = useFormTextDetail(
           css[`menu__${popper?.strategy ?? 'absolute'}`],
         ]"
         role="menu"
-        @click.stop.prevent="closeOnContentClick ? onLeave() : undefined"
+        @click="closeOnContentClick ? onLeave() : undefined"
       >
         <Transition
           enter-class="opacity-0 translate-y-1"
