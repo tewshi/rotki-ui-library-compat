@@ -36,6 +36,9 @@ const emit = defineEmits<{
 const { color, grow, value, disabled, vertical, align } = toRefs(props);
 
 const internalValue = ref();
+const bar = ref<HTMLDivElement>();
+const wrapper = ref<HTMLDivElement>();
+const showArrows: Ref<boolean> = ref(false);
 
 const slots = useSlots();
 const children = computed(() => {
@@ -181,16 +184,11 @@ watch(route, () => {
 
 const css = useCssModule();
 
-const bar = ref<HTMLDivElement>();
-const wrapper = ref<HTMLDivElement>();
-
 const { width, height } = useElementSize(bar);
 const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapper);
 const { arrivedState, x, y } = useScroll(bar, { behavior: 'smooth' });
 
 const { top, bottom, left, right } = toRefs(arrivedState);
-
-const showArrows: Ref<boolean> = ref(false);
 const { trigger: triggerHorizontal, stop: stopHorizontal } = watchTriggerable(
   [wrapperWidth, width],
   ([ww, w]) => {
