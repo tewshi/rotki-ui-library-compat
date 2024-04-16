@@ -9,12 +9,12 @@ const icons = ref([
 ]);
 
 const logos = ref<(LogoProps & { name: string })[]>([
-  { name: 'Default', customSrc: undefined },
-  { name: 'Custom', customSrc: 'https://raw.githubusercontent.com/rotki/data/hohoho/assets/icons/drawer_logo.png' },
-  { name: 'Custom failed fallback to default', customSrc: 'not-existing-path' },
-  { name: 'Custom failed fallback to default with app name', customSrc: 'not-existing-path', text: true },
-  { name: 'Default with app name', customSrc: undefined, text: true },
-  { name: 'Custom with app name', customSrc: 'https://raw.githubusercontent.com/rotki/data/main/assets/icons/drawer_logo.png', text: true },
+  { name: 'Default' },
+  { name: 'Custom', logo: 'drawer' },
+  { name: 'Custom failed fallback to default', logo: 'nonExistingKey' },
+  { name: 'Custom failed fallback to default with app name', logo: 'nonExistingKey', text: true },
+  { name: 'Default with app name', text: true },
+  { name: 'Custom with app name', logo: 'emptyScreen', text: true },
 ]);
 </script>
 
