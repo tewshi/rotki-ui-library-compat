@@ -1,4 +1,4 @@
-import { default as FooterStepper, type Props } from './FooterStepper.vue';
+import FooterStepper, { type Props } from '@/components/steppers/FooterStepper.vue';
 import type { Meta, StoryFn, StoryObj } from '@storybook/vue';
 
 const render: StoryFn<Props> = args => ({
@@ -22,6 +22,7 @@ const render: StoryFn<Props> = args => ({
 const meta: Meta<Props> = {
   argTypes: {
     arrowButtons: { control: 'boolean', table: { category: 'State' } },
+    hideButtons: { control: 'boolean', table: { category: 'State' } },
     pages: { control: 'number', table: { category: 'State' } },
     value: {
       control: 'number',
@@ -55,6 +56,16 @@ export const Default: Story = {
   },
 };
 
+export const DefaultWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: true,
+    pages: 5,
+    value: 1,
+    variant: 'numeric',
+  },
+};
+
 export const Bullet: Story = {
   args: {
     arrowButtons: false,
@@ -64,9 +75,29 @@ export const Bullet: Story = {
   },
 };
 
+export const BulletWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: true,
+    pages: 5,
+    value: 1,
+    variant: 'bullet',
+  },
+};
+
 export const Progress: Story = {
   args: {
     arrowButtons: false,
+    pages: 5,
+    value: 1,
+    variant: 'progress',
+  },
+};
+
+export const ProgressWithoutButtons: Story = {
+  args: {
+    arrowButtons: false,
+    hideButtons: true,
     pages: 5,
     value: 1,
     variant: 'progress',

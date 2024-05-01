@@ -1,7 +1,7 @@
 {
   "name": "@rotki/ui-library-compat",
   "version": "0.22.16",
-  "packageManager": "pnpm@8.15.6",
+  "packageManager": "pnpm@9.0.6",
   "description": "A vue 2 backport of the design system and component library for rotki",
   "type": "module",
   "keywords": [
@@ -156,7 +156,7 @@
     "vue-tsc": "2.0.12"
   },
   "engines": {
-    "pnpm": ">=8 <9"
+    "pnpm": ">=9 <10"
   },
   "lint-staged": {
     "*.{js,mjs,ts,vue,yml,json,md}": "eslint"
