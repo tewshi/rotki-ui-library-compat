@@ -8,6 +8,7 @@ export interface Props {
   value?: number;
   variant?: 'numeric' | 'bullet' | 'progress' | 'pill';
   arrowButtons?: boolean;
+  hideButtons?: boolean;
 }
 
 defineOptions({
@@ -18,6 +19,7 @@ const props = withDefaults(defineProps<Props>(), {
   value: 1,
   variant: 'numeric',
   arrowButtons: false,
+  hideButtons: false,
 });
 
 const emit = defineEmits<{
@@ -62,6 +64,7 @@ function onClick(index: number) {
     </template>
     <template v-else>
       <RuiButton
+        v-if="!hideButtons"
         :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="value <= 1"
         :icon="arrowButtons"
@@ -109,6 +112,7 @@ function onClick(index: number) {
         :value="(value / pages) * 100"
       />
       <RuiButton
+        v-if="!hideButtons"
         :class="{ [css.arrow__button]: arrowButtons }"
         :disabled="value >= pages"
         :icon="arrowButtons"
